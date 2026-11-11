@@ -8,7 +8,7 @@ DENSE_DATASETS ?= scifact nfcorpus arguana
 ORT_LIB   = $(DENSE)/onnxruntime-linux-x64-1.31.1/lib/libonnxruntime.so.1.31.1
 
 .DEFAULT_GOAL := help
-.PHONY: help build test lint fmt data trec-eval bm25 check table reproduce reference dense-assets embed dense dense-table dense-check ann ann-table
+.PHONY: help build test lint fmt data trec-eval bm25 check table reproduce reference dense-assets embed dense dense-table dense-check ann ann-table fuse fusion-table
 
 help: ## Show available targets
 	@awk -F':.*## ' '/^[a-z0-9-]+:.*## / {printf "  %-10s %s\n", $$1, $$2}' $(MAKEFILE_LIST)
@@ -89,3 +89,13 @@ ann: build ## Write the exact and HNSW runs of DENSE_DATASETS into RUNS, time th
 
 ann-table: build ## Write the HNSW tables into docs/BENCHMARKS.md from RUNS
 	bin/table -ann -anchors results/anchors-bge.tsv -data $(DATA) -runs $(RUNS)
+
+fuse: build ## Fuse the BM25 and BGE runs of DENSE_DATASETS in RUNS, RRF and Normalize, and check the fused runs against trec_eval
+	for d in $(DENSE_DATASETS); do \
+		bin/fuse -bm25 $(RUNS)/$$d.run -bge $(RUNS)/$$d.bge.run -rrf $(RUNS)/$$d.rrf.run -norm $(RUNS)/$$d.norm.run && \
+		scripts/check-eval.sh $(TREC_EVAL) bin/eval $(DATA)/$$d $(RUNS)/$$d.rrf.run && \
+		scripts/check-eval.sh $(TREC_EVAL) bin/eval $(DATA)/$$d $(RUNS)/$$d.norm.run || exit 1; \
+	done
+
+fusion-table: build ## Write the fusion tables into docs/BENCHMARKS.md from RUNS
+	bin/table -fusion -anchors results/anchors-fusion.tsv -data $(DATA) -runs $(RUNS)

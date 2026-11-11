@@ -61,3 +61,5 @@ jobs:
       # a document vector's cosine to Pyserini's is below 0.9999 (D012).
       # Exact values depend on the CPU.
       - run: make embed ann dense-check DATA="$RUNNER_TEMP/data"
+      # Fuse NFCorpus's BM25 and BGE runs and check them against trec_eval.
+      - run: make bm25 fuse DATA="$RUNNER_TEMP/data"

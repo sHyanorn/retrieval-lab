@@ -1,0 +1,7 @@
+dataset	pyserini_rrf	pyserini_normalize	anserini_rrf	anserini_normalize	page_bge
+trec-covid	0.8041	0.7956	0.8041	0.7956	0.7815
+nfcorpus	0.3725	0.3789	0.3725	0.3782	0.3735
+fiqa	0.3671	0.3942	0.3671	0.3942	0.4065
+arguana	0.5586	0.5694	0.5626	0.5738	0.6228
+scidocs	0.1948	0.2019	0.1948	0.2019	0.2172
+scifact	0.7420	0.7472	0.7420	0.7472	0.7408

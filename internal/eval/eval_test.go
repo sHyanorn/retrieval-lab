@@ -157,3 +157,17 @@ func TestOverlapRanksBothListsAsTrecEval(t *testing.T) {
 		}
 	}
 }
+
+func TestPairedIntervalPairsTheQueries(t *testing.T) {
+	// Every query gains 0.1 over very different baselines, so a paired
+	// interval is exactly 0.1, whatever the spread of the baselines.
+	var a, b []float64
+	for i := range 50 {
+		x := float64(i%7) / 7
+		a, b = append(a, x+0.1), append(b, x)
+	}
+	lo, hi := PairedInterval(a, b, 10000)
+	if math.Abs(lo-0.1) > 1e-9 || math.Abs(hi-0.1) > 1e-9 {
+		t.Fatalf("PairedInterval = [%v, %v], want [0.1, 0.1]", lo, hi)
+	}
+}

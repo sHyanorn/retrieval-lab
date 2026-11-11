@@ -158,3 +158,21 @@ Mean milliseconds per query on one goroutine, and the graph build on one gorouti
 
 <!-- hnsw-time -->
 <!-- /hnsw-time -->
+
+## Fusion protocol
+
+`cmd/fuse` fuses each dataset's BM25 flat run and BGE run as Pyserini's `pyserini.fusion` does for its BEIR fusion page (D015): RRF with k = 60, and Normalize, the sum of the min-max normalised scores; both over the top 1000 of each run, keeping 1000. `cmd/table -fusion` computes the tables below from the run files. The anchors, in `results/anchors-fusion.tsv`, are from `docs/experiments-beir-fusion.md` of Pyserini at commit d1b77315499a601c1bf9c2d88a2baa72019244ee and of Anserini at commit 6390709ad7a637ec974b69d8a8556e9607652edc. The fused runs depend on the CPU through the BGE runs (D012) and are not checksummed.
+
+### Fusion against Pyserini
+
+Δ is this project's value, to four decimals, minus Pyserini's; the agreement column applies SPEC §4 to each method. "BGE on the page" is the nDCG@10 of the BGE run the page fused, as the page gives it.
+
+<!-- fusion -->
+<!-- /fusion -->
+
+### Fusion against its inputs
+
+nDCG@10 of each fused run minus that of each of its inputs, with the 95% interval of a paired bootstrap over the queries (SPEC §4).
+
+<!-- fusion-gain -->
+<!-- /fusion-gain -->

@@ -6,6 +6,7 @@ import (
 	"io"
 	"maps"
 	"math"
+	"math/rand/v2"
 	"slices"
 	"strings"
 )
@@ -113,6 +114,25 @@ func Overlap(exact, approx []Hit, k int) float64 {
 		}
 	}
 	return float64(n) / float64(len(e))
+}
+
+// PairedInterval is the 95% interval of the mean of a[i] − b[i] from a
+// paired bootstrap: samples draws of len(a) indices with replacement, from
+// a fixed seed; it returns the 251st and the 9,750th of 10,000 sorted means,
+// and the same quantiles for other sample counts.
+func PairedInterval(a, b []float64, samples int) (lo, hi float64) {
+	r := rand.New(rand.NewPCG(1, 2))
+	means := make([]float64, samples)
+	for s := range means {
+		var sum float64
+		for range a {
+			i := r.IntN(len(a))
+			sum += a[i] - b[i]
+		}
+		means[s] = sum / float64(len(a))
+	}
+	slices.Sort(means)
+	return means[samples/40], means[samples-samples/40-1]
 }
 
 // Evaluate scores every query in qrels, as trec_eval -c does: a query

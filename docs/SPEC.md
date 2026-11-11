@@ -54,6 +54,15 @@ Fixed before any HNSW result existed. This milestone measures the error of appro
 4. Search time per query on one goroutine, exact and for each ef, is measured while no other job runs on the machine and reported without conclusions.
 5. `cmd/eval` agrees with trec_eval on every approximate run file.
 
+### Fusion
+
+Fixed before any fusion result existed.
+
+1. Each dataset's BM25 flat run and BGE run are fused as Pyserini's `pyserini.fusion` fuses them (D015): reciprocal rank fusion with k = 60, and the sum of each run's scores after min-max normalisation per query, which is the convex combination with weight 0.5 up to a factor of 2. Both take the top 1000 of each run and keep the top 1000. These are the anchor's settings; nothing is tuned on any split.
+2. Anchor: the RRF and Normalize nDCG@10 of Pyserini's BEIR fusion page (`docs/experiments-beir-fusion.md` at commit d1b77315499a601c1bf9c2d88a2baa72019244ee), with those of Anserini's page (commit 6390709ad7a637ec974b69d8a8556e9607652edc) beside them. |nDCG@10 of this project − anchor| ≤ 0.005, as for BM25; a dataset outside it is not tuned toward the anchor, and its cause is recorded.
+3. For each fused run, the difference in nDCG@10 from each of its two inputs, with a 95% interval from a paired bootstrap over the queries: 10,000 samples of the queries with replacement, seed fixed, the 2.5th and 97.5th percentiles of the mean per-query difference.
+4. `cmd/eval` agrees with trec_eval on every fused run.
+
 ## 5. Evaluation rules
 
 - Every query in the qrels counts; a query without results scores 0. Queries absent from the qrels are ignored.

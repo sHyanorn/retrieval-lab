@@ -51,7 +51,7 @@ func TestCheckLeavesTheDocumentAlone(t *testing.T) {
 	if err := os.WriteFile(doc, []byte(before), 0o600); err != nil {
 		t.Fatal(err)
 	}
-	if err := run("../../results/anchors-bge.tsv", dir, dir, doc, false, true, false, true, dir, dir); err != nil {
+	if err := run("../../results/anchors-bge.tsv", dir, dir, doc, false, true, false, false, true, dir, dir); err != nil {
 		t.Fatal(err)
 	}
 	after, err := os.ReadFile(doc)

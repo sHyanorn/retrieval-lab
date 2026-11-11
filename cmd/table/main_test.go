@@ -59,3 +59,11 @@ func TestCheckLeavesTheDocumentAlone(t *testing.T) {
 		t.Fatalf("-check rewrote the document (%v):\n%s", err, after)
 	}
 }
+
+func TestNDCGChangeRoundsTheDifference(t *testing.T) {
+	// 0.402553 − 0.406231 = −0.003678; rounding each first would give
+	// 0.4026 − 0.4062 = −0.0036.
+	if got := ndcgChange(0.402553, 0.406231); got != "-0.0037" {
+		t.Fatalf("ndcgChange = %s, want -0.0037", got)
+	}
+}

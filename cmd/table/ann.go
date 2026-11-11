@@ -5,7 +5,6 @@ import (
 	"errors"
 	"fmt"
 	"io/fs"
-	"math"
 	"os"
 	"path/filepath"
 	"strings"
@@ -66,7 +65,7 @@ func annTables(text, anchorsPath, data, runs string) (string, error) {
 		if err != nil {
 			return "", err
 		}
-		exactNDCG := round4(eval.Mean(eval.Evaluate(qrels, exact)).NDCG10)
+		exactNDCG := eval.Mean(eval.Evaluate(qrels, exact)).NDCG10
 		fmt.Fprintf(r10, "| %s |", a.dataset)
 		fmt.Fprintf(r100, "| %s |", a.dataset)
 		fmt.Fprintf(nd, "| %s | %.4f |", a.dataset, exactNDCG)
@@ -79,7 +78,7 @@ func annTables(text, anchorsPath, data, runs string) (string, error) {
 			if dense.GraphDepth(ef) >= 100 {
 				fmt.Fprintf(r100, " %.4f |", overlap(exact, approx, 100))
 			}
-			fmt.Fprintf(nd, " %s |", signed(round4(eval.Mean(eval.Evaluate(qrels, approx)).NDCG10)-exactNDCG))
+			fmt.Fprintf(nd, " %s |", ndcgChange(eval.Mean(eval.Evaluate(qrels, approx)).NDCG10, exactNDCG))
 		}
 		for _, b := range []*strings.Builder{r10, r100, nd} {
 			b.WriteString("\n")
@@ -121,4 +120,5 @@ func overlap(exact, approx eval.Run, k int) float64 {
 	return sum / float64(len(exact))
 }
 
-func round4(v float64) float64 { return math.Round(v*1e4) / 1e4 }
+// ndcgChange formats approx − exact to four decimals.
+func ndcgChange(approx, exact float64) string { return signed(approx - exact) }

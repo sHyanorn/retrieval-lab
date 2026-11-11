@@ -41,7 +41,7 @@ Fixed with the plan for M2, before any BGE result existed.
 1. On each dataset that is run, |nDCG@10 of this project − nDCG@10 of Pyserini's `bge-base-en-v1.5.lucene-flat`| ≤ 0.005, with the faiss condition listed beside it (D009).
 2. The encoder reproduces the two reference query vectors of Anserini's tests to within 1e-4 per component, the tolerance of those tests.
 3. The document vectors are compared one by one with those in Pyserini's prebuilt indexes of SciFact, NFCorpus and ArguAna, and the distribution of the cosines is reported.
-4. A dataset whose encoding would take more than three hours on the four-core machine is not run, and the table says so.
+4. A dataset whose encoding would take more than three hours on the four-core machine is encoded in the background, resumably (D013).
 5. `cmd/eval` agrees with trec_eval on every run file, as for BM25.
 
 ## 5. Evaluation rules

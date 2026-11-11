@@ -125,6 +125,6 @@ One machine: an Intel Xeon at 2.10 GHz, 4 vCPUs with AVX-512, 15 GB of memory; O
 | fiqa | 57,638 | 9.62 million | 3,850 | 15.0 |
 | trec-covid | 171,332 | about 40.4 million, from every tenth document | not run | |
 
-At the 2,390 to 2,550 tokens per second measured above, TREC-COVID would take 4.4 to 4.7 hours, more than the three hours SPEC §4 allows, so it is not run.
+At the 2,390 to 2,550 tokens per second measured above, TREC-COVID takes 4.4 to 4.7 hours, more than the three hours of SPEC §4, and is encoded resumably (D013).
 
 Searching Pyserini's own NFCorpus document vectors with this project's query encoding and search gives nDCG@10 0.3736 and R@100 0.3368, against 0.3735 and 0.3367 with this project's vectors and 0.3738 and 0.3368 for the anchor.

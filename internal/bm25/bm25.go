@@ -9,7 +9,6 @@ import (
 	"context"
 	"encoding/json"
 	"fmt"
-	"io"
 	"maps"
 	"math"
 	"slices"
@@ -340,22 +339,4 @@ func (x *Index) SearchBleve(query string, k int) ([]eval.Hit, error) {
 		hits[i] = eval.Hit{DocID: h.ID, Score: float64(scores[i])}
 	}
 	return hits, nil
-}
-
-// WriteRun runs search on every query in ID order and writes the top k hits
-// of each as a TREC run. A hit whose document ID equals the query ID is
-// left out after retrieval, as Pyserini's --remove-query does, so such a
-// query gets k−1 lines.
-func WriteRun(w io.Writer, search func(query string, k int) ([]eval.Hit, error), queries map[string]string, k int, tag string) error {
-	for _, qid := range slices.Sorted(maps.Keys(queries)) {
-		hits, err := search(queries[qid], k)
-		if err != nil {
-			return fmt.Errorf("query %s: %w", qid, err)
-		}
-		hits = slices.DeleteFunc(hits, func(h eval.Hit) bool { return h.DocID == qid })
-		if err := eval.WriteRun(w, qid, hits, tag); err != nil {
-			return err
-		}
-	}
-	return nil
 }

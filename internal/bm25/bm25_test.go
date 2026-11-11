@@ -10,6 +10,7 @@ import (
 	"testing"
 
 	"github.com/sHyanorn/retrieval-lab/internal/beir"
+	"github.com/sHyanorn/retrieval-lab/internal/eval"
 )
 
 // The corpus: "a" holds cat twice (title and text), "b" and "e" hold the
@@ -101,9 +102,9 @@ func TestSearchCutsTiesByDocID(t *testing.T) {
 	}
 }
 
-func TestWriteRunLeavesOutTheQueryDocument(t *testing.T) {
+func TestRunLeavesOutTheQueryDocument(t *testing.T) {
 	var buf bytes.Buffer
-	if err := WriteRun(&buf, build(t).Search, map[string]string{"a": "cat"}, 2, "t"); err != nil {
+	if err := eval.RunQueries(&buf, build(t).Search, map[string]string{"a": "cat"}, 2, "t"); err != nil {
 		t.Fatal(err)
 	}
 	if lines := strings.Split(strings.TrimSpace(buf.String()), "\n"); len(lines) != 1 || !strings.HasPrefix(lines[0], "a Q0 b 1 ") {
@@ -111,7 +112,7 @@ func TestWriteRunLeavesOutTheQueryDocument(t *testing.T) {
 	}
 }
 
-func TestWriteRunAdjustsTiesBeforeLeavingOutTheQueryDocument(t *testing.T) {
+func TestRunAdjustsTiesBeforeLeavingOutTheQueryDocument(t *testing.T) {
 	// b and e tie for "fish"; Pyserini adjusts the 1000 hits, b first, and
 	// then drops the hit equal to the query ID, so e keeps its lowered score.
 	x := build(t)
@@ -120,7 +121,7 @@ func TestWriteRunAdjustsTiesBeforeLeavingOutTheQueryDocument(t *testing.T) {
 		t.Fatal(err)
 	}
 	var buf bytes.Buffer
-	if err := WriteRun(&buf, x.Search, map[string]string{"b": "fish"}, 2, "t"); err != nil {
+	if err := eval.RunQueries(&buf, x.Search, map[string]string{"b": "fish"}, 2, "t"); err != nil {
 		t.Fatal(err)
 	}
 	if want := fmt.Sprintf("b Q0 e 1 %f t\n", hits[1].Score); buf.String() != want || hits[1].Score >= hits[0].Score {

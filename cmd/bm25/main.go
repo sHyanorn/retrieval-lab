@@ -16,6 +16,7 @@ import (
 
 	"github.com/sHyanorn/retrieval-lab/internal/beir"
 	"github.com/sHyanorn/retrieval-lab/internal/bm25"
+	"github.com/sHyanorn/retrieval-lab/internal/eval"
 )
 
 func main() {
@@ -71,7 +72,7 @@ func run(data, indexPath, out string, k int, bleveScoring bool) error {
 		searchFn, tag = x.SearchBleve, "bleve-bm25"
 	}
 	w := bufio.NewWriter(f)
-	err = bm25.WriteRun(w, searchFn, queries, k, tag)
+	err = eval.RunQueries(w, searchFn, queries, k, tag)
 	if err == nil {
 		err = w.Flush()
 	}

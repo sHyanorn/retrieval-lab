@@ -15,7 +15,7 @@ A hybrid retrieval system in Go: BM25, dense vectors, fusion and reranking. Each
 | Component | Built on | Accepted against |
 |---|---|---|
 | Evaluation: TREC run files, nDCG@10, Recall@100 | Go standard library | trec_eval v10.0, query by query |
-| BM25 | Bleve | Pyserini BM25 flat |
+| BM25 | Bleve for analysis and the inverted index; Lucene's BM25 scoring, ported (D005) | Pyserini BM25 flat |
 | Dense retrieval, exact search | ONNX Runtime, a small embedding model | Pyserini BGE-base-en-v1.5 |
 | Approximate search (HNSW) | | exact search on the same vectors |
 | Fusion: RRF and convex combination | run files | intervals over queries |

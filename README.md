@@ -2,16 +2,16 @@
 
 Hybrid retrieval in Go (BM25, dense vectors, fusion, reranking), where each component is accepted against a published number that anyone can reproduce with public commands and data. The datasets are six BEIR test sets; the anchors are the numbers on Pyserini's BEIR reproducibility page.
 
-Status: the evaluation harness is in place. It reads BEIR datasets, reads and writes TREC run files, and computes nDCG@10 and Recall@100 with the rules of `trec_eval -c`, matching trec_eval v10.0 query by query. See [docs/SPEC.md](docs/SPEC.md), [docs/DECISIONS.md](docs/DECISIONS.md), [docs/TASKS.md](docs/TASKS.md) and [docs/BENCHMARKS.md](docs/BENCHMARKS.md).
+Status: M1 is done. The evaluation harness computes nDCG@10 and Recall@100 with the rules of `trec_eval -c` and matches trec_eval v10.0 query by query. BM25 uses Bleve for analysis and the inverted index and Lucene's BM25 scoring, ported to Go; on all six datasets its nDCG@10 and Recall@100 equal Pyserini's BM25 flat numbers to the four decimals published, and every run file reproduces byte for byte. Bleve's own BM25 scorer, shown as a reference, differs from those numbers by −0.243 to +0.148 in nDCG@10. See [docs/BENCHMARKS.md](docs/BENCHMARKS.md) for the tables, and [docs/SPEC.md](docs/SPEC.md), [docs/DECISIONS.md](docs/DECISIONS.md) and [docs/TASKS.md](docs/TASKS.md).
 
 ## Rerun
 
-Needs Go 1.27, git, make, curl and unzip; trec_eval also needs a C compiler. Data goes to `DATA` (default `../retrieval-lab-data`), outside the repository.
+Needs Go 1.27, git, make, curl, unzip and a C compiler (for trec_eval). Data, indexes and run files go to `DATA` (default `../retrieval-lab-data`, about 1.5 GB), outside the repository.
 
 ```bash
-make data                  # the six BEIR zips, checked against scripts/data.sha256
-make build trec-eval       # bin/eval; trec_eval v10.0 built from source into DATA/trec_eval
-scripts/check-eval.sh ../retrieval-lab-data/trec_eval/trec_eval bin/eval ../retrieval-lab-data/scifact RUN
+make reproduce
 ```
 
-`scripts/check-eval.sh` prints nothing and exits 0 when `bin/eval` and trec_eval agree on every query of `RUN`, a TREC run file.
+This downloads the six BEIR datasets and checks them against `scripts/data.sha256`, builds an index per dataset, writes the BM25 run files, checks each against `results/bm25-flat.sha256` and its per-query metrics against trec_eval v10.0 built from source, and regenerates the tables in `docs/BENCHMARKS.md`; it fails if anything differs from the committed files. CI runs it on every push; it takes a few minutes on four cores.
+
+`make help` lists the steps, which also run on their own; `DATASETS="scifact nfcorpus"` limits `data`, `bm25` and `check` to some datasets. `make reference` reranks with Bleve's own BM25 and writes the reference table.

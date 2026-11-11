@@ -10,8 +10,9 @@ Check off each item when it is done. All tests must pass at the end of every mil
 - [x] `make data`: download the six BEIR datasets, verify SHA-256, unpack
 - [x] Check that the BEIR test queries and qrels equal the copies Pyserini evaluates with
 - [x] TREC run files, nDCG@10 and Recall@100; per-query agreement with trec_eval v10.0
-- [ ] BM25 on Bleve, configured as Pyserini BM25 flat
-- [ ] Alignment table generated from the run files; run file checksums; CI rerun of the small datasets
+- [x] BM25 on Bleve, configured as Pyserini BM25 flat
+- [x] Alignment table generated from the run files; run file checksums; CI rerun of all six datasets
+- [x] Reference row: Bleve's own BM25
 
 ## M2 Dense retrieval, exact search
 - [ ] Text encoder on ONNX Runtime; exact search; alignment with Pyserini BGE-base-en-v1.5

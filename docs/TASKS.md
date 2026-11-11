@@ -25,7 +25,7 @@ Check off each item when it is done. All tests must pass at the end of every mil
 - [x] HNSW against exact search on the same vectors
 
 ## M4 Fusion
-- [ ] RRF and convex combination over run files, with intervals
+- [x] RRF and convex combination over run files, with intervals
 
 ## M5 Reranking
 - [ ] Cross-encoder reranking on ONNX Runtime, with intervals

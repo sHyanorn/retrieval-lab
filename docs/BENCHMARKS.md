@@ -200,6 +200,14 @@ Mean milliseconds per query on one goroutine, and the graph build on one gorouti
 Δ is this project's value, to four decimals, minus Pyserini's; the agreement column applies SPEC §4 to each method. "BGE on the page" is the nDCG@10 of the BGE run the page fused, as the page gives it.
 
 <!-- fusion -->
+| Dataset | RRF Pyserini | Anserini | here | Δ | Normalize Pyserini | Anserini | here | Δ | BGE on the page | BGE here | agreement, RRF / Normalize |
+|---|---|---|---|---|---|---|---|---|---|---|---|
+| trec-covid | 0.8041 | 0.8041 | 0.8045 | +0.0004 | 0.7956 | 0.7956 | 0.7962 | +0.0006 | 0.7815 | 0.7809 | three printed decimals / within 0.005 |
+| nfcorpus | 0.3725 | 0.3725 | 0.3724 | -0.0001 | 0.3789 | 0.3782 | 0.3792 | +0.0003 | 0.3735 | 0.3735 | three printed decimals / three printed decimals |
+| fiqa | 0.3671 | 0.3671 | 0.3676 | +0.0005 | 0.3942 | 0.3942 | 0.3943 | +0.0001 | 0.4065 | 0.4062 | three printed decimals / three printed decimals |
+| arguana | 0.5586 | 0.5626 | 0.5622 | +0.0036 | 0.5694 | 0.5738 | 0.5737 | +0.0043 | 0.6228 | 0.6375 | within 0.005 / within 0.005 |
+| scidocs | 0.1948 | 0.1948 | 0.1950 | +0.0002 | 0.2019 | 0.2019 | 0.2019 | 0.0000 | 0.2172 | 0.2172 | three printed decimals / all four decimals |
+| scifact | 0.7420 | 0.7420 | 0.7420 | 0.0000 | 0.7472 | 0.7472 | 0.7472 | 0.0000 | 0.7408 | 0.7404 | all four decimals / all four decimals |
 <!-- /fusion -->
 
 ### Fusion against its inputs
@@ -207,4 +215,12 @@ Mean milliseconds per query on one goroutine, and the graph build on one gorouti
 nDCG@10 of each fused run minus that of each of its inputs, with the 95% interval of a paired bootstrap over the queries (SPEC §4).
 
 <!-- fusion-gain -->
+| Dataset | BM25 | BGE | RRF − BM25 | RRF − BGE | Normalize − BM25 | Normalize − BGE |
+|---|---|---|---|---|---|---|
+| trec-covid | 0.5947 | 0.7809 | +0.2098 [+0.1610, +0.2597] | +0.0236 [-0.0236, +0.0721] | +0.2015 [+0.1525, +0.2527] | +0.0153 [-0.0296, +0.0606] |
+| nfcorpus | 0.3218 | 0.3735 | +0.0506 [+0.0374, +0.0647] | -0.0012 [-0.0131, +0.0110] | +0.0575 [+0.0433, +0.0725] | +0.0057 [-0.0051, +0.0167] |
+| fiqa | 0.2361 | 0.4062 | +0.1315 [+0.1155, +0.1475] | -0.0387 [-0.0560, -0.0211] | +0.1582 [+0.1407, +0.1760] | -0.0119 [-0.0267, +0.0027] |
+| arguana | 0.3970 | 0.6375 | +0.1653 [+0.1536, +0.1769] | -0.0752 [-0.0902, -0.0608] | +0.1768 [+0.1648, +0.1890] | -0.0638 [-0.0773, -0.0507] |
+| scidocs | 0.1490 | 0.2172 | +0.0460 [+0.0395, +0.0526] | -0.0222 [-0.0298, -0.0147] | +0.0529 [+0.0460, +0.0599] | -0.0153 [-0.0223, -0.0083] |
+| scifact | 0.6789 | 0.7404 | +0.0631 [+0.0408, +0.0854] | +0.0016 [-0.0212, +0.0236] | +0.0683 [+0.0475, +0.0905] | +0.0068 [-0.0159, +0.0294] |
 <!-- /fusion-gain -->

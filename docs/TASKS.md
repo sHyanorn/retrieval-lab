@@ -22,7 +22,7 @@ Check off each item when it is done. All tests must pass at the end of every mil
 - [x] TREC-COVID, encoded resumably (D013)
 
 ## M3 Approximate search
-- [ ] HNSW against exact search on the same vectors
+- [x] HNSW against exact search on the same vectors
 
 ## M4 Fusion
 - [ ] RRF and convex combination over run files, with intervals

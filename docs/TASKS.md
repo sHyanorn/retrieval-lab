@@ -18,7 +18,7 @@ Check off each item when it is done. All tests must pass at the end of every mil
 - [x] BGE-base-en-v1.5 encoder on ONNX Runtime, checked against Anserini's reference query vectors
 - [x] Document text and length read off Pyserini's prebuilt vectors; cosines of every document on the three small datasets
 - [x] Exact search as Anserini's flat dense search; BGE runs and table against Pyserini's flat and faiss conditions
-- [ ] FiQA (being encoded)
+- [x] FiQA
 - [ ] TREC-COVID, whose encoding would take more than three hours on four cores
 
 ## M3 Approximate search

@@ -94,7 +94,7 @@ Not this project's retrieval path (D008): Bleve's BM25 scorer with k1 = 0.9 and 
 |---|---|---|---|---|---|---|---|---|
 | trec-covid | 0.7815 | 0.7815 | not run | | 0.1406 | not run | | |
 | nfcorpus | 0.3738 | 0.3735 | 0.3735 | -0.0003 | 0.3368 | 0.3367 | -0.0001 | three printed decimals |
-| fiqa | 0.4065 | 0.4065 | not run | | 0.7415 | not run | | |
+| fiqa | 0.4065 | 0.4065 | 0.4062 | -0.0003 | 0.7415 | 0.7415 | 0.0000 | three printed decimals |
 | arguana | 0.6375 | 0.6362 | 0.6375 | 0.0000 | 0.9929 | 0.9929 | 0.0000 | all four decimals |
 | scidocs | 0.2172 | 0.2172 | 0.2172 | 0.0000 | 0.4959 | 0.4957 | -0.0002 | all four decimals |
 | scifact | 0.7408 | 0.7408 | 0.7404 | -0.0004 | 0.9667 | 0.9667 | 0.0000 | three printed decimals |
@@ -118,13 +118,13 @@ One machine: an Intel Xeon at 2.10 GHz, 4 vCPUs with AVX-512, 15 GB of memory; O
 
 | Dataset | Documents | Tokens | Seconds | Documents per second |
 |---|---|---|---|---|
-| nfcorpus | 3,633 | 1.26 million | 632 | 5.7 |
+| nfcorpus | 3,633 | 1.26 million | 519 | 7.0 |
 | scifact | 5,183 | 1.69 million | 663 | 7.8 |
 | arguana | 8,674 | 1.78 million | 700 | 12.4 |
 | scidocs | 25,657 | 5.79 million | 2,422 | 10.6 |
-| fiqa | 57,638 | 9.62 million | FIQA_SECONDS | FIQA_RATE |
+| fiqa | 57,638 | 9.62 million | 3,850 | 15.0 |
 | trec-covid | 171,332 | about 40.4 million, from every tenth document | not run | |
 
-At the 2,000 to 2,550 tokens per second of the first three, TREC-COVID would take 4.4 to 5.6 hours, more than the three hours SPEC §4 allows, so it is not run.
+At the 2,390 to 2,550 tokens per second measured above, TREC-COVID would take 4.4 to 4.7 hours, more than the three hours SPEC §4 allows, so it is not run.
 
 Searching Pyserini's own NFCorpus document vectors with this project's query encoding and search gives nDCG@10 0.3736 and R@100 0.3368, against 0.3735 and 0.3367 with this project's vectors and 0.3738 and 0.3368 for the anchor.

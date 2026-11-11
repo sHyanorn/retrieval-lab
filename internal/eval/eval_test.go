@@ -2,6 +2,7 @@ package eval
 
 import (
 	"bytes"
+	"fmt"
 	"math"
 	"strings"
 	"testing"
@@ -119,5 +120,24 @@ func TestWriteRunRoundTrips(t *testing.T) {
 	}
 	if got := run["q1"]; len(got) != 2 || got[0] != hits[0] || got[1] != hits[1] {
 		t.Fatalf("round trip gave %v", got)
+	}
+}
+
+func TestNDCGDiscountsMatchCLibm(t *testing.T) {
+	// Go's math.Log2(3) is one unit in the last place below C's, which
+	// moves this value across a rounding boundary. trec_eval v10.0 prints
+	// 0.6313 for it.
+	judged := map[string]int{"x": 19219, "y": 36111454}
+	ranked := []Hit{{"x", 2}, {"y", 1}}
+	if got := fmt.Sprintf("%6.4f", NDCG(judged, ranked, 10)); got != "0.6313" {
+		t.Fatalf("NDCG = %s, want 0.6313", got)
+	}
+}
+
+func TestReadRunRejectsNonFiniteScores(t *testing.T) {
+	for _, s := range []string{"nan", "inf", "-Inf"} {
+		if _, err := ReadRun(strings.NewReader("q1 Q0 d1 1 " + s + " r\n")); err == nil {
+			t.Errorf("want an error for score %s", s)
+		}
 	}
 }

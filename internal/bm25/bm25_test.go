@@ -2,6 +2,7 @@ package bm25
 
 import (
 	"bytes"
+	"fmt"
 	"maps"
 	"math"
 	"path/filepath"
@@ -107,5 +108,22 @@ func TestWriteRunLeavesOutTheQueryDocument(t *testing.T) {
 	}
 	if lines := strings.Split(strings.TrimSpace(buf.String()), "\n"); len(lines) != 1 || !strings.HasPrefix(lines[0], "a Q0 b 1 ") {
 		t.Fatalf("run = %q, want only document b at rank 1", buf.String())
+	}
+}
+
+func TestWriteRunAdjustsTiesBeforeLeavingOutTheQueryDocument(t *testing.T) {
+	// b and e tie for "fish"; Pyserini adjusts the 1000 hits, b first, and
+	// then drops the hit equal to the query ID, so e keeps its lowered score.
+	x := build(t)
+	hits, err := x.Search("fish", 2)
+	if err != nil {
+		t.Fatal(err)
+	}
+	var buf bytes.Buffer
+	if err := WriteRun(&buf, x.Search, map[string]string{"b": "fish"}, 2, "t"); err != nil {
+		t.Fatal(err)
+	}
+	if want := fmt.Sprintf("b Q0 e 1 %f t\n", hits[1].Score); buf.String() != want || hits[1].Score >= hits[0].Score {
+		t.Fatalf("run = %q, want %q below %v", buf.String(), want, hits[0].Score)
 	}
 }

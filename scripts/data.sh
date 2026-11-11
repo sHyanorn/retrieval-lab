@@ -12,7 +12,7 @@ sums=$(cd "$(dirname "$0")" && pwd)/data.sha256
 mkdir -p "$dir"
 cd "$dir"
 for n in "${names[@]}"; do
-	[ -f "$n.zip" ] || { curl -fsSL --retry 5 -o "$n.zip.part" "$base/$n.zip" && mv "$n.zip.part" "$n.zip"; }
+	[ -f "$n.zip" ] || { curl -fsSL --retry 5 --retry-all-errors --connect-timeout 30 --max-time 1200 -o "$n.zip.part" "$base/$n.zip" && mv "$n.zip.part" "$n.zip"; }
 	grep " $n.zip\$" "$sums" | sha256sum -c -
 	[ -d "$n" ] || unzip -q "$n.zip"
 done

@@ -41,7 +41,7 @@ func NDCG(judged map[string]int, ranked []Hit, k int) float64 {
 	dcg := 0.0
 	for i, h := range ranked[:min(k, len(ranked))] {
 		if g := judged[h.DocID]; g > 0 {
-			dcg += float64(g) / math.Log2(float64(i+2))
+			dcg += float64(g) / discount(i)
 		}
 	}
 	var grades []int
@@ -53,12 +53,30 @@ func NDCG(judged map[string]int, ranked []Hit, k int) float64 {
 	slices.SortFunc(grades, func(a, b int) int { return b - a })
 	ideal := 0.0
 	for i, g := range grades[:min(k, len(grades))] {
-		ideal += float64(g) / math.Log2(float64(i+2))
+		ideal += float64(g) / discount(i)
 	}
 	if ideal == 0 {
 		return 0
 	}
 	return dcg / ideal
+}
+
+// log2 holds log2(i + 2) for i = 0..9, the discounts of ranks 1 to 10, as
+// C's libm computes them (correctly rounded). Go's math.Log2 is one unit in
+// the last place lower for 3 and 9, which can move trec_eval's fourth
+// decimal.
+var log2 = [...]float64{
+	0x1p+0, 0x1.95c01a39fbd68p+0, 0x1p+1, 0x1.2934f0979a371p+1, 0x1.4ae00d1cfdeb4p+1,
+	0x1.675767f54042dp+1, 0x1.8p+1, 0x1.95c01a39fbd68p+1, 0x1.a934f0979a371p+1, 0x1.bacea7c065d42p+1,
+}
+
+// discount is the divisor of the gain at rank i + 1. Beyond rank 10 it uses
+// math.Log2, which can differ from C's in the last place.
+func discount(i int) float64 {
+	if i < len(log2) {
+		return log2[i]
+	}
+	return math.Log2(float64(i + 2))
 }
 
 // Recall is trec_eval's recall.k for one query: the share of documents with

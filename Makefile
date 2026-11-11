@@ -28,9 +28,12 @@ data: ## Download, verify and unpack DATASETS into DATA
 trec-eval: ## Build trec_eval v10.0 into DATA/trec_eval, used only to check cmd/eval
 	scripts/trec_eval.sh $(DATA)/trec_eval
 
-bm25: build ## Index DATASETS (once, into DATA/index) and write their BM25 runs and index statistics into RUNS
+bm25: build ## Index DATASETS afresh into DATA/index and write their BM25 runs and index statistics into RUNS
 	mkdir -p $(RUNS)
-	for d in $(DATASETS); do bin/bm25 -data $(DATA)/$$d -index $(DATA)/index/$$d -run $(RUNS)/$$d.run >$(RUNS)/$$d.stats.json || exit 1; done
+	for d in $(DATASETS); do \
+		rm -rf $(DATA)/index/$$d && \
+		bin/bm25 -data $(DATA)/$$d -index $(DATA)/index/$$d -run $(RUNS)/$$d.run >$(RUNS)/$$d.stats.json || exit 1; \
+	done
 
 check: build trec-eval ## Check each run of DATASETS: its SHA-256 against results/bm25-flat.sha256, its metrics against trec_eval
 	for d in $(DATASETS); do \

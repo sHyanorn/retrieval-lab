@@ -13,12 +13,14 @@ Format: ID, date, decision, rationale, alternatives. Append new decisions at the
 - Decision: `scripts/data.sh` downloads the six zips from `public.ukp.informatik.tu-darmstadt.de/thakur/BEIR/datasets/`, checks them against `scripts/data.sha256` and unpacks them outside the repository
 - Rationale: these are the files BEIR publishes; the MD5 of each of the six equals the value in the BEIR README. The test queries and qrels equal the copies Pyserini evaluates with (BENCHMARKS.md, Data check)
 - Alternatives: Pyserini's repackaged corpus, `beir-v1.0.0-corpus.tar` (14 GB for all of BEIR, no per-dataset files); Hugging Face `BeIR/<name>` (Parquet, qrels in separate repositories)
+- Limits: CI downloads the zips from that server on every push, with retries and timeouts but no cache, so an outage of the server fails the reproduce job
 
 ## D003 Metrics in Go, checked against trec_eval v10.0
 - Date: 2026-11-10
 - Decision: `internal/eval` implements nDCG@k and Recall@k with the rules of `trec_eval -c` (SPEC §5). trec_eval v10.0 (commit f4253652c8efd0d86ddffd0d163cc0a0f813111a) is built from source only to check it: `scripts/check-eval.sh` compares the per-query output as text
-- Rationale: trec_eval is the tool behind the anchors, so its rules decide ties (`form_res_rels.c`, `comp_sim_docno`), grades (`m_ndcg_cut.c`) and which queries count (`trec_eval.c`, `meas_avg.c`). Owning the code keeps a C binary out of the pipeline; the check keeps the code honest. The qrels reach trec_eval through awk, not through our reader
+- Rationale: the anchors are trec_eval numbers, so its rules decide ties (`form_res_rels.c`, `comp_sim_docno`), grades (`m_ndcg_cut.c`) and which queries count (`trec_eval.c`, `meas_avg.c`). Pyserini scores with a trec_eval build packaged in a jar (`pyserini/eval/trec_eval.py`); which version it holds was not checked. Between 9.0.8 and v10.0 those four files differ only in C prototypes and layout. Owning the code keeps a C binary out of the pipeline; the check keeps the code honest. The qrels reach trec_eval through awk, not through our reader. The discounts of ranks 1 to 10 are C's correctly rounded log2 values: Go's `math.Log2` is one unit in the last place lower for 3 and 9, which can move trec_eval's fourth decimal
 - Alternatives: calling trec_eval at run time (a C build in every environment); pytrec_eval (bundles trec_eval 9.0.8 and averages only over queries present in the run, which is not `-c`)
+- Limits: cmd/eval refuses some run files trec_eval scores: lines with more than six fields, a document listed twice for a query that is not in the qrels, scores that are not finite. It gives an error in those cases, never a different number. Beyond rank 10 the discounts come from `math.Log2`, so nDCG@k for k > 10 can differ from trec_eval in the fourth decimal in rare cases
 
 ## D004 Anchors and the BM25 tolerance
 - Date: 2026-11-10
@@ -38,6 +40,7 @@ Format: ID, date, decision, rationale, alternatives. Append new decisions at the
 
   The reference table in BENCHMARKS.md shows what they cost (D008)
 - Alternatives: Bleve's scorer (above); a custom score query over Bleve's searcher (its callback sees a hit, not the term statistics); an inverted index of our own (out of scope, SPEC §3)
+- Limits: the run checksums were established on amd64 only; other architectures are not checked, and Go may fuse a multiply and an add there (inside `math.Log`, for instance), which could change a last bit. Lucene sums a document's clause scores in its own order and this port in term order; both sums are float64, so the order matters only for a sum that lies on a float32 rounding boundary. Whether any document's score differs from Pyserini's for these reasons, or for the tokenization differences of D006, is not known: Pyserini's run files were not compared line by line
 
 ## D006 Analysis as Anserini's DefaultEnglishAnalyzer
 - Date: 2026-11-11

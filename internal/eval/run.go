@@ -6,6 +6,7 @@ import (
 	"bufio"
 	"fmt"
 	"io"
+	"math"
 	"strconv"
 	"strings"
 )
@@ -21,7 +22,8 @@ type Run map[string][]Hit
 
 // ReadRun parses a TREC run file: "qid Q0 docid rank score tag" per line.
 // The rank column is ignored, as trec_eval ignores it. A document listed
-// twice for the same query is an error, as it is in trec_eval.
+// twice for the same query is an error, as it is in trec_eval; so is a
+// score that is not finite.
 func ReadRun(r io.Reader) (Run, error) {
 	run := Run{}
 	seen := map[[2]string]bool{}
@@ -37,6 +39,11 @@ func ReadRun(r io.Reader) (Run, error) {
 		score, err := strconv.ParseFloat(f[4], 64)
 		if err != nil {
 			return nil, fmt.Errorf("run line %d: %w", n, err)
+		}
+		// trec_eval compares a NaN as neither above nor below any score, so its
+		// order is not well defined.
+		if math.IsNaN(score) || math.IsInf(score, 0) {
+			return nil, fmt.Errorf("run line %d: score %s is not finite", n, f[4])
 		}
 		key := [2]string{f[0], f[2]}
 		if seen[key] {

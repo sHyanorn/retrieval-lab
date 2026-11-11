@@ -61,7 +61,7 @@ reference: build ## Rank DATASETS with Bleve's own BM25 on two fresh builds each
 dense-assets: ## Download the BGE model, tokenizer, ONNX Runtime and Pyserini's indexes of DENSE_DATASETS into DENSE
 	scripts/dense.sh $(DENSE) $(DENSE_DATASETS)
 
-embed: build dense-assets ## Encode the corpora of DENSE_DATASETS into DENSE/vectors (about 10 to 25 minutes each on four cores)
+embed: build dense-assets ## Encode the corpora of DENSE_DATASETS into DENSE/vectors (9 minutes to 4.4 hours each on four cores; resumes an interrupted run)
 	mkdir -p $(RUNS)
 	for d in $(DENSE_DATASETS); do \
 		bin/embed -data $(DATA)/$$d -out $(DENSE)/vectors/$$d -model $(DENSE) -ort $(ORT_LIB) >$(RUNS)/$$d.embed.json || exit 1; \

@@ -92,7 +92,7 @@ Not this project's retrieval path (D008): Bleve's BM25 scorer with k1 = 0.9 and 
 <!-- bge-flat -->
 | Dataset | nDCG@10 Pyserini flat | Pyserini faiss | here | Δ to flat | R@100 Pyserini flat | here | Δ to flat | nDCG@10 agreement |
 |---|---|---|---|---|---|---|---|---|
-| trec-covid | 0.7815 | 0.7815 | not run | | 0.1406 | not run | | |
+| trec-covid | 0.7815 | 0.7815 | 0.7809 | -0.0006 | 0.1406 | 0.1406 | 0.0000 | within 0.005 |
 | nfcorpus | 0.3738 | 0.3735 | 0.3735 | -0.0003 | 0.3368 | 0.3367 | -0.0001 | three printed decimals |
 | fiqa | 0.4065 | 0.4065 | 0.4062 | -0.0003 | 0.7415 | 0.7415 | 0.0000 | three printed decimals |
 | arguana | 0.6375 | 0.6362 | 0.6375 | 0.0000 | 0.9929 | 0.9929 | 0.0000 | all four decimals |
@@ -123,8 +123,8 @@ One machine: an Intel Xeon at 2.10 GHz, 4 vCPUs with AVX-512, 15 GB of memory; O
 | arguana | 8,674 | 1.78 million | 700 | 12.4 |
 | scidocs | 25,657 | 5.79 million | 2,422 | 10.6 |
 | fiqa | 57,638 | 9.62 million | 3,850 | 15.0 |
-| trec-covid | 171,332 | about 40.4 million, from every tenth document | not run | |
+| trec-covid | 171,332 | about 40.4 million, from every tenth document | about 15,700, in three runs | 10.9 |
 
-At the 2,390 to 2,550 tokens per second measured above, TREC-COVID takes 4.4 to 4.7 hours, more than the three hours of SPEC §4, and is encoded resumably (D013).
+TREC-COVID was encoded in three runs; the first two were stopped by a two-hour limit on background jobs, and each next run continued from the partial file (D013). Its seconds are the sum of the three, including the documents in progress at each stop, which were encoded again, at most 1,000 each time. No other job ran on the machine meanwhile.
 
 Searching Pyserini's own NFCorpus document vectors with this project's query encoding and search gives nDCG@10 0.3736 and R@100 0.3368, against 0.3735 and 0.3367 with this project's vectors and 0.3738 and 0.3368 for the anchor.

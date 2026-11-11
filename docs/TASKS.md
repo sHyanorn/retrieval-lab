@@ -19,7 +19,7 @@ Check off each item when it is done. All tests must pass at the end of every mil
 - [x] Document text and length read off Pyserini's prebuilt vectors; cosines of every document on the three small datasets
 - [x] Exact search as Anserini's flat dense search; BGE runs and table against Pyserini's flat and faiss conditions
 - [x] FiQA
-- [ ] TREC-COVID, whose encoding would take more than three hours on four cores
+- [x] TREC-COVID, encoded resumably (D013)
 
 ## M3 Approximate search
 - [ ] HNSW against exact search on the same vectors

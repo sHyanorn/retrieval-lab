@@ -141,3 +141,19 @@ func TestReadRunRejectsNonFiniteScores(t *testing.T) {
 		}
 	}
 }
+
+func TestOverlapRanksBothListsAsTrecEval(t *testing.T) {
+	exact := []Hit{{"a", 0.9}, {"b", 0.8}, {"c", 0.8}, {"d", 0.7}}
+	approx := []Hit{{"e", 0.75}, {"c", 0.8}, {"a", 0.9}}
+	// trec_eval puts c before b (equal scores, ID descending), so the exact
+	// top 2 is {a, c} and the approximate list holds both; the exact top 3,
+	// {a, c, b}, shares a and c with the approximate top 3, {a, c, e}.
+	for _, tc := range []struct {
+		k    int
+		want float64
+	}{{2, 1}, {3, 2.0 / 3}} {
+		if got := Overlap(exact, approx, tc.k); math.Abs(got-tc.want) > 1e-12 {
+			t.Errorf("Overlap(k=%d) = %v, want %v", tc.k, got, tc.want)
+		}
+	}
+}

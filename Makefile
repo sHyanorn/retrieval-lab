@@ -8,7 +8,7 @@ DENSE_DATASETS ?= scifact nfcorpus arguana
 ORT_LIB   = $(DENSE)/onnxruntime-linux-x64-1.31.1/lib/libonnxruntime.so.1.31.1
 
 .DEFAULT_GOAL := help
-.PHONY: help build test lint fmt data trec-eval bm25 check table reproduce reference dense-assets embed dense dense-table dense-check
+.PHONY: help build test lint fmt data trec-eval bm25 check table reproduce reference dense-assets embed dense dense-table dense-check ann ann-table
 
 help: ## Show available targets
 	@awk -F':.*## ' '/^[a-z0-9-]+:.*## / {printf "  %-10s %s\n", $$1, $$2}' $(MAKEFILE_LIST)
@@ -78,3 +78,14 @@ dense-table: build ## Write the BGE tables into docs/BENCHMARKS.md from RUNS and
 
 dense-check: build ## Fail if a BGE run of RUNS is more than 0.005 from its anchor or a vector's cosine to Pyserini's is below 0.9999
 	bin/table -dense -check -anchors results/anchors-bge.tsv -data $(DATA) -runs $(RUNS) -vectors $(DENSE)/vectors -prebuilt $(DENSE)/prebuilt
+
+ann: build ## Write the exact and HNSW runs of DENSE_DATASETS into RUNS, time the searches and check every run against trec_eval
+	for d in $(DENSE_DATASETS); do \
+		bin/dense -data $(DATA)/$$d -vectors $(DENSE)/vectors/$$d -model $(DENSE) -ort $(ORT_LIB) -run $(RUNS)/$$d.bge.run -ann $(RUNS)/$$d.bge-hnsw >$(RUNS)/$$d.ann.json || exit 1; \
+		for r in $(RUNS)/$$d.bge.run $(RUNS)/$$d.bge-hnsw-ef*.run; do \
+			scripts/check-eval.sh $(TREC_EVAL) bin/eval $(DATA)/$$d $$r || exit 1; \
+		done; \
+	done
+
+ann-table: build ## Write the HNSW tables into docs/BENCHMARKS.md from RUNS
+	bin/table -ann -anchors results/anchors-bge.tsv -data $(DATA) -runs $(RUNS)

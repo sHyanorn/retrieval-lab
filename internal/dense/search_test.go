@@ -1,13 +1,16 @@
 package dense
 
 import (
+	"fmt"
 	"math"
+	"math/rand/v2"
 	"path/filepath"
 	"slices"
 	"testing"
 
 	"github.com/sHyanorn/retrieval-lab/internal/beir"
 	"github.com/sHyanorn/retrieval-lab/internal/eval"
+	"github.com/sHyanorn/retrieval-lab/internal/hnsw"
 )
 
 // unit returns a vector of Dim values with the given leading components.
@@ -28,6 +31,37 @@ func TestSearchScoresAsLuceneDotProduct(t *testing.T) {
 	want := []eval.Hit{{DocID: "a", Score: 1}, {DocID: "b", Score: 1}, {DocID: "c", Score: float64(float32(1.6) / 2)}}
 	if !slices.Equal(got, want) {
 		t.Fatalf("Search = %v, want %v", got, want)
+	}
+}
+
+func TestSearchGraphScoresAsSearchAndSkips(t *testing.T) {
+	const n = 300
+	r := rand.New(rand.NewPCG(1, 2))
+	x := &Index{}
+	for i := range n {
+		v := make([]float32, Dim)
+		var norm float64
+		for j := range v {
+			v[j] = float32(r.NormFloat64())
+			norm += float64(v[j]) * float64(v[j])
+		}
+		for j := range v {
+			v[j] /= float32(math.Sqrt(norm))
+		}
+		x.IDs = append(x.IDs, fmt.Sprintf("d%03d", i))
+		x.Vecs = append(x.Vecs, v...)
+	}
+	g, err := hnsw.Build(x.Vecs, Dim, hnsw.Config{M: 16, EfConstruction: 200, Seed: 1, Workers: 1})
+	if err != nil {
+		t.Fatal(err)
+	}
+	// The query is d000's vector, so d000 is its own best match. With
+	// ef = n the graph search visits every node and must return the exact
+	// top 10 without d000, scored as Search scores them.
+	q := x.Vecs[:Dim]
+	want := slices.DeleteFunc(x.Search(q, n), func(h eval.Hit) bool { return h.DocID == "d000" })[:10]
+	if got := x.SearchGraph(g, q, 10, n, "d000"); !slices.Equal(got, want) {
+		t.Fatalf("SearchGraph = %v, want %v", got, want)
 	}
 }
 

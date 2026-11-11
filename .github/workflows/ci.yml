@@ -56,7 +56,8 @@ jobs:
           RL_MODEL_DIR: ${{ runner.temp }}/data/dense
           RL_ORT_LIB: ${{ runner.temp }}/data/dense/onnxruntime-linux-x64-1.31.1/lib/libonnxruntime.so.1.31.1
           RL_REQUIRE_MODEL: "1"
-      # Encode, search and check against trec_eval; then fail if nDCG@10 is
-      # more than 0.005 from the anchor or a document vector's cosine to
-      # Pyserini's is below 0.9999 (D012). Exact values depend on the CPU.
-      - run: make embed dense dense-check DATA="$RUNNER_TEMP/data"
+      # Encode, search exactly and on the HNSW graph, check every run against
+      # trec_eval; then fail if nDCG@10 is more than 0.005 from the anchor or
+      # a document vector's cosine to Pyserini's is below 0.9999 (D012).
+      # Exact values depend on the CPU.
+      - run: make embed ann dense-check DATA="$RUNNER_TEMP/data"

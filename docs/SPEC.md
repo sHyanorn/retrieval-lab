@@ -44,6 +44,16 @@ Fixed with the plan for M2, before any BGE result existed.
 4. A dataset whose encoding would take more than three hours on the four-core machine is encoded in the background, resumably (D013).
 5. `cmd/eval` agrees with trec_eval on every run file, as for BM25.
 
+### Approximate search (HNSW)
+
+Fixed before any HNSW result existed. This milestone measures the error of approximate search; it has no pass threshold.
+
+1. The graph is recserve's HNSW, copied unchanged (D014), built over the same document vectors as the exact runs with recserve's default settings: M = 16, efConstruction = 200, level seed 1, one inserting goroutine, which builds the same graph every time (`internal/shard/set.go`, line 31, at recserve commit c802a68). Every dataset uses these settings.
+2. The queries and their vectors are those of the exact run. Each is searched at ef = 10, 20, 40, 80, 120, 200, 400 and 800, the default list of recserve's `cmd/annbench` (line 62 at c802a68): 10 results for ef below 100 and 100 from ef 120 up, as the graph searches layer 0 with max(ef, k). The query's own document is not returned, as the exact run leaves it out. The documents returned are scored and ordered as exact search scores them (D011), so an approximate run differs from the exact run only in which documents it holds.
+3. A command computes from the run files, per dataset and ef: recall@10, the share of the exact run's top 10 that the approximate run's top 10 holds, averaged over queries; recall@100 likewise, from ef 120 up; and nDCG@10 of the approximate run minus that of the exact run.
+4. Search time per query on one goroutine, exact and for each ef, is measured while no other job runs on the machine and reported without conclusions.
+5. `cmd/eval` agrees with trec_eval on every approximate run file.
+
 ## 5. Evaluation rules
 
 - Every query in the qrels counts; a query without results scores 0. Queries absent from the qrels are ignored.

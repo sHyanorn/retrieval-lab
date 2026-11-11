@@ -2,20 +2,29 @@
 // queries: each query, with the BGE instruction before it, is encoded and
 // searched exactly against the document vectors that cmd/embed wrote; the
 // top 1000 per query go out in TREC format.
+//
+// With -ann it also builds an HNSW graph over the same vectors and writes,
+// for each ef, the run of the same query vectors searched on the graph
+// (D014), and prints the search times as JSON.
 package main
 
 import (
 	"bufio"
 	"cmp"
+	"encoding/json"
 	"flag"
 	"fmt"
+	"maps"
 	"os"
 	"path/filepath"
 	"runtime"
+	"slices"
+	"time"
 
 	"github.com/sHyanorn/retrieval-lab/internal/beir"
 	"github.com/sHyanorn/retrieval-lab/internal/dense"
 	"github.com/sHyanorn/retrieval-lab/internal/eval"
+	"github.com/sHyanorn/retrieval-lab/internal/hnsw"
 )
 
 func main() {
@@ -25,14 +34,15 @@ func main() {
 	ortLib := flag.String("ort", "", "path to libonnxruntime.so")
 	out := flag.String("run", "", "output run file")
 	k := flag.Int("k", 1000, "hits per query")
+	ann := flag.String("ann", "", "also write the HNSW run for each ef to <ann>-ef<ef>.run")
 	flag.Parse()
-	if err := run(*data, *vectors, *model, *ortLib, *out, *k); err != nil {
+	if err := run(*data, *vectors, *model, *ortLib, *out, *k, *ann); err != nil {
 		fmt.Fprintln(os.Stderr, "dense:", err)
 		os.Exit(1)
 	}
 }
 
-func run(data, vectors, model, ortLib, out string, k int) error {
+func run(data, vectors, model, ortLib, out string, k int, ann string) error {
 	qrels, err := beir.Qrels(data, "test")
 	if err != nil {
 		return err
@@ -87,6 +97,87 @@ func run(data, vectors, model, ortLib, out string, k int) error {
 	}
 	w := bufio.NewWriter(f)
 	err = eval.RunQueries(w, search, queries, k, "bge-base-en-v1.5")
+	if err == nil {
+		err = w.Flush()
+	}
+	if err = cmp.Or(err, f.Close()); err != nil || ann == "" {
+		return err
+	}
+	byQID := make(map[string][]float32, len(queries))
+	for qid, text := range queries {
+		byQID[qid] = byText[dense.QueryPrefix+text]
+	}
+	t, err := approximate(x, byQID, k, ann)
+	if err != nil {
+		return err
+	}
+	return json.NewEncoder(os.Stdout).Encode(t)
+}
+
+type times struct {
+	MeanMS   float64 `json:"mean_ms"`
+	MedianMS float64 `json:"median_ms"`
+}
+
+type efTimes struct {
+	EF int `json:"ef"`
+	K  int `json:"k"`
+	times
+}
+
+// approximate builds the graph over x and writes one run per ef of
+// dense.EFs, dense.GraphDepth(ef) hits deep. A query's own document is
+// skipped inside the search, so each query gets that many lines. It returns
+// the time per query on one goroutine, of exact search at depth k and of
+// the graph at each ef.
+func approximate(x *dense.Index, qvecs map[string][]float32, k int, prefix string) (any, error) {
+	qids := slices.Sorted(maps.Keys(qvecs))
+	start := time.Now()
+	g, err := hnsw.Build(x.Vecs, dense.Dim, dense.GraphConfig)
+	if err != nil {
+		return nil, err
+	}
+	build := time.Since(start).Seconds()
+	exact := timed(qids, func(qid string) { x.Search(qvecs[qid], k) })
+	var graph []efTimes
+	for _, ef := range dense.EFs {
+		k := dense.GraphDepth(ef)
+		hits := make(map[string][]eval.Hit, len(qids))
+		t := timed(qids, func(qid string) { hits[qid] = x.SearchGraph(g, qvecs[qid], k, ef, qid) })
+		graph = append(graph, efTimes{ef, k, t})
+		if err := writeRun(fmt.Sprintf("%s-ef%d.run", prefix, ef), qids, hits, fmt.Sprintf("bge-base-en-v1.5-hnsw-ef%d", ef)); err != nil {
+			return nil, err
+		}
+	}
+	return map[string]any{"build_seconds": build, "exact": exact, "hnsw": graph}, nil
+}
+
+func timed(qids []string, search func(qid string)) times {
+	d := make([]float64, len(qids))
+	for i, qid := range qids {
+		start := time.Now()
+		search(qid)
+		d[i] = float64(time.Since(start).Microseconds()) / 1000
+	}
+	var sum float64
+	for _, v := range d {
+		sum += v
+	}
+	slices.Sort(d)
+	return times{MeanMS: sum / float64(len(d)), MedianMS: d[len(d)/2]}
+}
+
+func writeRun(path string, qids []string, hits map[string][]eval.Hit, tag string) error {
+	f, err := os.Create(path)
+	if err != nil {
+		return err
+	}
+	w := bufio.NewWriter(f)
+	for _, qid := range qids {
+		if err = eval.WriteRun(w, qid, hits[qid], tag); err != nil {
+			break
+		}
+	}
 	if err == nil {
 		err = w.Flush()
 	}

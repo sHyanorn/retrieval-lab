@@ -128,3 +128,33 @@ One machine: an Intel Xeon at 2.10 GHz, 4 vCPUs with AVX-512, 15 GB of memory; O
 TREC-COVID was encoded in three runs; the first two were stopped by a two-hour limit on background jobs, and each next run continued from the partial file (D013). Its seconds are the sum of the three, including the documents in progress at each stop, which were encoded again, at most 1,000 each time. No other job ran on the machine meanwhile.
 
 Searching Pyserini's own NFCorpus document vectors with this project's query encoding and search gives nDCG@10 0.3736 and R@100 0.3368, against 0.3735 and 0.3367 with this project's vectors and 0.3738 and 0.3368 for the anchor.
+
+## HNSW run protocol
+
+`cmd/dense -ann` builds recserve's HNSW graph (D014) over each dataset's document vectors with M = 16, efConstruction = 200, level seed 1 and one inserting goroutine, and searches the same query vectors as the exact run at each ef of SPEC §4: 10 hits for ef 10 to 80 and 100 from ef 120 up, the query's own document skipped, the hits scored and ordered as exact search scores them (D011). `cmd/table -ann` computes the tables below from the run files; the times come from the JSON that `cmd/dense -ann` prints. Like the exact runs, these depend in their last bits on the CPU (D012) and are not checksummed.
+
+### HNSW against exact search
+
+Recall@k is the share of the exact run's top k that the HNSW run's top k holds, both ranked as trec_eval ranks them, averaged over the queries.
+
+Recall@10:
+
+<!-- hnsw-recall10 -->
+<!-- /hnsw-recall10 -->
+
+Recall@100:
+
+<!-- hnsw-recall100 -->
+<!-- /hnsw-recall100 -->
+
+nDCG@10 of the exact run, and that of each HNSW run minus it:
+
+<!-- hnsw-ndcg -->
+<!-- /hnsw-ndcg -->
+
+### Search time
+
+Mean milliseconds per query on one goroutine, and the graph build on one goroutine in seconds, on the machine of the encoding times, with no other job running. It is a shared four-core VM, so these are reported without conclusions.
+
+<!-- hnsw-time -->
+<!-- /hnsw-time -->

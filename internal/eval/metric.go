@@ -100,6 +100,21 @@ func Recall(judged map[string]int, ranked []Hit, k int) float64 {
 	return float64(found) / float64(rel)
 }
 
+// Overlap is the share of exact's top k that approx's top k holds, both
+// ranked as trec_eval ranks them: the recall of an approximate search
+// against the exact one. exact must not be empty.
+func Overlap(exact, approx []Hit, k int) float64 {
+	e, a := Ranked(exact), Ranked(approx)
+	e, a = e[:min(k, len(e))], a[:min(k, len(a))]
+	n := 0
+	for _, h := range a {
+		if slices.ContainsFunc(e, func(x Hit) bool { return x.DocID == h.DocID }) {
+			n++
+		}
+	}
+	return float64(n) / float64(len(e))
+}
+
 // Evaluate scores every query in qrels, as trec_eval -c does: a query
 // missing from the run scores 0 and queries missing from qrels are ignored.
 func Evaluate(qrels Qrels, run Run) map[string]Scores {

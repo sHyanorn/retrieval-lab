@@ -7,6 +7,7 @@ require (
 	github.com/blevesearch/bleve_index_api v1.4.1
 	github.com/gomlx/go-huggingface v0.4.30
 	github.com/yalue/onnxruntime_go v1.38.0
+	golang.org/x/sys v0.48.0
 )
 
 require (
@@ -37,7 +38,6 @@ require (
 	github.com/mschoch/smat v0.2.0 // indirect
 	github.com/pkg/errors v0.9.1 // indirect
 	go.etcd.io/bbolt v1.4.0 // indirect
-	golang.org/x/sys v0.48.0 // indirect
 	golang.org/x/text v0.37.0 // indirect
 	google.golang.org/protobuf v1.36.11 // indirect
 )

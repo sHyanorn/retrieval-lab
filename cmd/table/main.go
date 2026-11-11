@@ -31,23 +31,24 @@ type anchor struct {
 }
 
 func main() {
-	anchorsPath := flag.String("anchors", "results/anchors.tsv", "anchors file (results/anchors-bge.tsv with -dense)")
+	anchorsPath := flag.String("anchors", "results/anchors.tsv", "anchors file (results/anchors-bge.tsv with -dense and -ann)")
 	data := flag.String("data", "", "directory holding the BEIR datasets")
 	runs := flag.String("runs", "", "directory holding the run files and index statistics")
 	doc := flag.String("doc", "docs/BENCHMARKS.md", "file to update")
 	reference := flag.Bool("reference", false, "write the Bleve reference table")
 	denseMode := flag.Bool("dense", false, "write the BGE-base tables")
+	annMode := flag.Bool("ann", false, "write the HNSW tables")
 	vectors := flag.String("vectors", "", "with -dense: directory of this project's document vectors, one per dataset")
 	prebuilt := flag.String("prebuilt", "", "with -dense: directory of Pyserini's flat indexes, one per dataset")
 	check := flag.Bool("check", false, "with -dense: write nothing; exit 1 if a result falls short of the tolerance or a vector of the agreement threshold")
 	flag.Parse()
-	if err := run(*anchorsPath, *data, *runs, *doc, *reference, *denseMode, *check, *vectors, *prebuilt); err != nil {
+	if err := run(*anchorsPath, *data, *runs, *doc, *reference, *denseMode, *annMode, *check, *vectors, *prebuilt); err != nil {
 		fmt.Fprintln(os.Stderr, "table:", err)
 		os.Exit(1)
 	}
 }
 
-func run(anchorsPath, data, runs, doc string, reference, denseMode, check bool, vectors, prebuilt string) error {
+func run(anchorsPath, data, runs, doc string, reference, denseMode, annMode, check bool, vectors, prebuilt string) error {
 	buf, err := os.ReadFile(doc)
 	if err != nil {
 		return err
@@ -57,9 +58,12 @@ func run(anchorsPath, data, runs, doc string, reference, denseMode, check bool, 
 		return meanOf(filepath.Join(data, dataset), filepath.Join(runs, file))
 	}
 	var short []string
-	if denseMode {
+	switch {
+	case annMode:
+		text, err = annTables(text, anchorsPath, data, runs)
+	case denseMode:
 		text, short, err = denseTables(text, anchorsPath, runs, vectors, prebuilt, mean)
-	} else {
+	default:
 		var anchors []anchor
 		if anchors, err = readAnchors(anchorsPath); err == nil && reference {
 			text, err = referenceTable(text, anchors, mean)
@@ -161,16 +165,24 @@ func meanOf(dataDir, runPath string) (eval.Scores, error) {
 	if err != nil {
 		return eval.Scores{}, err
 	}
-	f, err := os.Open(runPath)
+	r, err := readRun(runPath)
 	if err != nil {
 		return eval.Scores{}, err
+	}
+	return eval.Mean(eval.Evaluate(qrels, r)), nil
+}
+
+func readRun(path string) (eval.Run, error) {
+	f, err := os.Open(path)
+	if err != nil {
+		return nil, err
 	}
 	defer f.Close() //nolint:errcheck // read-only
 	r, err := eval.ReadRun(bufio.NewReader(f))
 	if err != nil {
-		return eval.Scores{}, fmt.Errorf("%s: %w", runPath, err)
+		return nil, fmt.Errorf("%s: %w", path, err)
 	}
-	return eval.Mean(eval.Evaluate(qrels, r)), nil
+	return r, nil
 }
 
 // splice replaces the text between "<!-- name -->" and "<!-- /name -->".

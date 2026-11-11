@@ -2,7 +2,7 @@
 
 Hybrid retrieval in Go (BM25, dense vectors, fusion, reranking), where each component is accepted against a published number that anyone can reproduce with public commands and data. The datasets are six BEIR test sets; the anchors are the numbers on Pyserini's BEIR reproducibility page.
 
-Status: M1 is done. The evaluation harness computes nDCG@10 and Recall@100 with the rules of `trec_eval -c` and matches trec_eval v10.0 query by query. BM25 uses Bleve for analysis and the inverted index and Lucene's BM25 scoring, ported to Go; on all six datasets its nDCG@10 and Recall@100 equal Pyserini's BM25 flat numbers to the four decimals published, and its six run files reproduce byte for byte from their committed SHA-256. Bleve's own BM25 scorer, shown as a reference, differs from those numbers by −0.243 to +0.148 in nDCG@10. See [docs/BENCHMARKS.md](docs/BENCHMARKS.md) for the tables, and [docs/SPEC.md](docs/SPEC.md), [docs/DECISIONS.md](docs/DECISIONS.md) and [docs/TASKS.md](docs/TASKS.md).
+Status: M1 is done and M2 is under way. The evaluation harness computes nDCG@10 and Recall@100 with the rules of `trec_eval -c` and matches trec_eval v10.0 query by query. BM25 uses Bleve for analysis and the inverted index and Lucene's BM25 scoring, ported to Go; on all six datasets its nDCG@10 and Recall@100 equal Pyserini's BM25 flat numbers to the four decimals published, and its six run files reproduce byte for byte from their committed SHA-256. Bleve's own BM25 scorer, shown as a reference, differs from those numbers by −0.243 to +0.148 in nDCG@10. Dense retrieval encodes with BGE-base-en-v1.5 on ONNX Runtime and searches exactly; on NFCorpus, SciFact, ArguAna and SCIDOCS its nDCG@10 is within 0.0004 of Pyserini's, and every document vector of the first three has a cosine of at least 0.99997 to Pyserini's own. FiQA is being encoded; TREC-COVID would take over three hours to encode on four cores and is not run. See [docs/BENCHMARKS.md](docs/BENCHMARKS.md) for the tables, and [docs/SPEC.md](docs/SPEC.md), [docs/DECISIONS.md](docs/DECISIONS.md) and [docs/TASKS.md](docs/TASKS.md).
 
 ## Rerun
 
@@ -13,6 +13,8 @@ make reproduce
 ```
 
 This downloads the six BEIR datasets and checks them against `scripts/data.sha256`, builds an index per dataset, writes the BM25 run files, checks each against `results/bm25-flat.sha256` and its per-query metrics against trec_eval v10.0 built from source, and regenerates the tables in `docs/BENCHMARKS.md`; it fails if anything differs from the committed files. CI runs it on every push; it takes a few minutes on four cores.
+
+The dense runs need ONNX Runtime and the model, which `make dense-assets` downloads with Pyserini's indexes for the vector comparison; `make embed dense dense-table` then encodes the corpora of `DENSE_DATASETS` (10 to 40 minutes each on four cores), writes and checks the runs and the tables. Their exact values depend on the CPU (D012).
 
 `make help` lists the steps, which also run on their own; `DATASETS="scifact nfcorpus"` limits `data`, `bm25` and `check` to some datasets. `make reference` reranks with Bleve's own BM25 and writes the reference table.
 

@@ -1,13 +1,16 @@
-// Command table computes the BM25 results from run files and writes them
-// into docs/BENCHMARKS.md, between marker comments, next to the anchors.
-// It reads <dataset>.run and <dataset>.stats.json from -runs; with
-// -reference it writes the Bleve reference table from <dataset>.bleve1.run
-// and <dataset>.bleve2.run instead.
+// Command table computes results from run files and writes them into
+// docs/BENCHMARKS.md, between marker comments, next to the anchors. By
+// default it writes the BM25 tables from <dataset>.run and
+// <dataset>.stats.json in -runs; with -reference, the Bleve reference table
+// from <dataset>.bleve1.run and <dataset>.bleve2.run; with -dense, the
+// BGE-base tables from <dataset>.bge.run and the vectors in -vectors and
+// -prebuilt.
 package main
 
 import (
 	"bufio"
 	"encoding/json"
+	"errors"
 	"flag"
 	"fmt"
 	"math"
@@ -28,23 +31,23 @@ type anchor struct {
 }
 
 func main() {
-	anchorsPath := flag.String("anchors", "results/anchors.tsv", "anchors file")
+	anchorsPath := flag.String("anchors", "results/anchors.tsv", "anchors file (results/anchors-bge.tsv with -dense)")
 	data := flag.String("data", "", "directory holding the BEIR datasets")
 	runs := flag.String("runs", "", "directory holding the run files and index statistics")
 	doc := flag.String("doc", "docs/BENCHMARKS.md", "file to update")
 	reference := flag.Bool("reference", false, "write the Bleve reference table")
+	denseMode := flag.Bool("dense", false, "write the BGE-base tables")
+	vectors := flag.String("vectors", "", "with -dense: directory of this project's document vectors, one per dataset")
+	prebuilt := flag.String("prebuilt", "", "with -dense: directory of Pyserini's flat indexes, one per dataset")
+	check := flag.Bool("check", false, "with -dense: write nothing; exit 1 if a result falls short of the tolerance or a vector of the agreement threshold")
 	flag.Parse()
-	if err := run(*anchorsPath, *data, *runs, *doc, *reference); err != nil {
+	if err := run(*anchorsPath, *data, *runs, *doc, *reference, *denseMode, *check, *vectors, *prebuilt); err != nil {
 		fmt.Fprintln(os.Stderr, "table:", err)
 		os.Exit(1)
 	}
 }
 
-func run(anchorsPath, data, runs, doc string, reference bool) error {
-	anchors, err := readAnchors(anchorsPath)
-	if err != nil {
-		return err
-	}
+func run(anchorsPath, data, runs, doc string, reference, denseMode, check bool, vectors, prebuilt string) error {
 	buf, err := os.ReadFile(doc)
 	if err != nil {
 		return err
@@ -53,13 +56,25 @@ func run(anchorsPath, data, runs, doc string, reference bool) error {
 	mean := func(dataset, file string) (eval.Scores, error) {
 		return meanOf(filepath.Join(data, dataset), filepath.Join(runs, file))
 	}
-	if reference {
-		text, err = referenceTable(text, anchors, mean)
+	var short []string
+	if denseMode {
+		text, short, err = denseTables(text, anchorsPath, runs, vectors, prebuilt, mean)
 	} else {
-		text, err = mainTables(text, anchors, runs, mean)
+		var anchors []anchor
+		if anchors, err = readAnchors(anchorsPath); err == nil && reference {
+			text, err = referenceTable(text, anchors, mean)
+		} else if err == nil {
+			text, err = mainTables(text, anchors, runs, mean)
+		}
 	}
 	if err != nil {
 		return err
+	}
+	if check {
+		if len(short) > 0 {
+			return fmt.Errorf("outside the acceptance:\n%s", strings.Join(short, "\n"))
+		}
+		return nil
 	}
 	return os.WriteFile(doc, []byte(text), 0o644) //nolint:gosec // a tracked text file
 }
@@ -169,28 +184,45 @@ func splice(text, name, table string) (string, error) {
 }
 
 func readAnchors(path string) ([]anchor, error) {
-	raw, err := os.ReadFile(path)
+	rows, err := readTSV(path, "dataset\tndcg_cut_10\trecall_100\tdocs_non_empty\ttokens")
 	if err != nil {
 		return nil, err
 	}
-	var out []anchor
-	for n, line := range strings.Split(strings.TrimSpace(string(raw)), "\n")[1:] {
-		f := strings.Split(line, "\t")
-		if len(f) != 5 {
-			return nil, fmt.Errorf("%s line %d: want 5 fields", path, n+2)
-		}
+	out := make([]anchor, len(rows))
+	for n, f := range rows {
 		a := anchor{dataset: f[0]}
 		var errs [4]error
 		a.ndcg, errs[0] = strconv.ParseFloat(f[1], 64)
 		a.recall, errs[1] = strconv.ParseFloat(f[2], 64)
 		a.docs, errs[2] = strconv.ParseInt(f[3], 10, 64)
 		a.tokens, errs[3] = strconv.ParseInt(f[4], 10, 64)
-		for _, err := range errs {
-			if err != nil {
-				return nil, fmt.Errorf("%s line %d: %w", path, n+2, err)
-			}
+		if err := errors.Join(errs[:]...); err != nil {
+			return nil, fmt.Errorf("%s line %d: %w", path, n+2, err)
 		}
-		out = append(out, a)
+		out[n] = a
 	}
 	return out, nil
+}
+
+// readTSV reads a tab-separated file whose first line must be header and
+// whose other lines have as many fields.
+func readTSV(path, header string) ([][]string, error) {
+	raw, err := os.ReadFile(path)
+	if err != nil {
+		return nil, err
+	}
+	lines := strings.Split(strings.TrimSpace(string(raw)), "\n")
+	if lines[0] != header {
+		return nil, fmt.Errorf("%s: header %q, want %q", path, lines[0], header)
+	}
+	width := len(strings.Split(header, "\t"))
+	rows := make([][]string, 0, len(lines)-1)
+	for n, line := range lines[1:] {
+		f := strings.Split(line, "\t")
+		if len(f) != width {
+			return nil, fmt.Errorf("%s line %d: want %d fields", path, n+2, width)
+		}
+		rows = append(rows, f)
+	}
+	return rows, nil
 }

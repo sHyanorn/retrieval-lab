@@ -1,0 +1,6 @@
+4219e7343a5eeacd9c4fd7186df4b8a766981370ae0d8cd6f08dfee540b156e0  bge-base-en-v1.5-optimized.onnx
+d241a60d5e8f04cc1b2b3e9ef7a4921b27bf526d9f6050ab90f9267a1f9e5c66  tokenizer.json
+c849e36a1ef3e22d4ff217b9d1ce4a3cf5b9467b975610913ae959ad5b16bdc9  onnxruntime-linux-x64-1.31.1.tgz
+703cc45eeb2ab159e6c223bc48832b5022f4bdd1c98f9d92289fe3865d076067  prebuilt/scifact.tar.gz
+ac6507b00d41415bf4a79f9107b2ee86ea7c94de01a05738002165a273e4aeeb  prebuilt/nfcorpus.tar.gz
+81e12152f7f5c6c45b5d3ec3a3419859cd9700f99dfb0254d0d0198de2803039  prebuilt/arguana.tar.gz

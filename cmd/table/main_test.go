@@ -1,6 +1,10 @@
 package main
 
-import "testing"
+import (
+	"os"
+	"path/filepath"
+	"testing"
+)
 
 func TestAgreementFollowsSpec(t *testing.T) {
 	for _, c := range []struct {
@@ -25,5 +29,33 @@ func TestSpliceReplacesOnlyTheMarkedBlock(t *testing.T) {
 	}
 	if _, err := splice("no markers", "x", ""); err == nil {
 		t.Fatal("want an error without markers")
+	}
+}
+
+func TestAnchorReadersRejectTheOtherFile(t *testing.T) {
+	if _, err := readDenseAnchors("../../results/anchors.tsv"); err == nil {
+		t.Error("readDenseAnchors accepted the BM25 anchors")
+	}
+	if _, err := readAnchors("../../results/anchors-bge.tsv"); err == nil {
+		t.Error("readAnchors accepted the BGE anchors")
+	}
+	if _, err := readDenseAnchors("../../results/anchors-bge.tsv"); err != nil {
+		t.Error(err)
+	}
+}
+
+func TestCheckLeavesTheDocumentAlone(t *testing.T) {
+	dir := t.TempDir()
+	doc := filepath.Join(dir, "doc.md")
+	const before = "<!-- bge-flat -->\nkept\n<!-- /bge-flat -->\n<!-- bge-vectors -->\nkept\n<!-- /bge-vectors -->\n"
+	if err := os.WriteFile(doc, []byte(before), 0o600); err != nil {
+		t.Fatal(err)
+	}
+	if err := run("../../results/anchors-bge.tsv", dir, dir, doc, false, true, true, dir, dir); err != nil {
+		t.Fatal(err)
+	}
+	after, err := os.ReadFile(doc)
+	if err != nil || string(after) != before {
+		t.Fatalf("-check rewrote the document (%v):\n%s", err, after)
 	}
 }

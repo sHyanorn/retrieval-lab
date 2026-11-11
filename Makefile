@@ -3,9 +3,12 @@ DATA     ?= ../retrieval-lab-data
 RUNS     ?= $(DATA)/runs
 DATASETS ?= scifact nfcorpus arguana scidocs fiqa trec-covid
 TREC_EVAL = $(DATA)/trec_eval/trec_eval
+DENSE    ?= $(DATA)/dense
+DENSE_DATASETS ?= scifact nfcorpus arguana
+ORT_LIB   = $(DENSE)/onnxruntime-linux-x64-1.31.1/lib/libonnxruntime.so.1.31.1
 
 .DEFAULT_GOAL := help
-.PHONY: help build test lint fmt data trec-eval bm25 check table reproduce reference
+.PHONY: help build test lint fmt data trec-eval bm25 check table reproduce reference dense-assets embed dense dense-table dense-check
 
 help: ## Show available targets
 	@awk -F':.*## ' '/^[a-z0-9-]+:.*## / {printf "  %-10s %s\n", $$1, $$2}' $(MAKEFILE_LIST)
@@ -54,3 +57,24 @@ reference: build ## Rank DATASETS with Bleve's own BM25 on two fresh builds each
 		bin/bm25 -data $(DATA)/$$d -index $(DATA)/index-reference/$$d -run $(RUNS)/$$d.bleve$$b.run -bleve-scoring >/dev/null || exit 1; \
 	done; done
 	bin/table -reference -data $(DATA) -runs $(RUNS)
+
+dense-assets: ## Download the BGE model, tokenizer, ONNX Runtime and Pyserini's indexes of DENSE_DATASETS into DENSE
+	scripts/dense.sh $(DENSE) $(DENSE_DATASETS)
+
+embed: build dense-assets ## Encode the corpora of DENSE_DATASETS into DENSE/vectors (about 10 to 25 minutes each on four cores)
+	mkdir -p $(RUNS)
+	for d in $(DENSE_DATASETS); do \
+		bin/embed -data $(DATA)/$$d -out $(DENSE)/vectors/$$d -model $(DENSE) -ort $(ORT_LIB) >$(RUNS)/$$d.embed.json || exit 1; \
+	done
+
+dense: build ## Write the BGE runs of DENSE_DATASETS into RUNS and check their metrics against trec_eval
+	for d in $(DENSE_DATASETS); do \
+		bin/dense -data $(DATA)/$$d -vectors $(DENSE)/vectors/$$d -model $(DENSE) -ort $(ORT_LIB) -run $(RUNS)/$$d.bge.run && \
+		scripts/check-eval.sh $(TREC_EVAL) bin/eval $(DATA)/$$d $(RUNS)/$$d.bge.run || exit 1; \
+	done
+
+dense-table: build ## Write the BGE tables into docs/BENCHMARKS.md from RUNS and DENSE
+	bin/table -dense -anchors results/anchors-bge.tsv -data $(DATA) -runs $(RUNS) -vectors $(DENSE)/vectors -prebuilt $(DENSE)/prebuilt
+
+dense-check: build ## Fail if a BGE run of RUNS is more than 0.005 from its anchor or a vector's cosine to Pyserini's is below 0.9999
+	bin/table -dense -check -anchors results/anchors-bge.tsv -data $(DATA) -runs $(RUNS) -vectors $(DENSE)/vectors -prebuilt $(DENSE)/prebuilt

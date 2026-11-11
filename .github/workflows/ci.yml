@@ -37,3 +37,26 @@ jobs:
       # Download, index, rank and evaluate the six datasets; fails if a run
       # file's SHA-256, a trec_eval comparison or the tables differ.
       - run: make reproduce DATA="$RUNNER_TEMP/data"
+
+  dense:
+    runs-on: ubuntu-latest
+    timeout-minutes: 120
+    env:
+      DATASETS: scifact nfcorpus
+      DENSE_DATASETS: scifact nfcorpus
+    steps:
+      - uses: actions/checkout@3d3c42e5aac5ba805825da76410c181273ba90b1 # v7.0.1
+      - uses: actions/setup-go@b7ad1dad31e06c5925ef5d2fc7ad053ef454303e # v7.0.0
+        with:
+          go-version-file: go.mod
+      - run: make data trec-eval dense-assets DATA="$RUNNER_TEMP/data"
+      # The encoder against Anserini's reference query vectors.
+      - run: go test ./internal/dense/
+        env:
+          RL_MODEL_DIR: ${{ runner.temp }}/data/dense
+          RL_ORT_LIB: ${{ runner.temp }}/data/dense/onnxruntime-linux-x64-1.31.1/lib/libonnxruntime.so.1.31.1
+          RL_REQUIRE_MODEL: "1"
+      # Encode, search and check against trec_eval; then fail if nDCG@10 is
+      # more than 0.005 from the anchor or a document vector's cosine to
+      # Pyserini's is below 0.9999 (D012). Exact values depend on the CPU.
+      - run: make embed dense dense-check DATA="$RUNNER_TEMP/data"

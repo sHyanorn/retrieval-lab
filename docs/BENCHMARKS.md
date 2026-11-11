@@ -80,3 +80,51 @@ Not this project's retrieval path (D008): Bleve's BM25 scorer with k1 = 0.9 and 
 | scidocs | 0.1490 | 0.1524 | 0.1524 | +0.0034 |
 | scifact | 0.6789 | 0.6745 | 0.6745 | -0.0044 |
 <!-- /bleve-bm25 -->
+
+## BGE-base-en-v1.5 run protocol
+
+`cmd/embed` encodes each corpus with BGE-base-en-v1.5 (D009, D010) and writes the vectors in the layout of Pyserini's faiss flat indexes; `cmd/dense` encodes the test queries, searches exactly (D011) and writes the run. `cmd/table -dense` computes the tables below from the run files and the vectors. The anchors are the `bge-base-en-v1.5.lucene-flat` condition of `pyserini/2cr/beir.yaml` at commit d1b77315499a601c1bf9c2d88a2baa72019244ee, with the `bge-base-en-v1.5.faiss` condition beside it, in `results/anchors-bge.tsv`. The run files are not checksummed: the vectors depend in their last bits on the CPU (D012).
+
+### BGE-base-en-v1.5 against Pyserini
+
+Δ is this project's value, to four decimals, minus the flat anchor; the agreement column applies SPEC §4 to nDCG@10.
+
+<!-- bge-flat -->
+| Dataset | nDCG@10 Pyserini flat | Pyserini faiss | here | Δ to flat | R@100 Pyserini flat | here | Δ to flat | nDCG@10 agreement |
+|---|---|---|---|---|---|---|---|---|
+| trec-covid | 0.7815 | 0.7815 | not run | | 0.1406 | not run | | |
+| nfcorpus | 0.3738 | 0.3735 | 0.3735 | -0.0003 | 0.3368 | 0.3367 | -0.0001 | three printed decimals |
+| fiqa | 0.4065 | 0.4065 | not run | | 0.7415 | not run | | |
+| arguana | 0.6375 | 0.6362 | 0.6375 | 0.0000 | 0.9929 | 0.9929 | 0.0000 | all four decimals |
+| scidocs | 0.2172 | 0.2172 | 0.2172 | 0.0000 | 0.4959 | 0.4957 | -0.0002 | all four decimals |
+| scifact | 0.7408 | 0.7408 | 0.7404 | -0.0004 | 0.9667 | 0.9667 | 0.0000 | three printed decimals |
+<!-- /bge-flat -->
+
+### Document vectors against Pyserini's
+
+For each document, the cosine between this project's vector and the one in Pyserini's prebuilt index `faiss-flat.beir-v1.0.0-<dataset>.bge-base-en-v1.5.20240107`. Quantiles are the cosine at rank ⌊q·n⌋ in ascending order.
+
+<!-- bge-vectors -->
+| Dataset | Documents | Min cosine | 0.1 % | 1 % | Median | Below 0.9999 | Below 0.99999 |
+|---|---|---|---|---|---|---|---|
+| nfcorpus | 3633 | 0.999996 | 0.999997 | 0.999998 | 0.9999995 | 0 | 0 |
+| arguana | 8674 | 0.999978 | 0.999994 | 0.999996 | 0.9999987 | 0 | 1 |
+| scifact | 5183 | 0.999997 | 0.999998 | 0.999998 | 0.9999995 | 0 | 0 |
+<!-- /bge-vectors -->
+
+### Encoding time
+
+One machine: an Intel Xeon at 2.10 GHz, 4 vCPUs with AVX-512, 15 GB of memory; ONNX Runtime 1.31.1, four concurrent calls of one thread each (the default of `cmd/embed`). Tokens are counted with the tokenizer and capped at 512 per document, before the category C removal of D010.
+
+| Dataset | Documents | Tokens | Seconds | Documents per second |
+|---|---|---|---|---|
+| nfcorpus | 3,633 | 1.26 million | 632 | 5.7 |
+| scifact | 5,183 | 1.69 million | 663 | 7.8 |
+| arguana | 8,674 | 1.78 million | 700 | 12.4 |
+| scidocs | 25,657 | 5.79 million | 2,422 | 10.6 |
+| fiqa | 57,638 | 9.62 million | FIQA_SECONDS | FIQA_RATE |
+| trec-covid | 171,332 | about 40.4 million, from every tenth document | not run | |
+
+At the 2,000 to 2,550 tokens per second of the first three, TREC-COVID would take 4.4 to 5.6 hours, more than the three hours SPEC §4 allows, so it is not run.
+
+Searching Pyserini's own NFCorpus document vectors with this project's query encoding and search gives nDCG@10 0.3736 and R@100 0.3368, against 0.3735 and 0.3367 with this project's vectors and 0.3738 and 0.3368 for the anchor.

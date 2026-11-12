@@ -1,6 +1,8 @@
 // Command fuse fuses a dataset's BM25 flat run and BGE run as Pyserini's
 // pyserini.fusion does with the settings of its BEIR fusion page (D015)
-// and writes the RRF and Normalize runs, scores in full.
+// and writes the RRF and Normalize runs, scores in full. -bm25-depth and
+// -dense-depth cut each run before fusion; the study fuses the dense run's
+// top 100 with BM25's top 1,000 (D015, docs/PREREGISTRATION.md, Section 6).
 package main
 
 import (
@@ -22,14 +24,16 @@ func main() {
 	bge := flag.String("bge", "", "BGE run")
 	rrf := flag.String("rrf", "", "output RRF run")
 	norm := flag.String("norm", "", "output Normalize run")
+	bm25Depth := flag.Int("bm25-depth", 1000, "hits per query taken from the BM25 run")
+	denseDepth := flag.Int("dense-depth", 1000, "hits per query taken from the dense run; the study takes 100")
 	flag.Parse()
-	if err := run(*bm25, *bge, *rrf, *norm); err != nil {
+	if err := run(*bm25, *bge, *rrf, *norm, []int{*bm25Depth, *denseDepth}); err != nil {
 		fmt.Fprintln(os.Stderr, "fuse:", err)
 		os.Exit(1)
 	}
 }
 
-func run(bm25, bge, rrf, norm string) error {
+func run(bm25, bge, rrf, norm string, depths []int) error {
 	var runs []eval.Run
 	for _, p := range []string{bm25, bge} {
 		f, err := os.Open(p)
@@ -42,8 +46,8 @@ func run(bm25, bge, rrf, norm string) error {
 		}
 		runs = append(runs, r)
 	}
-	// k 1000, depth 1000, rrf_k 60, as on the page.
-	return cmp.Or(write(rrf, fusion.RRF(runs, 60, 1000, 1000), "rrf"), write(norm, fusion.Normalize(runs, 1000, 1000), "normalize"))
+	// k 1000, rrf_k 60, as on the page; depth 1000 on the page, by default.
+	return cmp.Or(write(rrf, fusion.RRF(runs, depths, 60, 1000), "rrf"), write(norm, fusion.Normalize(runs, depths, 1000), "normalize"))
 }
 
 func write(path string, r eval.Run, tag string) error {

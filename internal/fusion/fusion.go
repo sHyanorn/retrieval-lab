@@ -1,7 +1,10 @@
 // Package fusion fuses runs as Pyserini's pyserini.fusion does (D015):
-// each run is rescored, the scores of a document are summed over the top
-// depth of every run, and the top keep are kept, by score and then
-// document ID ascending.
+// each run is rescored, the scores of a document are summed over every run,
+// and the top keep are kept, by score and then document ID ascending. Each
+// run is first cut to its own depth, its first lines per query: a depth at
+// least the run's length is Pyserini's depth, and a shorter one fuses the
+// dense run's top 100 with BM25's top 1,000 (docs/PREREGISTRATION.md,
+// Section 6).
 package fusion
 
 import (
@@ -13,9 +16,9 @@ import (
 )
 
 // RRF is reciprocal rank fusion: a document scores 1 / (k + rank) in each
-// run, rank counting from 1 in the run's order.
-func RRF(runs []eval.Run, k, depth, keep int) eval.Run {
-	return merge(runs, depth, keep, func(hits []eval.Hit) []float64 {
+// run, rank counting from 1 in the run's order; depths[i] cuts runs[i].
+func RRF(runs []eval.Run, depths []int, k, keep int) eval.Run {
+	return merge(runs, depths, keep, func(hits []eval.Hit) []float64 {
 		s := make([]float64, len(hits))
 		for i := range hits {
 			s[i] = 1 / float64(k+i+1)
@@ -24,10 +27,10 @@ func RRF(runs []eval.Run, k, depth, keep int) eval.Run {
 	})
 }
 
-// Normalize maps each run's scores for a query to (s − min) / (max − min),
-// or to 1 when max = min, before the sum.
-func Normalize(runs []eval.Run, depth, keep int) eval.Run {
-	return merge(runs, depth, keep, func(hits []eval.Hit) []float64 {
+// Normalize maps each run's scores for a query, after the cut, to
+// (s − min) / (max − min), or to 1 when max = min, before the sum.
+func Normalize(runs []eval.Run, depths []int, keep int) eval.Run {
+	return merge(runs, depths, keep, func(hits []eval.Hit) []float64 {
 		lo, hi := hits[0].Score, hits[0].Score
 		for _, h := range hits {
 			lo, hi = min(lo, h.Score), max(hi, h.Score)
@@ -43,14 +46,21 @@ func Normalize(runs []eval.Run, depth, keep int) eval.Run {
 	})
 }
 
-func merge(runs []eval.Run, depth, keep int, rescore func([]eval.Hit) []float64) eval.Run {
+func merge(runs []eval.Run, depths []int, keep int, rescore func([]eval.Hit) []float64) eval.Run {
+	if len(depths) != len(runs) {
+		panic("fusion: one depth per run")
+	}
 	sums := map[string]map[string]float64{}
-	for _, run := range runs {
+	for r, run := range runs {
 		for qid, hits := range run {
 			if sums[qid] == nil {
 				sums[qid] = map[string]float64{}
 			}
-			for i, s := range rescore(hits)[:min(depth, len(hits))] {
+			hits = hits[:min(depths[r], len(hits))]
+			if len(hits) == 0 {
+				continue
+			}
+			for i, s := range rescore(hits) {
 				sums[qid][hits[i].DocID] += s
 			}
 		}

@@ -214,4 +214,11 @@ func TestTables(t *testing.T) {
 	if err := tables(out, doc, []string{"e5-base-v2", "gte-base"}, false); err == nil {
 		t.Error("want an error with one confirmatory model left")
 	}
+	if err := tables(out, doc, []string{"gte"}, false); err == nil || !strings.Contains(err.Error(), "not stored") {
+		t.Errorf("a failed model that is not stored: %v; want an error", err)
+	}
+	err := run([]string{"tables", "-results", out, "-doc", doc, "-failed", "bge-base-en-v1.5, gte-base"})
+	if err == nil || !strings.Contains(err.Error(), "nothing to compare") {
+		t.Errorf("-failed with a space: %v; want two models left out and one left to compare", err)
+	}
 }

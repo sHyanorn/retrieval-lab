@@ -175,6 +175,11 @@ func tables(dir, doc string, failed []string, tier1 bool) error {
 	if err != nil {
 		return err
 	}
+	for _, m := range failed {
+		if !slices.ContainsFunc(sortedKeys(r.cells), func(ds string) bool { return r.cells[ds][m] != nil }) {
+			return fmt.Errorf("failed model %q is not stored", m)
+		}
+	}
 	conf, expl, err := r.report(r.readingSets(failed, tier1))
 	if err != nil {
 		return err

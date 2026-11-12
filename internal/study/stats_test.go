@@ -263,3 +263,20 @@ func TestTauB(t *testing.T) {
 		t.Error("scorings of different lengths were accepted")
 	}
 }
+
+// TestResampleSharesDraws checks that statistics read from one Resample
+// are those of separate calls of Bootstrap, each from a fresh generator.
+func TestResampleSharesDraws(t *testing.T) {
+	s := Strata{{{0.1, 0.5}, {0.2, 0.3}, {0.9, 0.4}}, {{0.4, 0.4}, {0.7, 0.1}}}
+	draws := Resample(s, 500)
+	stats := []func([]float64) float64{
+		func(m []float64) float64 { return m[0] },
+		func(m []float64) float64 { return m[1] },
+		Range,
+	}
+	for i, stat := range stats {
+		if !slices.Equal(Sorted(draws, stat), Bootstrap(s, 500, stat)) {
+			t.Errorf("statistic %d: Resample and Bootstrap differ", i)
+		}
+	}
+}

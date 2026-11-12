@@ -3,9 +3,12 @@ package main
 import (
 	"bufio"
 	"compress/gzip"
+	"crypto/sha256"
+	"encoding/hex"
 	"fmt"
 	"os"
 	"path/filepath"
+	"slices"
 	"strings"
 	"testing"
 
@@ -195,6 +198,18 @@ func TestCollect(t *testing.T) {
 	if got := readGz(t, filepath.Join(out, "scifact", "gte-base.tsv.gz")); len(got) < 2 {
 		t.Fatal("second model not stored")
 	}
+	// Every file read has its checksum: exact, 7 and 5 builds of 65 ef,
+	// the anchor and 10 fused runs.
+	sums := strings.Split(strings.TrimSpace(readFile(t, filepath.Join(out, "per-query.sha256"))), "\n")
+	if want := (1 + 7*65 + 1 + 10) + (1 + 5*65 + 10); len(sums) != want {
+		t.Fatalf("per-query.sha256 has %d lines, want %d", len(sums), want)
+	}
+	if !slices.Contains(sums, sha256Line(t, in, "gte-base/scifact/m16-efc200-s3/ef17.tsv")) {
+		t.Fatal("per-query.sha256 lacks the checksum of a file not stored")
+	}
+	if err := collect(in, out, maxFile); err == nil || !strings.Contains(err.Error(), "not empty") {
+		t.Fatalf("collect into a used directory: %v; want an error", err)
+	}
 }
 
 func selectionOf(t *testing.T, sel []string, model, b, target string) string {
@@ -245,6 +260,11 @@ func TestCollectRejects(t *testing.T) {
 		{"stray file", func(t *testing.T, cell string) {
 			writeQueries(t, filepath.Join(cell, "rrf-s0-ef100.tsv"), synth{queries: 6}.fused(0))
 		}, "rrf-s0-ef100.tsv"},
+		{"dataset", func(t *testing.T, cell string) {
+			if err := os.Rename(cell, filepath.Join(filepath.Dir(cell), "nq2")); err != nil {
+				t.Fatal(err)
+			}
+		}, "dataset nq2"},
 		{"no neighbour overlap", func(t *testing.T, cell string) {
 			writeQueries(t, filepath.Join(cell, "m16-efc200-s1", "ef40.tsv"), synth{queries: 6}.exact())
 		}, "neighbour overlap"},
@@ -295,6 +315,12 @@ func removeAll(t *testing.T, path string) {
 	if err := os.RemoveAll(path); err != nil {
 		t.Fatal(err)
 	}
+}
+
+func sha256Line(t *testing.T, in, rel string) string {
+	t.Helper()
+	sum := sha256.Sum256([]byte(readFile(t, filepath.Join(in, rel))))
+	return hex.EncodeToString(sum[:]) + "  " + rel
 }
 
 func writeGz(t *testing.T, path, body string) {

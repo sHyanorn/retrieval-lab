@@ -4,7 +4,10 @@ import (
 	"bufio"
 	"bytes"
 	"compress/gzip"
+	"crypto/sha256"
+	"encoding/hex"
 	"fmt"
+	"io"
 	"maps"
 	"math/big"
 	"os"
@@ -55,6 +58,9 @@ func target(s string) *big.Rat {
 	return r
 }
 
+// studyDatasets are the datasets of Section 4.
+var studyDatasets = append(slices.Clone(study.ConfirmatoryDatasets), "trec-covid")
+
 // confirmatorySeeds are the builds that H1 to H5 average over.
 var confirmatorySeeds = []int{1, 2, 3, 4}
 
@@ -78,11 +84,12 @@ type layout struct {
 	dir    string
 	builds map[build][]int
 	fused  map[string]bool
-	h4     []string // seeds 2 to 4 at seed 1's ef for recall 0.95
+	sums   map[string]string // SHA-256 of each file read, by path in dir
+	h4     []string          // seeds 2 to 4 at seed 1's ef for recall 0.95
 }
 
 func readLayout(dir string) (*layout, error) {
-	l := &layout{dir: dir, builds: map[build][]int{}, fused: map[string]bool{}}
+	l := &layout{dir: dir, builds: map[build][]int{}, fused: map[string]bool{}, sums: map[string]string{}}
 	entries, err := os.ReadDir(dir)
 	if err != nil {
 		return nil, err
@@ -190,18 +197,24 @@ func readEFs(dir string) ([]int, error) {
 	return efs, nil
 }
 
-// readQueries reads one per-query file and checks its qids against want,
-// when given.
-func readQueries(path string, want []string) ([]eval.Query, error) {
+// read reads one per-query file of the layout, records its SHA-256 and
+// checks its qids against want, when given.
+func (l *layout) read(rel string, want []string) ([]eval.Query, error) {
+	path := filepath.Join(l.dir, rel)
 	f, err := os.Open(path)
 	if err != nil {
 		return nil, err
 	}
 	defer f.Close() //nolint:errcheck // read-only
-	qs, err := eval.ReadPerQuery(bufio.NewReader(f))
+	h := sha256.New()
+	qs, err := eval.ReadPerQuery(bufio.NewReader(io.TeeReader(f, h)))
 	if err != nil {
 		return nil, fmt.Errorf("%s: %w", path, err)
 	}
+	if _, err := io.Copy(h, f); err != nil {
+		return nil, err
+	}
+	l.sums[rel] = hex.EncodeToString(h.Sum(nil))
 	if want != nil && !slices.Equal(qids(qs), want) {
 		return nil, fmt.Errorf("%s: qids differ from those of exact.tsv", path)
 	}
@@ -252,8 +265,16 @@ func measure(qs []eval.Query, ef int) (gridCell, error) {
 // <model>/<dataset>/{exact.tsv, <build>/ef<ef>.tsv, <fusion>-exact.tsv,
 // <fusion>-s<seed>-ef100.tsv}, and writes into out the means of every cell
 // of the grid, the recall selections of every build, and per dataset and
-// model the per-query measures of the points the readings use.
+// model the per-query measures of the points the readings use, with the
+// SHA-256 of every file read (amendment 9). out must be empty, so that no
+// file of an earlier collection is read with this one.
 func collect(in, out string, limit int) error {
+	if entries, err := os.ReadDir(out); err == nil && len(entries) > 0 {
+		return fmt.Errorf("%s is not empty", out)
+	}
+	if err := os.MkdirAll(out, 0o755); err != nil {
+		return err
+	}
 	models, err := subdirs(in)
 	if err != nil {
 		return err
@@ -262,6 +283,7 @@ func collect(in, out string, limit int) error {
 		return fmt.Errorf("%s: no models", in)
 	}
 	var grid, sel bytes.Buffer
+	var sums []string
 	fmt.Fprintln(&grid, gridHeader)
 	fmt.Fprintln(&sel, selectHeader)
 	ref := map[string][]string{} // dataset → qids of the first model
@@ -272,11 +294,14 @@ func collect(in, out string, limit int) error {
 			return err
 		}
 		for _, ds := range datasets {
+			if !slices.Contains(studyDatasets, ds) {
+				return fmt.Errorf("%s: dataset %s is not one of the study", filepath.Join(in, model), ds)
+			}
 			l, err := readLayout(filepath.Join(in, model, ds))
 			if err != nil {
 				return err
 			}
-			exact, err := readQueries(filepath.Join(l.dir, "exact.tsv"), nil)
+			exact, err := l.read("exact.tsv", nil)
 			if err != nil {
 				return err
 			}
@@ -293,12 +318,19 @@ func collect(in, out string, limit int) error {
 			if err := l.store(filepath.Join(out, ds, model+".tsv.gz"), exact, keep, limit); err != nil {
 				return err
 			}
+			for rel, sum := range l.sums {
+				sums = append(sums, sum+"  "+filepath.ToSlash(filepath.Join(model, ds, rel)))
+			}
 		}
 	}
 	if err := os.WriteFile(filepath.Join(out, "grid.tsv"), grid.Bytes(), 0o644); err != nil {
 		return err
 	}
-	return os.WriteFile(filepath.Join(out, "select.tsv"), sel.Bytes(), 0o644)
+	if err := os.WriteFile(filepath.Join(out, "select.tsv"), sel.Bytes(), 0o644); err != nil {
+		return err
+	}
+	slices.SortFunc(sums, func(a, b string) int { return strings.Compare(a[66:], b[66:]) })
+	return os.WriteFile(filepath.Join(out, "per-query.sha256"), []byte(strings.Join(sums, "\n")+"\n"), 0o644)
 }
 
 // cells writes the grid's means and the selections of one model on one
@@ -312,7 +344,7 @@ func (l *layout) cells(model, ds string, ids []string, grid, sel *bytes.Buffer) 
 		}
 		points := make([]study.Point, 0, len(efs))
 		for _, ef := range efs {
-			qs, err := readQueries(filepath.Join(l.dir, b.run(ef)+".tsv"), ids)
+			qs, err := l.read(b.run(ef)+".tsv", ids)
 			if err != nil {
 				return nil, err
 			}
@@ -379,7 +411,7 @@ func (l *layout) store(path string, exact []eval.Query, keep []string, limit int
 		qs := exact
 		if run != "exact" {
 			var err error
-			if qs, err = readQueries(filepath.Join(l.dir, run+".tsv"), ids); err != nil {
+			if qs, err = l.read(run+".tsv", ids); err != nil {
 				return err
 			}
 		}

@@ -48,8 +48,10 @@ func run(args []string) error {
 			return err
 		}
 		var f []string
-		if *failed != "" {
-			f = strings.Split(*failed, ",")
+		for m := range strings.SplitSeq(*failed, ",") {
+			if m = strings.TrimSpace(m); m != "" {
+				f = append(f, m)
+			}
 		}
 		return tables(*results, *doc, f, *tier1)
 	}

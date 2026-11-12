@@ -280,9 +280,10 @@ func (rp *reporter) single(m, ds string, b build, t string, ef int) (string, err
 	if _, ok := r.grid[gridKey{m, ds, b}]; !ok {
 		return "–", nil
 	}
+	var sel study.Selection
 	if t != "" {
-		sel, err := r.selection(m, ds, b, t, false)
-		if err != nil {
+		var err error
+		if sel, err = r.selection(m, ds, b, t, false); err != nil {
 			return "", err
 		}
 		ef = sel.EF
@@ -295,7 +296,11 @@ func (rp *reporter) single(m, ds string, b build, t string, ef int) (string, err
 	if err != nil {
 		return "", err
 	}
-	return f4(mean(e) - mean(a)), nil
+	v := f4(mean(e) - mean(a))
+	if t != "" && sel.Status != study.Matched {
+		v += " †"
+	}
+	return v, nil
 }
 
 func (rp *reporter) datasets() []string {
@@ -336,7 +341,17 @@ func (rp *reporter) buildsTable() (string, error) {
 						if err != nil {
 							return "", err
 						}
-						row = append(row, f4(mean(loss)))
+						v := f4(mean(loss))
+						if t != "" {
+							ok, err := r.matched(m, ds, t)
+							if err != nil {
+								return "", err
+							}
+							if !ok {
+								v += " †"
+							}
+						}
+						row = append(row, v)
 						continue
 					}
 					v, err := rp.single(m, ds, b, t, 40)
@@ -349,7 +364,7 @@ func (rp *reporter) buildsTable() (string, error) {
 			rows = append(rows, row)
 		}
 	}
-	return "\nLoss L by build, averaged over queries: at ef 40, and at recall 0.95 with each build at its own ef. Seeds 1–4 is the mean of the confirmatory builds; M 16, M 8 and M 32 are seed 1 (amendment 14).\n\n" +
+	return "\nLoss L by build, averaged over queries: at ef 40, and at recall 0.95 with each build at its own ef. Seeds 1–4 is the mean of the confirmatory builds; M 16, M 8 and M 32 are seed 1 (amendment 14). † the build, or one of seeds 1–4, is not matched at 0.95; select.tsv gives its status.\n\n" +
 		table([]string{"Model", "Dataset", "ef 40: seed 0", "seeds 1–4", "M 16", "M 8", "M 32", "0.95: seed 0", "seeds 1–4", "M 16", "M 8", "M 32"}, rows), nil
 }
 

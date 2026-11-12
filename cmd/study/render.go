@@ -76,13 +76,15 @@ func (rp *reporter) confirmatory(h1 *study.Comparison, at95 opResult, h4 study.H
 		s95 = "none"
 	}
 	l40 := h1.Label(study.Delta)
-	rows := [][]string{{"H1", study.H1(l40).String(), strings.Join(s.cdatasets, ", "),
-		fmt.Sprintf("label %s; upper end of R̄'s 90%% interval %s; pairs rejected %s", l40, f4(h1.RangeBound), rejected(h1.Pairs))}}
+	beside := fmt.Sprintf("label %s; upper end of R̄'s 90%% interval %s; pairs rejected %s", l40, f4(h1.RangeBound), rejected(h1.Pairs))
+	if at95.at40 != nil {
+		beside += "; label over S_0.95 " + at95.at40.Label(study.Delta).String()
+	}
+	rows := [][]string{{"H1", study.H1(l40).String(), strings.Join(s.cdatasets, ", "), beside}}
 	h2 := at95.h2
-	beside := ""
+	beside = ""
 	if at95.cmp != nil {
-		beside = fmt.Sprintf("label %s; upper end of R̄'s 90%% interval %s; H1's label over S_0.95 %s",
-			at95.cmp.Label(study.Delta), f4(at95.cmp.RangeBound), at95.at40.Label(study.Delta))
+		beside = fmt.Sprintf("label %s; upper end of R̄'s 90%% interval %s", at95.cmp.Label(study.Delta), f4(at95.cmp.RangeBound))
 		if h2.Verdict == study.Supported {
 			beside += "; " + readings[h2.Reading]
 			if h2.Negligible {
@@ -94,12 +96,8 @@ func (rp *reporter) confirmatory(h1 *study.Comparison, at95 opResult, h4 study.H
 	h3 := at95.h3
 	beside = ""
 	if at95.cmp != nil {
-		var taus []string
-		for d, t := range h3.TauByDataset {
-			taus = append(taus, at95.datasets[d]+" "+f2(t))
-		}
 		beside = fmt.Sprintf("exact search orders %d of %d pairs; reversed %d; ordered by exact search and not by HNSW %d; τ-b %s (per dataset: %s)",
-			h3.Ordered, len(h3.Exact), h3.Reversed, h3.Unordered, f2(h3.Tau), strings.Join(taus, ", "))
+			h3.Ordered, len(h3.Exact), h3.Reversed, h3.Unordered, f2(h3.Tau), taus(at95))
 	}
 	rows = append(rows, []string{"H3", h3.Verdict.String(), s95, beside})
 	var h4ds []string
@@ -162,6 +160,22 @@ func (rp *reporter) confirmatory(h1 *study.Comparison, at95 opResult, h4 study.H
 	return b.String()
 }
 
+// taus is H3's τ-b on each dataset of the point.
+func taus(o opResult) string {
+	var v []string
+	for d, t := range o.h3.TauByDataset {
+		v = append(v, o.datasets[d]+" "+f2(t))
+	}
+	return strings.Join(v, ", ")
+}
+
+var shortReadings = map[study.Reading]string{
+	study.ReadingRemoved:    "dependence removed",
+	study.ReadingSideBySide: "side by side",
+	study.ReadingNeither:    "neither point",
+	study.ReadingAt95Only:   "agreement at the target only",
+}
+
 func yes(b bool) string {
 	if b {
 		return "yes"
@@ -187,17 +201,26 @@ func (rp *reporter) opsTable(ops []opResult) string {
 			bound, rej = f4(o.cmp.RangeBound), rejected(o.cmp.Pairs)
 		}
 		r = append(r, bound, rej)
-		h2, h3, rev, tau := "–", "–", "–", "–"
+		h2, reading, h3, rev, tau, byDS := "–", "–", "–", "–", "–", "–"
 		if o.h2 != nil {
 			h2, h3 = o.h2.Verdict.String(), o.h3.Verdict.String()
+			if o.h2.Verdict == study.Supported {
+				reading = shortReadings[o.h2.Reading]
+				if o.h2.Negligible {
+					reading += "; every L̄ negligible"
+				}
+			}
 		}
 		if o.cmp != nil && o.h3 != nil {
-			rev, tau = fmt.Sprintf("%d, %d", o.h3.Reversed, o.h3.Unordered), f2(o.h3.Tau)
+			rev, tau, byDS = fmt.Sprintf("%d, %d", o.h3.Reversed, o.h3.Unordered), f2(o.h3.Tau), taus(o)
 		}
-		rows = append(rows, append(r, h2, h3, rev, tau))
+		if o.at40 != nil {
+			reading = "ef 40 " + o.at40.Label(study.Delta).String() + "; " + reading
+		}
+		rows = append(rows, append(r, h2, reading, h3, rev, tau, byDS))
 	}
 	return "Operating points, the confirmatory models averaged over datasets. At a recall target, smallest ef over S_r (Section 3) or closest recall over every confirmatory dataset (amendment 10). H2 and H3 are read by their rules at each target (amendment 14).\n\n" +
-		table([]string{"Point", "Datasets", "label δ 0.0025", "δ 0.005", "δ 0.01", "R̄ bound", "pairs rejected", "H2", "H3", "reversed, unordered", "τ-b"}, rows)
+		table([]string{"Point", "Datasets", "label δ 0.0025", "δ 0.005", "δ 0.01", "R̄ bound", "pairs rejected", "H2", "H2 reading", "H3", "reversed, unordered", "τ-b", "τ-b per dataset"}, rows)
 }
 
 func dsTable(p point, fams [][]dsLabel) string {

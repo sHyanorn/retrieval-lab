@@ -66,15 +66,25 @@ jobs:
 
   encode:
     runs-on: ubuntu-latest
-    timeout-minutes: 30
+    timeout-minutes: 45
     steps:
       - uses: actions/checkout@3d3c42e5aac5ba805825da76410c181273ba90b1 # v7.0.1
       - uses: actions/setup-python@6d4fd22b20465ccc0f7354476588e8df7c9ca0e0 # v7.1.0
         with:
           python-version: "3.13"
+      - uses: actions/setup-go@b7ad1dad31e06c5925ef5d2fc7ad053ef454303e # v7.0.0
+        with:
+          go-version-file: go.mod
       - run: pip install --index-url https://download.pytorch.org/whl/cpu torch==2.15.0
       - run: pip install -r encode/requirements.txt
+      - run: scripts/data.sh "$RUNNER_TEMP/data" scifact
       # The encoding script on all-MiniLM-L6-v2 at its registered revision,
       # on the CPU: output layout, ID order, resumption, prompts, settings.
-      - run: python -m pytest -q -p no:cacheprovider
+      # The step-4 job: order, cut rule, checks, resumption, and its dry run
+      # on SciFact, killed and resumed.
+      - run: python -m pytest -q -p no:cacheprovider --basetemp "$RUNNER_TEMP/pytest"
         working-directory: encode
+        env:
+          RL_SCIFACT_DATA: ${{ runner.temp }}/data
+      # How many of the dry run's CPU reference files equal step 3's.
+      - run: python -c 'import glob, json, sys; [print(json.load(open(p))["reference"]) for p in glob.glob(sys.argv[1] + "/*/a/step4/out/summary.json")]' "$RUNNER_TEMP/pytest"

@@ -41,3 +41,13 @@ Committed before any vector, run or result of the study existed.
     - The rest of the grid: the means of every cell (amendment 9), descriptive, without a test.
 
     Why: Section 9 has its analyses run once by the code frozen at step 2; the list does not say what that code computes for each item.
+
+## 2026-11-12: ties at the cut of the approximate runs
+
+Committed before any vector, run or result of the study existed.
+
+15. Section 6, "Hits are scored and ordered as exact search scores them (D011), so an HNSW run differs from the exact run only in which documents it holds", with Section 7, "neighbour recall@10 and @100 against the exact run". Scores are compared as the run files print them, to six decimals, and runs are ranked as trec_eval ranks them: score descending, ties by document ID descending.
+    - Neighbour recall@k counts ties: a document of the approximate run's top k is found if the exact run holds it at a score above that of its k-th document; of the documents the exact run holds at exactly the k-th score, the run is credited with as many as it holds, up to the number of them in the exact run's top k.
+    - The approximate runs of the study take all `ef` documents of the search, rank them as trec_eval does, and keep the top 10 below `ef` 100 and the top 100 from 100 up. At `ef` 10 and 100 the search holds no more documents than the run keeps, so there a tie at the cut stays as the graph decided it; neighbour recall counts it as found.
+
+    Why: which of two documents tied at the cut a run keeps is not an error of the approximation.

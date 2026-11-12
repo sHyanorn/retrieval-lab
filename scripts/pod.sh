@@ -1,10 +1,13 @@
 #!/usr/bin/env bash
 # Sets up the step-4 pod and runs encode/job.py on the network volume; called
 # by scripts/pod-start.sh with the pod's start time. Everything it prints also
-# goes to VOL/step4/out/pod-<pod>-<start>.log.
+# goes to VOL/step4/out/pod-<pod>-<start>.log. At exit, whatever the outcome,
+# it prints the small files of step4/out with encode/report.py, so that they
+# leave the pod in its log, then waits GRACE_MIN minutes (default 5), within
+# the pod's time limit, for the log to be read while the pod lives.
 # Environment: HARD_LIMIT_MIN, PRICE; VOL (default /workspace/rl), LINE
 # (default 17.9), DEADLINE_H (the job's time limit, default an hour less than
-# the pod's), DRY_RUN=1 to skip the set-up and run job.py --dry-run.
+# the pod's), GRACE_MIN, DRY_RUN=1 to skip the set-up and run job.py --dry-run.
 set -euo pipefail
 start=${1:-$(date +%s)}
 repo=$(cd "$(dirname "$0")/.." && pwd)
@@ -13,6 +16,21 @@ out=$vol/step4/out
 mkdir -p "$out"
 exec > >(tee -a "$out/pod-${RUNPOD_POD_ID:-local}-$start.log") 2>&1
 cd "$repo"
+finish() {
+	code=$?
+	python3 encode/report.py "$out" || echo "encode/report.py failed"
+	wait=$((${GRACE_MIN:-5} * 60))
+	if [ -n "${HARD_LIMIT_MIN:-}" ]; then
+		left=$((start + HARD_LIMIT_MIN * 60 - $(date +%s)))
+		if [ "$left" -lt "$wait" ]; then wait=$left; fi
+	fi
+	if [ "$wait" -gt 0 ]; then
+		echo "exit $code in $wait s"
+		sleep "$wait"
+	fi
+	exit "$code"
+}
+trap finish EXIT
 echo "pod ${RUNPOD_POD_ID:-local}, commit $(git rev-parse HEAD), started $(date -u -d "@$start" +%FT%TZ)"
 deadline=${DEADLINE_H:-$(awk "BEGIN { print $HARD_LIMIT_MIN / 60 - 1 }")}
 args=(--vol "$vol" --price "$PRICE" --line "${LINE:-17.9}" --deadline-h "$deadline" --pod-start "$start" --agree "$repo/bin/agree")

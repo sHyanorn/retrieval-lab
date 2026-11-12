@@ -81,7 +81,7 @@ jobs:
       # The encoding script on all-MiniLM-L6-v2 at its registered revision,
       # on the CPU: output layout, ID order, resumption, prompts, settings.
       # The step-4 job: order, cut rule, checks, resumption, and its dry run
-      # on SciFact, killed and resumed.
+      # on SciFact, killed and resumed; the report of its files in the log.
       - run: python -m pytest -q -p no:cacheprovider --basetemp "$RUNNER_TEMP/pytest"
         working-directory: encode
         env:

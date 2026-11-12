@@ -126,7 +126,7 @@ func TestWorkersWriteTheSameRun(t *testing.T) {
 	for i := range n {
 		ids[i] = fmt.Sprintf("d%03d", i)
 		for j := range dim {
-			vecs[i*dim+j] = float32(math.Sin(float64((i%97+1)*(j+3)))) // i and i+97 share a vector
+			vecs[i*dim+j] = float32(math.Sin(float64((i%97 + 1) * (j + 3)))) // i and i+97 share a vector
 		}
 	}
 	qids, qvecs := make([]string, nq), make([]float32, nq*dim)

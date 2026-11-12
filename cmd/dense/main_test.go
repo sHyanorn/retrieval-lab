@@ -110,3 +110,60 @@ func TestCutRanksPrintedScores(t *testing.T) {
 		t.Errorf("cut = %v, want b then z", got)
 	}
 }
+
+// TestWorkersWriteTheSameRun writes the exact run of a small dataset with
+// one worker and with four, and wants the same file. Some documents share a
+// vector, so that ties are ordered by ID, and some queries are documents, so
+// that the self-hit is removed.
+func TestWorkersWriteTheSameRun(t *testing.T) {
+	const n, nq, dim = 300, 40, 4
+	dir := t.TempDir()
+	data := filepath.Join(dir, "data")
+	if err := os.MkdirAll(filepath.Join(data, "qrels"), 0o755); err != nil {
+		t.Fatal(err)
+	}
+	ids, vecs := make([]string, n), make([]float32, n*dim)
+	for i := range n {
+		ids[i] = fmt.Sprintf("d%03d", i)
+		for j := range dim {
+			vecs[i*dim+j] = float32(math.Sin(float64((i%97+1)*(j+3)))) // i and i+97 share a vector
+		}
+	}
+	qids, qvecs := make([]string, nq), make([]float32, nq*dim)
+	qrels := "query-id\tcorpus-id\tscore\n"
+	for i := range nq {
+		qids[i] = fmt.Sprintf("q%02d", i)
+		if i%5 == 0 {
+			qids[i] = ids[i*7]
+		}
+		copy(qvecs[i*dim:], vecs[(i*7)*dim:(i*7+1)*dim])
+		qrels += fmt.Sprintf("%s\t%s\t1\n", qids[i], ids[(i*11)%n])
+	}
+	if err := os.WriteFile(filepath.Join(data, "qrels", "test.tsv"), []byte(qrels), 0o644); err != nil {
+		t.Fatal(err)
+	}
+	if err := dense.WriteFaissFlat(filepath.Join(dir, "docs"), ids, vecs, dim); err != nil {
+		t.Fatal(err)
+	}
+	if err := dense.WriteFaissFlat(filepath.Join(dir, "queries"), qids, qvecs, dim); err != nil {
+		t.Fatal(err)
+	}
+	write := func(workers int) []byte {
+		out := filepath.Join(dir, fmt.Sprintf("w%d.run", workers))
+		if err := run(data, filepath.Join(dir, "docs"), filepath.Join(dir, "queries"), "", "", out, "t", 100, "", graph{workers: workers}); err != nil {
+			t.Fatal(err)
+		}
+		b, err := os.ReadFile(out)
+		if err != nil {
+			t.Fatal(err)
+		}
+		return b
+	}
+	one, four := write(1), write(4)
+	if len(one) == 0 || !bytes.Equal(one, four) {
+		t.Fatalf("runs differ: %d bytes with one worker, %d with four", len(one), len(four))
+	}
+	if bytes.Contains(one, []byte("d000 Q0 d000")) || !bytes.Contains(one, []byte("\nd035 Q0 d132 1 ")) {
+		t.Fatalf("self-hit kept, or tie not first by ID:\n%.400s", one)
+	}
+}

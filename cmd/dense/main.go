@@ -11,6 +11,9 @@
 // ef, the run of the same query vectors searched on the graph (D014), and
 // prints the search times as JSON. -run may then be left out to skip the
 // exact run.
+//
+// With -workers N the exact run searches N queries at a time; the run file
+// is the same as with one.
 package main
 
 import (
@@ -25,6 +28,7 @@ import (
 	"path/filepath"
 	"runtime"
 	"slices"
+	"sync"
 	"time"
 
 	"github.com/sHyanorn/retrieval-lab/internal/beir"
@@ -46,8 +50,9 @@ func main() {
 	m := flag.Int("m", dense.GraphConfig.M, "links per node of the graph")
 	efc := flag.Int("efc", dense.GraphConfig.EfConstruction, "efConstruction of the graph")
 	grid := flag.String("grid", "m3", "ef values searched: m3, the eight of M3, or study, the 65 of the study")
+	workers := flag.Int("workers", 1, "queries of the exact run searched at a time")
 	flag.Parse()
-	g := graph{seed: *seed, m: *m, efc: *efc, efs: dense.EFs}
+	g := graph{seed: *seed, m: *m, efc: *efc, efs: dense.EFs, workers: max(*workers, 1)}
 	switch *grid {
 	case "m3":
 	case "study":
@@ -68,6 +73,8 @@ type graph struct {
 	m, efc int
 	efs    []int
 	study  bool // the study's grid: runs cut as trec_eval ranks them
+	// workers is the number of queries of the exact run searched at a time.
+	workers int
 }
 
 func run(data, vectors, queryVecs, model, ortLib, out, tag string, k int, ann string, gr graph) error {
@@ -103,6 +110,10 @@ func run(data, vectors, queryVecs, model, ortLib, out, tag string, k int, ann st
 	}
 
 	if out != "" {
+		if gr.workers > 1 {
+			hits := searchAll(x, byQID, qids, k, gr.workers)
+			search = func(qid string, _ int) ([]eval.Hit, error) { return hits[qid], nil }
+		}
 		f, err := os.Create(out)
 		if err != nil {
 			return err
@@ -124,6 +135,31 @@ func run(data, vectors, queryVecs, model, ortLib, out, tag string, k int, ann st
 		return err
 	}
 	return json.NewEncoder(os.Stdout).Encode(t)
+}
+
+// searchAll searches every query of qids exactly, workers at a time; each
+// query's hits are those of x.Search alone.
+func searchAll(x *dense.Index, qvecs map[string][]float32, qids []string, k, workers int) map[string][]eval.Hit {
+	res := make([][]eval.Hit, len(qids))
+	next := make(chan int)
+	var wg sync.WaitGroup
+	for range workers {
+		wg.Go(func() {
+			for i := range next {
+				res[i] = x.Search(qvecs[qids[i]], k)
+			}
+		})
+	}
+	for i := range qids {
+		next <- i
+	}
+	close(next)
+	wg.Wait()
+	out := make(map[string][]eval.Hit, len(qids))
+	for i, qid := range qids {
+		out[qid] = res[i]
+	}
+	return out
 }
 
 type times struct {

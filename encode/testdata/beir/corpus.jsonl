@@ -1,0 +1,5 @@
+{"_id": "d1", "title": "Graphs", "text": "Navigable small world graphs index vectors."}
+{"_id": "d2", "title": "", "text": "Exact search scores every document."}
+{"_id": "d3", "title": "Fusion", "text": "Reciprocal rank fusion sums 1 / (60 + rank).\u200b"}
+{"_id": "d4", "title": "Recall", "text": "Neighbour recall compares two lists of documents."}
+{"_id": "d5", "title": "Seeds", "text": "A permutation fixes the order of insertion."}

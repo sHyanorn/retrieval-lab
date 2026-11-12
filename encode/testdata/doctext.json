@@ -1,0 +1,32 @@
+[
+ {
+  "title": "A",
+  "text": "b",
+  "want": "A b"
+ },
+ {
+  "title": "",
+  "text": "x",
+  "want": " x"
+ },
+ {
+  "title": "co\u00adoperate",
+  "text": "zero\u200bwidth\u200emark\ufeff",
+  "want": "cooperate zerowidthmark"
+ },
+ {
+  "title": "a\tb",
+  "text": "c\nd\re",
+  "want": "a\tb c\nd\re"
+ },
+ {
+  "title": "bell\u0007del\u007fnel\u0085",
+  "text": "pua\ue000",
+  "want": "belldelnel pua"
+ },
+ {
+  "title": "unassigned\u0378",
+  "text": "line\u2028sep",
+  "want": "unassigned line\u2028sep"
+ }
+]

@@ -1,2 +1,4 @@
 # Datasets, indexes and run files live outside the repository
 /bin/
+__pycache__/
+.pytest_cache/

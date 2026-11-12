@@ -18,6 +18,8 @@ The dense runs need ONNX Runtime and the model, which `make dense-assets` downlo
 
 `make ann ann-table` builds the HNSW graphs over the vectors of `DENSE_DATASETS`, writes and checks their runs and times the searches, and writes the HNSW tables. `make fuse fusion-table` fuses the BM25 and BGE runs of `DENSE_DATASETS`, checks the fused runs and writes the fusion tables.
 
+`encode/encode.py` encodes a BEIR dataset with one of the eight models of the study in `docs/PREREGISTRATION.md`, on sentence-transformers and PyTorch at the versions of `encode/requirements.txt` (torch first, from PyTorch's CPU or CUDA index): `python encode/encode.py --model ID --data DIR --out DIR [--limit N] [--device cuda]`. It writes the layout of `cmd/embed`, with the test queries' vectors under `queries`; an interrupted encoding resumes when rerun with the same settings.
+
 `make help` lists the steps, which also run on their own; `DATASETS="scifact nfcorpus"` limits `data`, `bm25` and `check` to some datasets. `make reproduce`, `make table` and `make reference` tabulate all six datasets and fail without the runs of all six. `make reference` ranks with Bleve's own BM25 and writes the reference table.
 
 ## Limits

@@ -64,14 +64,9 @@ var Tolerance = big.NewRat(1, 100)
 // Select chooses the smallest ef whose recall is at least r, comparing
 // exactly.
 func Select(points []Point, r *big.Rat) (Selection, error) {
-	if len(points) == 0 {
-		return Selection{}, errors.New("no points to select from")
-	}
-	ps := slices.SortedFunc(slices.Values(points), func(a, b Point) int { return a.EF - b.EF })
-	for i, p := range ps {
-		if i > 0 && p.EF == ps[i-1].EF {
-			return Selection{}, fmt.Errorf("ef %d given twice", p.EF)
-		}
+	ps, err := sortPoints(points)
+	if err != nil {
+		return Selection{}, err
 	}
 	for i, p := range ps {
 		if p.Recall.Cmp(r) < 0 {
@@ -88,6 +83,36 @@ func Select(points []Point, r *big.Rat) (Selection, error) {
 	}
 	last := ps[len(ps)-1]
 	return Selection{EF: last.EF, Reached: last.Recall, Status: Unreached}, nil
+}
+
+// Closest chooses the ef whose recall is closest to r, the smaller of two
+// equally close, comparing exactly (amendment 10).
+func Closest(points []Point, r *big.Rat) (Point, error) {
+	ps, err := sortPoints(points)
+	if err != nil {
+		return Point{}, err
+	}
+	best, dist := ps[0], new(big.Rat).Abs(new(big.Rat).Sub(ps[0].Recall, r))
+	for _, p := range ps[1:] {
+		if d := new(big.Rat).Abs(new(big.Rat).Sub(p.Recall, r)); d.Cmp(dist) < 0 {
+			best, dist = p, d
+		}
+	}
+	return best, nil
+}
+
+// sortPoints returns the points in ascending ef, each ef once.
+func sortPoints(points []Point) ([]Point, error) {
+	if len(points) == 0 {
+		return nil, errors.New("no points to select from")
+	}
+	ps := slices.SortedFunc(slices.Values(points), func(a, b Point) int { return a.EF - b.EF })
+	for i, p := range ps {
+		if i > 0 && p.EF == ps[i-1].EF {
+			return nil, fmt.Errorf("ef %d given twice", p.EF)
+		}
+	}
+	return ps, nil
 }
 
 // AllMatched reports whether a model is matched on a dataset: every one

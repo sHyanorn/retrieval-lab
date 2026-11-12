@@ -96,3 +96,35 @@ func TestRecallSet(t *testing.T) {
 		t.Errorf("RecallSet = %v, want [d1 d3]", got)
 	}
 }
+
+func TestClosest(t *testing.T) {
+	pts := []Point{
+		{EF: 12, Recall: big.NewRat(99, 100)},
+		{EF: 11, Recall: big.NewRat(94, 100)},
+		{EF: 10, Recall: big.NewRat(92, 100)},
+	}
+	// 0.93 − 0.92 and 0.94 − 0.93 tie exactly: the smaller ef. In float64
+	// the second difference is the smaller, and ef 11 would be chosen.
+	lo, r, hi := 0.92, 0.93, 0.94
+	if hi-r >= r-lo {
+		t.Fatal("the float64 trap this test relies on is gone")
+	}
+	got, err := Closest(pts, big.NewRat(93, 100))
+	if err != nil || got.EF != 10 || got.Recall.Cmp(big.NewRat(92, 100)) != 0 {
+		t.Fatalf("Closest(0.93) = %+v, %v; want ef 10", got, err)
+	}
+	for _, c := range []struct {
+		r  *big.Rat
+		ef int
+	}{{big.NewRat(98, 100), 12}, {big.NewRat(1, 2), 10}} {
+		if got, err := Closest(pts, c.r); err != nil || got.EF != c.ef {
+			t.Fatalf("Closest(%s) = %+v, %v; want ef %d", c.r.FloatString(2), got, err, c.ef)
+		}
+	}
+	if _, err := Closest(nil, big.NewRat(1, 2)); err == nil {
+		t.Fatal("want an error with no points")
+	}
+	if _, err := Closest([]Point{pts[0], pts[0]}, big.NewRat(1, 2)); err == nil {
+		t.Fatal("want an error for an ef given twice")
+	}
+}

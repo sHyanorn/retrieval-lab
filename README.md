@@ -20,6 +20,8 @@ The dense runs need ONNX Runtime and the model, which `make dense-assets` downlo
 
 `encode/encode.py` encodes a BEIR dataset with one of the eight models of the study in `docs/PREREGISTRATION.md`, on sentence-transformers and PyTorch at the versions of `encode/requirements.txt` (torch first, from PyTorch's CPU or CUDA index): `python encode/encode.py --model ID --data DIR --out DIR [--limit N] [--device cuda]`. It writes the layout of `cmd/embed`, with the test queries' vectors under `queries`; an interrupted encoding resumes when rerun with the same settings.
 
+`go run ./cmd/study collect -in DIR` reads the per-query measures that `cmd/eval -per-query` writes for every run of the study, laid out as `DIR/<model>/<dataset>/{exact.tsv, m16-efc200-s<seed>/ef<ef>.tsv, rrf-exact.tsv, rrf-s<seed>-ef100.tsv, ...}`, and writes into `study/results/` the means of every cell of the grid, the recall selections of every build and the per-query measures of the points the readings use. `go run ./cmd/study tables` computes the readings from those files alone and writes them into `docs/STUDY.md`.
+
 `make help` lists the steps, which also run on their own; `DATASETS="scifact nfcorpus"` limits `data`, `bm25` and `check` to some datasets. `make reproduce`, `make table` and `make reference` tabulate all six datasets and fail without the runs of all six. `make reference` ranks with Bleve's own BM25 and writes the reference table.
 
 ## Limits

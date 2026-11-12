@@ -51,3 +51,14 @@ Committed before any vector, run or result of the study existed.
     - The approximate runs of the study take all `ef` documents of the search, rank them as trec_eval does, and keep the top 10 below `ef` 100 and the top 100 from 100 up. At `ef` 10 and 100 the search holds no more documents than the run keeps, so there a tie at the cut stays as the graph decided it; neighbour recall counts it as found.
 
     Why: which of two documents tied at the cut a run keeps is not an error of the approximation.
+
+## 2026-11-12: the GPU session of step 4
+
+Committed before any vector, run or result of the study existed.
+
+16. Section 11, step 4, with Section 12, Order of encoding and the cut rule, and Section 5: how the GPU session reads them.
+    - Section 12, "if they alone would exceed the tier's GPU line with its reserve, the session stops after the measurement": it stops if the projection of the six small datasets and Quora exceeds the GPU line times 1.2 (21.48 USD in tier 2b), or exceeds the pod's time limit less an hour. Why: the reserve is the 20% above the line, and a projection past the time limit cannot finish in the pod.
+    - Section 12, "After the rate measurement the cost of the approved tier is projected": the projection is the hours elapsed, a fixed 0.25 hours for what is left besides encoding (model loads, downloads, check 2, checksums), and the tokens still to encode (Section 4, scaled by each model's forward cost) over the measured rate; it is held under the GPU line and under the pod's time limit less an hour (D017). Why: the GPU hours of the table include about an hour of set-up and checks.
+    - Section 12, "If it exceeds the tier's GPU line, NQ is cut for one model after another in this order until it does not": before each model's NQ the projection is made again, at the rate measured over the steps done. It can only add cuts, in the same order; a cut is not undone, and each is logged with its time and the rate it used. Why: so that the time limit does not end a model's NQ half encoded.
+    - Section 5, Encoding, "A Python script on sentence-transformers and PyTorch ... encodes on the GPU": batches of 128 on the GPU; the CPU reference of check 1 keeps the 32 of step 3. Why: the registration fixes no batch size, and check 1 measures what the difference changes.
+    - Section 5, check 1, "before the GPU is rented, the same script encodes the first 1,000 documents and all test queries of SciFact for each model on the CPU. Every GPU vector must have a cosine of at least 0.9999 to its CPU vector": the GPU vectors are compared with CPU vectors that step 3's script, `scripts/reference.sh`, computes again on the pod's CPU. Whether they equal the checksums committed at step 3 (`results/reference-scifact-cpu.sha256`) is recorded, not required. Why: the last bits of a CPU vector depend on the CPU, and they already differ between machines of CI.

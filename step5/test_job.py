@@ -53,6 +53,12 @@ def test_bge_base_two_anchors_each_by_its_own_kind():
     assert got == {(m, "fiqa", "mteb"): "investigate", (m, "fiqa", "pyserini"): "investigate"}
 
 
+def test_an_exception_waits_for_the_models_other_runs():
+    a = anchors(("m", "fiqa", "mteb", "0.40", True), ("m", "nq", "mteb", "0.50", False))
+    got = classes(J.classify({("m", "fiqa"): "0.4100"}, a, unrun={"m"}))
+    assert got == {("m", "fiqa", "mteb"): "pending"}
+
+
 def test_bm25_is_never_an_exception():
     a = anchors(("bm25", "nq", "pyserini", "0.3055", False))
     assert classes(J.classify({("bm25", "nq"): "0.3200"}, a)) == {("bm25", "nq", "pyserini"): "investigate"}

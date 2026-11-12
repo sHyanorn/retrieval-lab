@@ -15,8 +15,9 @@ outside its anchor's tolerance does not stop the job: it is listed, with its
 class, in check3.tsv and the summary.
 
 A unit (one exact run, or one BM25 run) counts as done once its record
-done/<unit>.json exists and the SHA-256 of its run and per-query files equal
-the record's; a rerun skips it, and redoes a unit without a valid record from
+done/<unit>.json exists, the SHA-256 of its run and per-query files equal the
+record's and, for an exact run, the record names the vector checksums of
+--step4; a rerun skips it, and redoes a unit without a valid record from
 the start. Files are written beside their final name and renamed into place.
 
 --deadline-h counts from --start, the pod's start: no exact run starts that
@@ -33,7 +34,8 @@ VOL/step5/out                              log, summary, check 3, checksums
 
 Exit status: 0 done, every run inside its anchors or a recorded exception;
 3 done, with deviations to investigate or a run without an anchor; 2 stopped
-by a checksum or by trec_eval; 4 stopped by --deadline-h; 1 an error.
+by a checksum, a missing vector file or trec_eval; 4 stopped by --deadline-h;
+1 an error or a signal.
 
 usage: python3 step5/job.py --vol DIR --step4 results/step4/<attempt> --bin DIR --trec-eval PATH [--workers N]
 """
@@ -64,6 +66,10 @@ TOL = decimal.Decimal("0.005")  # Section 5, check 3; SPEC §4
 
 class Stop(Exception):
     """An input or a run failed a check that ends the job."""
+
+
+class Ended(Exception):
+    """The job is ending for a cause raised elsewhere."""
 
 
 class Deadline(Exception):
@@ -113,9 +119,11 @@ def delta(ours, anchor):
     return decimal.Decimal(ours) - anchor
 
 
-def classify(cells, anchors):
-    """Check 3 with amendment 18. cells: {(model, dataset): nDCG@10 as printed}. Returns one row per anchor:
-    (model, dataset, source, ours, anchor, delta, weak, class), class "inside", "exception" or "investigate"."""
+def classify(cells, anchors, unrun=()):
+    """Check 3 with amendment 18. cells: {(model, dataset): nDCG@10 as printed}; unrun: models with a dataset
+    encoded and not yet run. Returns one row per anchor: (model, dataset, source, ours, anchor, delta, weak,
+    class), class "inside", "exception", "pending" (an exception if the model's runs still to do are inside)
+    or "investigate"."""
     rows, out_by_model = [], {}
     for (m, d), v in sorted(cells.items()):
         for source, a, weak in anchors.get((m, d), []):
@@ -130,7 +138,7 @@ def classify(cells, anchors):
             # An exception: the model's only dataset outside, and every anchor it misses there is weak.
             alone = out_by_model[m] == {d}
             weak = all(x[6] for x in rows if x[0] == m and x[1] == d and x[7] != "inside")
-            r[7] = "exception" if alone and weak and m != "bm25" else "investigate"
+            r[7] = ("pending" if m in unrun else "exception") if alone and weak and m != "bm25" else "investigate"
     return rows
 
 
@@ -153,6 +161,7 @@ class Job:
                     h, rel = ln.split()
                     self.sums[rel] = h
         steps = {(s["model"], s["dataset"]) for s in summary["steps"]}
+        self.encoded = steps
         self.cells = [(m, d) for d in DATASETS for m in summary_models(summary) if (m, d) in steps]
         if a.models:
             self.cells = [c for c in self.cells if c[0] in a.models]
@@ -174,24 +183,34 @@ class Job:
             with open(os.path.join(self.out, "job.log"), "a", encoding="utf-8") as f:
                 f.write(line + "\n")
 
-    def sh(self, cmd, stdout=None):
-        """Runs cmd; end() terminates it."""
-        self.log("run: " + " ".join(cmd))
-        p = subprocess.Popen(cmd, cwd=REPO, stdout=stdout)
+    def sh(self, cmd, stdout=None, quiet=False):
+        """Runs cmd; end() terminates it. With stdout=subprocess.PIPE returns its output and stderr."""
+        if not quiet:
+            self.log("run: " + " ".join(cmd))
+        p = subprocess.Popen(cmd, cwd=REPO, stdout=stdout, stderr=subprocess.STDOUT if stdout == subprocess.PIPE else None,
+                             text=stdout == subprocess.PIPE)
         with self.proc_lock:
             self.procs.add(p)
         if self.stopped.is_set():
             p.terminate()
         try:
-            code = p.wait()
+            out = p.communicate()[0]
         finally:
             with self.proc_lock:
                 self.procs.discard(p)
-        if code != 0:
-            raise subprocess.CalledProcessError(code, cmd)
+        if p.returncode != 0:
+            raise subprocess.CalledProcessError(p.returncode, cmd, out)
+        return out
+
+    def halt(self):
+        """Raises if the job is ending: nothing is renamed into place or recorded after a stop."""
+        if self.stopped.is_set():
+            raise Ended()
 
     def end(self, e):
         """Ends the job: keeps the first cause, stops both threads, terminates what runs."""
+        if not isinstance(e, (Ended, subprocess.CalledProcessError)) or not self.stopped.is_set():
+            self.log(f"end: {type(e).__name__}: {e}")
         with self.proc_lock:
             if self.cause is None:
                 self.cause = e
@@ -206,10 +225,14 @@ class Job:
     def record(self, unit):
         return os.path.join(self.s5, "done", unit + ".json")
 
-    def done(self, unit, run, perquery):
-        """The unit's record, if it exists and the run and per-query files are those it names."""
+    def done(self, unit, run, perquery, vectors=None):
+        """The unit's record, if it exists, names these vector checksums and the run and per-query files on disk."""
         r = read_json(self.record(unit))
         if r is None:
+            return None
+        if vectors is not None and r.get("vectors_sha256") != vectors:
+            self.log(f"{unit}: the record names other vectors; done again")
+            os.remove(self.record(unit))
             return None
         for path, key in ((run, "run_sha256"), (perquery, "perquery_sha256")):
             if not os.path.exists(path) or sha256(path) != r[key]:
@@ -228,42 +251,60 @@ class Job:
                 open(ok, "w").close()
         return path
 
-    def verify(self, m, d):
-        """Every vector file of (m, d) against step 4's committed SHA-256."""
+    def want(self, m, d):
+        """Step 4's committed SHA-256 of each vector file of (m, d)."""
+        out = {}
         for f in FILES:
             rel = f"{d}/{slug(m)}/{f}"
-            want = self.sums.get(rel)
-            if want is None:
+            if rel not in self.sums:
                 raise Stop(f"{rel}: no SHA-256 in {self.a.step4}/vectors.sha256")
+            out[f] = self.sums[rel]
+        return out
+
+    def verify(self, m, d):
+        """Every vector file of (m, d) against step 4's committed SHA-256."""
+        for f, want in self.want(m, d).items():
+            rel = f"{d}/{slug(m)}/{f}"
+            if not os.path.isfile(os.path.join(self.vectors, rel)):
+                raise Stop(f"{rel}: missing")
+            self.halt()
             got = sha256(os.path.join(self.vectors, rel))
             if got != want:
                 raise Stop(f"{rel}: SHA-256 {got}, step 4's {want}")
 
     def evaluate(self, data, run, perquery, unit):
         """trec_eval against cmd/eval; then nDCG@10 as printed, and the per-query measures."""
-        p = subprocess.run([os.path.join(REPO, "scripts", "check-eval.sh"), self.a.trec_eval, self.bin("eval"), data, run],
-                           cwd=REPO, capture_output=True, text=True)
-        if p.returncode != 0:
-            raise Stop(f"{unit}: cmd/eval and trec_eval differ or failed: {(p.stdout + p.stderr)[-2000:]}")
-        p = subprocess.run([self.bin("eval"), "-data", data, "-run", run], capture_output=True, text=True, check=True)
-        means = {ln.split()[0]: ln.split()[2] for ln in p.stdout.splitlines() if ln.split()[1:2] == ["all"]}
+        try:
+            self.sh([os.path.join(REPO, "scripts", "check-eval.sh"), self.a.trec_eval, self.bin("eval"), data, run],
+                    stdout=subprocess.PIPE, quiet=True)
+        except subprocess.CalledProcessError as e:
+            self.halt()  # ended by the other thread, not a disagreement
+            raise Stop(f"{unit}: cmd/eval and trec_eval differ or failed: {(e.output or '')[-2000:]}") from None
+        out = self.sh([self.bin("eval"), "-data", data, "-run", run], stdout=subprocess.PIPE, quiet=True)
+        means = {ln.split()[0]: ln.split()[2] for ln in out.splitlines() if ln.split()[1:2] == ["all"]}
+        tmp = os.path.join(self.s5, "tmp", unit.replace("/", "_") + ".tsv")  # outside study/
+        os.makedirs(os.path.dirname(tmp), exist_ok=True)
+        with open(tmp, "w", encoding="utf-8") as f:
+            self.sh([self.bin("eval"), "-per-query", "-data", data, "-run", run], stdout=f, quiet=True)
+        self.halt()
         os.makedirs(os.path.dirname(perquery), exist_ok=True)
-        with open(perquery + ".tmp", "w", encoding="utf-8") as f:
-            subprocess.run([self.bin("eval"), "-per-query", "-data", data, "-run", run], stdout=f, check=True)
-        os.replace(perquery + ".tmp", perquery)
+        os.replace(tmp, perquery)
         return means["ndcg_cut_10"], means["recall_100"]
 
     def exact(self, m, d):
         unit = f"exact/{slug(m)}/{d}"
         run = os.path.join(self.s5, "runs", slug(m), d + ".run")
         perquery = os.path.join(self.s5, "study", slug(m), d, "exact.tsv")
-        if r := self.done(unit, run, perquery):
+        want = self.want(m, d)
+        if r := self.done(unit, run, perquery, want):
             return r
         data = self.dataset(d)
         vec = os.path.join(self.vectors, d, slug(m))
+        if not os.path.isfile(os.path.join(vec, "index")):
+            raise Stop(f"{d}/{slug(m)}/index: missing")
         work = os.path.getsize(os.path.join(vec, "index")) * queries(data)
         rate = (self.secs / self.work) if self.secs > 0 else self.prior_rate
-        if rate and self.a.deadline_h:
+        if rate and self.a.deadline_h is not None:
             left = self.start + self.a.deadline_h * 3600 - time.time()
             need = work * rate
             if need > left:
@@ -276,9 +317,11 @@ class Job:
         secs = time.time() - t
         self.work, self.secs = self.work + work, self.secs + secs
         ndcg, recall = self.evaluate(data, run + ".tmp", perquery, unit)
+        self.halt()
         os.replace(run + ".tmp", run)
         r = {"model": m, "dataset": d, "ndcg_cut_10": ndcg, "recall_100": recall, "seconds": round(secs, 1),
-             "work": work, "workers": self.a.workers, "run_sha256": sha256(run), "perquery_sha256": sha256(perquery)}
+             "work": work, "workers": self.a.workers, "run_sha256": sha256(run), "perquery_sha256": sha256(perquery),
+             "vectors_sha256": want}
         write_json(self.record(unit), r)
         self.log(f"exact {m} on {d}: nDCG@10 {ndcg}, {r['seconds']} s")
         return r
@@ -299,6 +342,7 @@ class Job:
         secs = time.time() - t
         os.replace(run + ".stats.json.tmp", run + ".stats.json")
         ndcg, recall = self.evaluate(data, run + ".tmp", perquery, unit)
+        self.halt()
         os.replace(run + ".tmp", run)
         shutil.rmtree(index, ignore_errors=True)
         r = {"model": "bm25", "dataset": d, "ndcg_cut_10": ndcg, "recall_100": recall, "seconds": round(secs, 1),
@@ -318,8 +362,9 @@ class Job:
 
     @property
     def prior_rate(self):
-        """Seconds per unit of work of the exact runs recorded before this pod's first."""
-        rs = [r for m, d in self.cells if (r := read_json(self.record(f"exact/{slug(m)}/{d}"))) and r.get("work")]
+        """Seconds per unit of work of the exact runs recorded before this pod's first, with as many workers."""
+        rs = [r for m, d in self.cells if (r := read_json(self.record(f"exact/{slug(m)}/{d}")))
+              and r.get("work") and r.get("workers") == self.a.workers]
         work = sum(r["work"] for r in rs)
         return sum(r["seconds"] for r in rs) / work if work else None
 
@@ -327,7 +372,7 @@ class Job:
         self.log(f"start: {len(self.cells)} exact runs, BM25 on {', '.join(self.bm25) or 'none'}, {self.a.workers} workers")
         results, bm = [], []
         timer = None
-        if self.a.deadline_h:
+        if self.a.deadline_h is not None:
             left = self.start + self.a.deadline_h * 3600 - time.time()
             timer = threading.Timer(max(left, 0), lambda: self.end(Deadline(f"{self.a.deadline_h} h from the pod's start")))
             timer.daemon = True
@@ -352,7 +397,8 @@ class Job:
     def finish(self, status, reason, results):
         anchors = read_anchors(self.a.anchors)
         cells = {(r["model"], r["dataset"]): r["ndcg_cut_10"] for r in results}
-        rows = classify(cells, anchors)
+        unrun = {m for m, d in self.encoded if (m, d) not in cells}
+        rows = classify(cells, anchors, unrun)
         with open(os.path.join(self.out, "check3.tsv"), "w", encoding="utf-8") as f:
             f.write("model\tdataset\tsource\tndcg_cut_10\tanchor\tdelta\tweak\tclass\n")
             for r in rows:
@@ -379,7 +425,8 @@ class Job:
             "not_encoded_in_step4": self.not_encoded,
             "step4_cuts": self.cuts,
             "check3": {"inside": sum(r[7] == "inside" for r in rows), "exception": [r[:3] for r in rows if r[7] == "exception"],
-                       "investigate": investigate, "no_anchor": missing_anchor},
+                       "pending": [r[:3] for r in rows if r[7] == "pending"], "investigate": investigate,
+                       "no_anchor": missing_anchor},
         }
         write_json(os.path.join(self.out, "summary.json"), s)
         self.log(f"{status}{': ' + reason if reason else ''}; {len(results)} runs, {len(investigate)} deviations to investigate")
@@ -405,14 +452,19 @@ class Job:
         return code or c
 
     def collected(self):
-        """The units done so far, from their records."""
+        """The units done so far: records that name the files on disk, as done() checks them."""
         out = []
         for m, d in self.cells:
-            r = read_json(self.record(f"exact/{slug(m)}/{d}"))
+            try:
+                want = self.want(m, d)
+            except Stop:
+                continue
+            r = self.done(f"exact/{slug(m)}/{d}", os.path.join(self.s5, "runs", slug(m), d + ".run"),
+                          os.path.join(self.s5, "study", slug(m), d, "exact.tsv"), want)
             if r:
                 out.append(r)
         for d in self.bm25:
-            r = read_json(self.record(f"bm25/{d}"))
+            r = self.done(f"bm25/{d}", os.path.join(self.s5, "runs", "bm25", d + ".run"), os.path.join(self.s5, "bm25", d + ".tsv"))
             if r:
                 out.append(r)
         return out

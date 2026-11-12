@@ -10,14 +10,17 @@
 # GRACE_MIN, DEADLINE_H (hours from the pod's start; default its time limit
 # less the grace and a quarter of an hour), SKIP_SETUP=1 where Go 1.27.3 is
 # installed, JOB_ARGS (more arguments of step5/job.py, for a dry run). The
-# binaries, trec_eval and the BM25 indexes stay on the pod's own disk; only
-# run files, per-query measures and records go to VOL.
+# binaries, trec_eval and the BM25 indexes stay on the pod's own disk; VOL
+# gets the datasets, run files, per-query measures, records and logs. The
+# report files of an earlier pod are removed first, so that the log never
+# carries them; the job writes them again from its records.
 set -euo pipefail
 start=${1:-$(date +%s)}
 repo=$(cd "$(dirname "$0")/.." && pwd)
 vol=${VOL:-/workspace/rl}
 out=$vol/step5/out
 mkdir -p "$out"
+rm -f "$out/summary.json" "$out/check3.tsv" "$out/runs.sha256" "$out/perquery.sha256"
 exec > >(tee -a "$out/pod-${RUNPOD_POD_ID:-local}-$start.log") 2>&1
 cd "$repo"
 finish() {

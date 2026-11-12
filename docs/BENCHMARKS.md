@@ -24,6 +24,13 @@ Done once, against castorini/eval at commit 5a26fd8d1a9e8408ae9a2606e95852312f1e
 - The test query IDs and texts are identical on all six datasets.
 - The qrels are identical on five. On TREC-COVID the BEIR file holds two more lines, both with grade −1 (query 38, `9hbib8b3`; query 50, `svo94kuo`). trec_eval treats a negative grade as unjudged, so neither line changes nDCG@10 or Recall@100.
 
+Quora and NQ (docs/PREREGISTRATION.md, Section 4), against the same commit, with `python3 -I scripts/datacheck.py DIR quora nq`, which downloads both zips with `scripts/data.sh`, checks Pyserini's files against `scripts/datacheck.sha256` and compares them:
+
+| Dataset | Test queries | Qrels lines | Query IDs | Query texts | Qrels |
+|---|---|---|---|---|---|
+| Quora | 10,000 | 15,675 | identical | identical | identical |
+| NQ | 3,452 | 4,201 | identical | identical | identical |
+
 ## Evaluation
 
 `cmd/eval` scores a run file against the qrels as `trec_eval -c -q -m ndcg_cut.10 -m recall.100` does (SPEC §5). `scripts/check-eval.sh` compares the two outputs as text; every run file in the results passes it.

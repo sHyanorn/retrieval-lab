@@ -1,0 +1,4 @@
+935d4b66229ef34e69b5935235abebdbffc3d9754fc45cb6eaf0c63d7692f0fe  qrels/qrels.beir-v1.0.0-nq.test.txt
+d03814d38a4a2c097fea81d5e4c774071f8667315a3c53b02e448bcdec4db57b  qrels/qrels.beir-v1.0.0-quora.test.txt
+9a278c94c9c7d6410672544fa5d1c89fd7816b074854e0179c9b8bd61b977bb7  topics/topics.beir-v1.0.0-nq.test.tsv.gz
+4f644dc5c16e7bef5831bdb5df3165aaf77dbaf577f482dc75b1741612dabd6c  topics/topics.beir-v1.0.0-quora.test.tsv.gz

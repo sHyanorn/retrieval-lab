@@ -5,15 +5,19 @@
 // writes them, or else each query, with the BGE instruction before it, is
 // encoded with BGE-base-en-v1.5 on ONNX Runtime.
 //
-// With -ann it also builds an HNSW graph over the same vectors and writes,
-// for each ef, the run of the same query vectors searched on the graph
-// (D014), and prints the search times as JSON.
+// With -ann it also builds an HNSW graph over the same vectors, with -m
+// links and -efc efConstruction, inserting the documents in the order of
+// build seed -seed (docs/PREREGISTRATION.md, Section 6), and writes, for each
+// ef, the run of the same query vectors searched on the graph (D014), and
+// prints the search times as JSON. -run may then be left out to skip the
+// exact run.
 package main
 
 import (
 	"bufio"
 	"cmp"
 	"encoding/json"
+	"errors"
 	"flag"
 	"fmt"
 	"maps"
@@ -26,7 +30,6 @@ import (
 	"github.com/sHyanorn/retrieval-lab/internal/beir"
 	"github.com/sHyanorn/retrieval-lab/internal/dense"
 	"github.com/sHyanorn/retrieval-lab/internal/eval"
-	"github.com/sHyanorn/retrieval-lab/internal/hnsw"
 )
 
 func main() {
@@ -39,14 +42,27 @@ func main() {
 	ann := flag.String("ann", "", "also write the HNSW run for each ef to <ann>-ef<ef>.run")
 	queryVecs := flag.String("queries", "", "test query vectors written by encode/encode.py, in place of encoding the queries with -model")
 	tag := flag.String("tag", "bge-base-en-v1.5", "run tag")
+	seed := flag.Uint64("seed", 0, "build seed of the graph: 0 inserts in corpus order")
+	m := flag.Int("m", dense.GraphConfig.M, "links per node of the graph")
+	efc := flag.Int("efc", dense.GraphConfig.EfConstruction, "efConstruction of the graph")
 	flag.Parse()
-	if err := run(*data, *vectors, *queryVecs, *model, *ortLib, *out, *tag, *k, *ann); err != nil {
+	g := graph{seed: *seed, m: *m, efc: *efc}
+	if err := run(*data, *vectors, *queryVecs, *model, *ortLib, *out, *tag, *k, *ann, g); err != nil {
 		fmt.Fprintln(os.Stderr, "dense:", err)
 		os.Exit(1)
 	}
 }
 
-func run(data, vectors, queryVecs, model, ortLib, out, tag string, k int, ann string) error {
+// graph is the build of the HNSW graph.
+type graph struct {
+	seed   uint64
+	m, efc int
+}
+
+func run(data, vectors, queryVecs, model, ortLib, out, tag string, k int, ann string, gr graph) error {
+	if out == "" && ann == "" {
+		return errors.New("neither -run nor -ann given")
+	}
 	qrels, err := beir.Qrels(data, "test")
 	if err != nil {
 		return err
@@ -75,19 +91,24 @@ func run(data, vectors, queryVecs, model, ortLib, out, tag string, k int, ann st
 		return x.Search(byQID[qid], k), nil
 	}
 
-	f, err := os.Create(out)
-	if err != nil {
-		return err
+	if out != "" {
+		f, err := os.Create(out)
+		if err != nil {
+			return err
+		}
+		w := bufio.NewWriter(f)
+		err = eval.RunQueries(w, search, queries, k, tag)
+		if err == nil {
+			err = w.Flush()
+		}
+		if err = cmp.Or(err, f.Close()); err != nil {
+			return err
+		}
 	}
-	w := bufio.NewWriter(f)
-	err = eval.RunQueries(w, search, queries, k, tag)
-	if err == nil {
-		err = w.Flush()
+	if ann == "" {
+		return nil
 	}
-	if err = cmp.Or(err, f.Close()); err != nil || ann == "" {
-		return err
-	}
-	t, err := approximate(x, byQID, dim, k, ann, tag)
+	t, err := approximate(x, byQID, k, ann, tag, gr, out != "")
 	if err != nil {
 		return err
 	}
@@ -105,20 +126,23 @@ type efTimes struct {
 	times
 }
 
-// approximate builds the graph over x and writes one run per ef of
+// approximate builds the graph of gr over x and writes one run per ef of
 // dense.EFs, dense.GraphDepth(ef) hits deep. A query's own document is
 // skipped inside the search, so each query gets that many lines. It returns
-// the time per query on one goroutine, of exact search at depth k and of
-// the graph at each ef.
-func approximate(x *dense.Index, qvecs map[string][]float32, dim, k int, prefix, tag string) (any, error) {
+// the time per query on one goroutine of the graph at each ef and, with
+// timeExact, of exact search at depth k.
+func approximate(x *dense.Index, qvecs map[string][]float32, k int, prefix, tag string, gr graph, timeExact bool) (any, error) {
 	qids := slices.Sorted(maps.Keys(qvecs))
 	start := time.Now()
-	g, err := hnsw.Build(x.Vecs, dim, dense.GraphConfig)
+	g, err := x.BuildGraph(gr.m, gr.efc, gr.seed)
 	if err != nil {
 		return nil, err
 	}
 	build := time.Since(start).Seconds()
-	exact := timed(qids, func(qid string) { x.Search(qvecs[qid], k) })
+	out := map[string]any{"build_seconds": build}
+	if timeExact {
+		out["exact"] = timed(qids, func(qid string) { x.Search(qvecs[qid], k) })
+	}
 	var graph []efTimes
 	for _, ef := range dense.EFs {
 		k := dense.GraphDepth(ef)
@@ -129,7 +153,8 @@ func approximate(x *dense.Index, qvecs map[string][]float32, dim, k int, prefix,
 			return nil, err
 		}
 	}
-	return map[string]any{"build_seconds": build, "exact": exact, "hnsw": graph}, nil
+	out["hnsw"] = graph
+	return out, nil
 }
 
 func timed(qids []string, search func(qid string)) times {

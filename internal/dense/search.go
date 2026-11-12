@@ -14,6 +14,8 @@ import (
 type Index struct {
 	IDs  []string
 	Vecs []float32
+
+	order []int // row k holds corpus document order[k]; nil in corpus order
 }
 
 // score is Lucene's DOT_PRODUCT similarity, as Anserini's flat dense search

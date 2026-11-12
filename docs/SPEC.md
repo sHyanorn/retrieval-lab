@@ -2,7 +2,7 @@
 
 ## 1. Summary
 
-A hybrid retrieval system in Go: BM25, dense vectors, fusion and reranking. Each component is accepted against a published number that a third party can reproduce with public commands and data. A pre-registered study built on the system follows as a second stage and is out of scope here.
+A hybrid retrieval system in Go: BM25, dense vectors, fusion and reranking. BM25, exact dense retrieval and fusion are each accepted against a published number that a third party can reproduce with public commands and data; approximate search is measured against exact search, and reranking is accepted against intervals over queries. A pre-registered study built on the system follows as a second stage and is out of scope here.
 
 ## 2. Data, anchors and measures
 
@@ -18,7 +18,7 @@ A hybrid retrieval system in Go: BM25, dense vectors, fusion and reranking. Each
 | BM25 | Bleve for analysis and the inverted index; Lucene's BM25 scoring, ported (D005) | Pyserini BM25 flat |
 | Dense retrieval, exact search | ONNX Runtime, a small embedding model | Pyserini BGE-base-en-v1.5 |
 | Approximate search (HNSW) | | exact search on the same vectors |
-| Fusion: RRF and convex combination | run files | intervals over queries |
+| Fusion: RRF and convex combination | run files | Pyserini's BEIR fusion page |
 | Cross-encoder reranking | ONNX Runtime | intervals over queries |
 
 Out of scope: a new inverted-index engine or vector database, filtered vector search benchmarks, anything that needs a GPU.
@@ -36,7 +36,7 @@ Differences in Recall@100 are reported and not gated. Differences up to 0.0005 i
 
 ### Dense retrieval (BGE-base-en-v1.5)
 
-Fixed with the plan for M2, before any BGE result existed.
+Committed in 3e29172, together with the first BGE results.
 
 1. On each dataset that is run, |nDCG@10 of this project − nDCG@10 of Pyserini's `bge-base-en-v1.5.lucene-flat`| ≤ 0.005, with the faiss condition listed beside it (D009).
 2. The encoder reproduces the two reference query vectors of Anserini's tests to within 1e-4 per component, the tolerance of those tests.

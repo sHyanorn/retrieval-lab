@@ -1,6 +1,6 @@
 # Benchmarks
 
-This file fixes how every figure in the project is produced. The protocol sections were written before any result was looked at; results are appended under Results, and a change to the protocol after results exist is recorded in DECISIONS.md with its reason.
+This file fixes how every figure in the project is produced. The HNSW and fusion protocol sections were committed, with their result tables empty, before their results; the BM25 and BGE-base-en-v1.5 run protocols were committed together with their result tables. Results are appended under Results, and a change to the protocol after results exist is recorded in DECISIONS.md with its reason.
 
 ## Anchors
 

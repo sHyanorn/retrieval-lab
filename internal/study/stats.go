@@ -29,6 +29,7 @@ type broken struct {
 	tauA       bool // divide by all pairs, ignoring ties
 	offByOne   bool // take the percentile one place inward
 	noTol      bool // count only draws at least the observed |statistic|
+	oneFamily  bool // H3: one Holm family of both searches
 }
 
 // Strata holds per-query values by dataset: Strata[d][q][j] is variable j
@@ -112,10 +113,30 @@ func Bootstrap(s Strata, b int, stat func(means []float64) float64) []float64 {
 }
 
 func bootstrap(s Strata, b int, stat func([]float64) float64, br broken) []float64 {
+	return Sorted(resample(s, b, br), stat)
+}
+
+// Resample returns the Means of each of b resamples, in the order that
+// Bootstrap draws them: Bootstrap(s, b, stat) is Sorted(Resample(s, b),
+// stat). Intervals of several statistics from one Resample are the
+// intervals that separate calls of Bootstrap give, each from a fresh
+// generator, since the draws do not depend on the statistic.
+func Resample(s Strata, b int) [][]float64 { return resample(s, b, broken{}) }
+
+func resample(s Strata, b int, br broken) [][]float64 {
 	r := newRand()
-	out := make([]float64, b)
+	out := make([][]float64, b)
 	for i := range out {
-		out[i] = stat(s.means(r.IntN, br))
+		out[i] = s.means(r.IntN, br)
+	}
+	return out
+}
+
+// Sorted returns stat of each resample's Means, sorted.
+func Sorted(draws [][]float64, stat func(means []float64) float64) []float64 {
+	out := make([]float64, len(draws))
+	for i, m := range draws {
+		out[i] = stat(m)
 	}
 	slices.Sort(out)
 	return out

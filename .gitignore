@@ -2,3 +2,10 @@
 /bin/
 __pycache__/
 .pytest_cache/
+# Binaries of go build at the root
+/bm25
+/dense
+/embed
+/eval
+/fuse
+/table

@@ -45,8 +45,17 @@ func main() {
 	seed := flag.Uint64("seed", 0, "build seed of the graph: 0 inserts in corpus order")
 	m := flag.Int("m", dense.GraphConfig.M, "links per node of the graph")
 	efc := flag.Int("efc", dense.GraphConfig.EfConstruction, "efConstruction of the graph")
+	grid := flag.String("grid", "m3", "ef values searched: m3, the eight of M3, or study, the 65 of the study")
 	flag.Parse()
-	g := graph{seed: *seed, m: *m, efc: *efc}
+	g := graph{seed: *seed, m: *m, efc: *efc, efs: dense.EFs}
+	switch *grid {
+	case "m3":
+	case "study":
+		g.efs = dense.StudyEFs
+	default:
+		fmt.Fprintf(os.Stderr, "dense: unknown -grid %q\n", *grid)
+		os.Exit(2)
+	}
 	if err := run(*data, *vectors, *queryVecs, *model, *ortLib, *out, *tag, *k, *ann, g); err != nil {
 		fmt.Fprintln(os.Stderr, "dense:", err)
 		os.Exit(1)
@@ -57,6 +66,7 @@ func main() {
 type graph struct {
 	seed   uint64
 	m, efc int
+	efs    []int
 }
 
 func run(data, vectors, queryVecs, model, ortLib, out, tag string, k int, ann string, gr graph) error {
@@ -127,7 +137,7 @@ type efTimes struct {
 }
 
 // approximate builds the graph of gr over x and writes one run per ef of
-// dense.EFs, dense.GraphDepth(ef) hits deep. A query's own document is
+// gr.efs, dense.GraphDepth(ef) hits deep. A query's own document is
 // skipped inside the search, so each query gets that many lines. It returns
 // the time per query on one goroutine of the graph at each ef and, with
 // timeExact, of exact search at depth k.
@@ -144,7 +154,7 @@ func approximate(x *dense.Index, qvecs map[string][]float32, k int, prefix, tag 
 		out["exact"] = timed(qids, func(qid string) { x.Search(qvecs[qid], k) })
 	}
 	var graph []efTimes
-	for _, ef := range dense.EFs {
+	for _, ef := range gr.efs {
 		k := dense.GraphDepth(ef)
 		hits := make(map[string][]eval.Hit, len(qids))
 		t := timed(qids, func(qid string) { hits[qid] = x.SearchGraph(g, qvecs[qid], k, ef, qid) })

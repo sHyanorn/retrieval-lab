@@ -105,15 +105,34 @@ func Recall(judged map[string]int, ranked []Hit, k int) float64 {
 // ranked as trec_eval ranks them: the recall of an approximate search
 // against the exact one. exact must not be empty.
 func Overlap(exact, approx []Hit, k int) float64 {
+	found, of := OverlapCount(exact, approx, k)
+	return float64(found) / float64(of)
+}
+
+// OverlapCount returns the counts behind Overlap: how many of exact's top k
+// approx's top k holds, and the size of exact's top k.
+func OverlapCount(exact, approx []Hit, k int) (found, of int) {
 	e, a := Ranked(exact), Ranked(approx)
 	e, a = e[:min(k, len(e))], a[:min(k, len(a))]
-	n := 0
 	for _, h := range a {
 		if slices.ContainsFunc(e, func(x Hit) bool { return x.DocID == h.DocID }) {
+			found++
+		}
+	}
+	return found, len(e)
+}
+
+// Unjudged is the share of the top k of ranked that qrels do not judge,
+// a missing judgment or a grade below zero counting as none, over k as
+// trec_eval's P@k divides.
+func Unjudged(judged map[string]int, ranked []Hit, k int) float64 {
+	n := 0
+	for _, h := range ranked[:min(k, len(ranked))] {
+		if g, ok := judged[h.DocID]; !ok || g < 0 {
 			n++
 		}
 	}
-	return float64(n) / float64(len(e))
+	return float64(n) / float64(k)
 }
 
 // PairedInterval is the 95% interval of the mean of a[i] − b[i] from a

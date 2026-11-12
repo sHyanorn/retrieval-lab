@@ -61,6 +61,17 @@ var GraphConfig = hnsw.Config{M: 16, EfConstruction: 200, Seed: 1, Workers: 1}
 // recserve's cmd/annbench at c802a68.
 var EFs = []int{10, 20, 40, 80, 120, 200, 400, 800}
 
+// StudyEFs is the ef grid of the study (docs/PREREGISTRATION.md, Section 6):
+// every integer from 10 to 60, then 70 to 1000 in the registered steps; 65
+// values, EFs among them.
+var StudyEFs = func() []int {
+	var efs []int
+	for ef := 10; ef <= 60; ef++ {
+		efs = append(efs, ef)
+	}
+	return append(efs, 70, 80, 90, 100, 120, 150, 200, 250, 300, 400, 500, 600, 800, 1000)
+}()
+
 // GraphDepth is the number of hits of the approximate run at ef: 10 below
 // ef 100, else 100, as the graph searches layer 0 with max(ef, k).
 func GraphDepth(ef int) int {

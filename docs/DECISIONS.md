@@ -126,3 +126,10 @@ Format: ID, date, decision, rationale, alternatives. Append new decisions at the
 - Rationale: an artifact uploaded from a self-hosted runner needs a change to the repository's settings; the log needs nothing the pod does not have. The wait gives the log time to leave the pod before the deletion
 - Alternatives: a self-hosted runner on the GPU pod; reading the files from the CPU pod of step 5, on the same volume
 - Limits: Runpod's documentation does not say whether a deleted pod's log can still be read. If the log is lost, the files are on the volume for step 5's pod
+
+## D019 Step 5 as one unattended CPU pod job, its small files in its log
+- Date: 2026-11-12
+- Decision: Section 12 of the registration has the CPU pod run the Go steps as jobs of a self-hosted runner. Step 5 runs as step 4 does (D017, D018) instead: `scripts/pod5-start.sh` is the container start command of a CPU pod on the network volume; it sets the pod's two deletions, at its time limit and when the command exits, fetches the repository at a fixed commit and runs `scripts/pod5.sh`, which builds `cmd/dense`, `cmd/eval`, `cmd/bm25` and trec_eval and runs `step5/job.py`. At exit, whatever the outcome, `step5/report.py` prints the job's summary, check 3 and the checksums of its run and per-query files into the log, which is read through Runpod's API and checked with `--read`; those files go to `results/step5/`. Run files and per-query measures stay on the volume
+- Rationale: as in D018, a self-hosted runner needs a change to the repository's settings and a registration token inside the pod; the start command needs nothing the pod does not have
+- Alternatives: a self-hosted runner on the CPU pod
+- Limits: those of D017 and D018: whether the pod's own key can delete the pod, and whether a deleted pod's log can be read. A container restarted without its exit trap starts its time limit again

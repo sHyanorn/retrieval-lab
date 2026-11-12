@@ -7,7 +7,8 @@ Writes results/anchors-step5.tsv, one line per anchor:
   mteb_version as the file gives it, "null" where it gives none;
 - source pyserini: BGE-base's `bge-base-en-v1.5.lucene-flat` (D009) and BM25
   flat's nDCG@10 on Quora and NQ (Section 4, SPEC §4), from
-  `pyserini/2cr/beir.yaml` at PYSERINI_COMMIT, whose SHA-256 is checked.
+  `pyserini/2cr/beir.yaml` at PYSERINI_COMMIT, whose SHA-256 is checked;
+  for BM25 also its Recall@100 (amendment 20), "-" on every other line.
 Standard library only; run with python3 -I.
 
 usage: python3 -I scripts/anchors.py [OUT]   (default results/anchors-step5.tsv)
@@ -49,7 +50,7 @@ TASKS = {
     "quora": "QuoraRetrieval",
     "nq": "NQ",
 }
-HEADER = "model\tdataset\tsource\tndcg_cut_10\tfile\tmteb_version"
+HEADER = "model\tdataset\tsource\tndcg_cut_10\tfile\tmteb_version\trecall_100"
 
 
 def get(url):
@@ -81,6 +82,7 @@ def mteb(model, rev, task):
 
 
 def pyserini():
+    """{(condition, dataset): {"nDCG@10": value, "R@100": value}}, values as the file prints them."""
     raw = get(BEIR_YAML)
     if hashlib.sha256(raw).hexdigest() != BEIR_YAML_SHA256:
         raise SystemExit("beir.yaml: SHA-256 differs")
@@ -91,7 +93,9 @@ def pyserini():
         elif m := re.match(r"      - dataset: (\S+)$", ln):
             ds = m.group(1)
         elif m := re.match(r"\s+- nDCG@10: ([0-9.]+)$", ln):
-            out[cond, ds] = m.group(1)
+            out[cond, ds] = {"nDCG@10": m.group(1)}
+        elif m := re.match(r"\s+R@100: ([0-9.]+)$", ln):
+            out[cond, ds]["R@100"] = m.group(1)
     return out
 
 
@@ -101,12 +105,13 @@ def main(argv):
     for model, rev in MODELS.items():
         for ds, task in TASKS.items():
             v, rel, ver = mteb(model, rev, task)
-            rows.append(f"{model}\t{ds}\tmteb\t{v}\t{rel}\t{ver}")
+            rows.append(f"{model}\t{ds}\tmteb\t{v}\t{rel}\t{ver}\t-")
     p = pyserini()
     for ds in TASKS:
-        rows.append(f"BAAI/bge-base-en-v1.5\t{ds}\tpyserini\t{p['bge-base-en-v1.5.lucene-flat', ds]}\tbge-base-en-v1.5.lucene-flat\t-")
+        rows.append(f"BAAI/bge-base-en-v1.5\t{ds}\tpyserini\t{p['bge-base-en-v1.5.lucene-flat', ds]['nDCG@10']}\tbge-base-en-v1.5.lucene-flat\t-\t-")
     for ds in ("quora", "nq"):
-        rows.append(f"bm25\t{ds}\tpyserini\t{p['bm25-flat', ds]}\tbm25-flat\t-")
+        b = p["bm25-flat", ds]
+        rows.append(f"bm25\t{ds}\tpyserini\t{b['nDCG@10']}\tbm25-flat\t-\t{b['R@100']}")
     with open(path, "w", encoding="utf-8") as f:
         f.write("\n".join(rows) + "\n")
     print(f"{len(rows) - 1} anchors written to {path}")

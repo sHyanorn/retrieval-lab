@@ -1,75 +1,75 @@
-model	dataset	source	ndcg_cut_10	file	mteb_version
-BAAI/bge-small-en-v1.5	scifact	mteb	0.71273	BAAI__bge-small-en-v1.5/5c38ec7c405ec4b44b94cc5a9bb96e735b38267a/SciFact.json	1.20.0
-BAAI/bge-small-en-v1.5	nfcorpus	mteb	0.34264	BAAI__bge-small-en-v1.5/5c38ec7c405ec4b44b94cc5a9bb96e735b38267a/NFCorpus.json	1.20.0
-BAAI/bge-small-en-v1.5	arguana	mteb	0.60348	BAAI__bge-small-en-v1.5/5c38ec7c405ec4b44b94cc5a9bb96e735b38267a/ArguAna.json	1.18.0
-BAAI/bge-small-en-v1.5	scidocs	mteb	0.20518	BAAI__bge-small-en-v1.5/5c38ec7c405ec4b44b94cc5a9bb96e735b38267a/SCIDOCS.json	1.18.0
-BAAI/bge-small-en-v1.5	fiqa	mteb	0.40343	BAAI__bge-small-en-v1.5/external/FiQA2018.json	null
-BAAI/bge-small-en-v1.5	trec-covid	mteb	0.75525	BAAI__bge-small-en-v1.5/5c38ec7c405ec4b44b94cc5a9bb96e735b38267a/TRECCOVID.json	1.20.0
-BAAI/bge-small-en-v1.5	quora	mteb	0.8878	BAAI__bge-small-en-v1.5/external/QuoraRetrieval.json	null
-BAAI/bge-small-en-v1.5	nq	mteb	0.50178	BAAI__bge-small-en-v1.5/external/NQ.json	null
-BAAI/bge-base-en-v1.5	scifact	mteb	0.74345	BAAI__bge-base-en-v1.5/a5beb1e3e68b9ab74eb54cfd186867f64f240e1a/SciFact.json	1.20.0
-BAAI/bge-base-en-v1.5	nfcorpus	mteb	0.37367	BAAI__bge-base-en-v1.5/a5beb1e3e68b9ab74eb54cfd186867f64f240e1a/NFCorpus.json	1.20.0
-BAAI/bge-base-en-v1.5	arguana	mteb	0.63752	BAAI__bge-base-en-v1.5/a5beb1e3e68b9ab74eb54cfd186867f64f240e1a/ArguAna.json	1.18.0
-BAAI/bge-base-en-v1.5	scidocs	mteb	0.21725	BAAI__bge-base-en-v1.5/a5beb1e3e68b9ab74eb54cfd186867f64f240e1a/SCIDOCS.json	1.18.0
-BAAI/bge-base-en-v1.5	fiqa	mteb	0.40646	BAAI__bge-base-en-v1.5/external/FiQA2018.json	null
-BAAI/bge-base-en-v1.5	trec-covid	mteb	0.78029	BAAI__bge-base-en-v1.5/a5beb1e3e68b9ab74eb54cfd186867f64f240e1a/TRECCOVID.json	1.20.0
-BAAI/bge-base-en-v1.5	quora	mteb	0.889	BAAI__bge-base-en-v1.5/external/QuoraRetrieval.json	null
-BAAI/bge-base-en-v1.5	nq	mteb	0.54146	BAAI__bge-base-en-v1.5/external/NQ.json	null
-BAAI/bge-large-en-v1.5	scifact	mteb	0.74644	BAAI__bge-large-en-v1.5/d4aa6901d3a41ba39fb536a557fa166f842b0e09/SciFact.json	1.20.0
-BAAI/bge-large-en-v1.5	nfcorpus	mteb	0.38061	BAAI__bge-large-en-v1.5/d4aa6901d3a41ba39fb536a557fa166f842b0e09/NFCorpus.json	1.20.0
-BAAI/bge-large-en-v1.5	arguana	mteb	0.64516	BAAI__bge-large-en-v1.5/d4aa6901d3a41ba39fb536a557fa166f842b0e09/ArguAna.json	1.18.0
-BAAI/bge-large-en-v1.5	scidocs	mteb	0.2263	BAAI__bge-large-en-v1.5/d4aa6901d3a41ba39fb536a557fa166f842b0e09/SCIDOCS.json	1.18.0
-BAAI/bge-large-en-v1.5	fiqa	mteb	0.45021	BAAI__bge-large-en-v1.5/external/FiQA2018.json	null
-BAAI/bge-large-en-v1.5	trec-covid	mteb	0.74696	BAAI__bge-large-en-v1.5/d4aa6901d3a41ba39fb536a557fa166f842b0e09/TRECCOVID.json	1.20.0
-BAAI/bge-large-en-v1.5	quora	mteb	0.8906500000000002	BAAI__bge-large-en-v1.5/external/QuoraRetrieval.json	null
-BAAI/bge-large-en-v1.5	nq	mteb	0.55029	BAAI__bge-large-en-v1.5/external/NQ.json	null
-intfloat/e5-base-v2	scifact	mteb	0.7194400000000001	intfloat__e5-base-v2/external/SciFact.json	null
-intfloat/e5-base-v2	nfcorpus	mteb	0.35389	intfloat__e5-base-v2/external/NFCorpus.json	null
-intfloat/e5-base-v2	arguana	mteb	0.44568	intfloat__e5-base-v2/1c644c92ad3ba1efdad3f1451a637716616a20e8/ArguAna.json	1.18.0
-intfloat/e5-base-v2	scidocs	mteb	0.18681	intfloat__e5-base-v2/1c644c92ad3ba1efdad3f1451a637716616a20e8/SCIDOCS.json	1.18.0
-intfloat/e5-base-v2	fiqa	mteb	0.39883	intfloat__e5-base-v2/external/FiQA2018.json	null
-intfloat/e5-base-v2	trec-covid	mteb	0.69633	intfloat__e5-base-v2/1c644c92ad3ba1efdad3f1451a637716616a20e8/TRECCOVID.json	1.18.0
-intfloat/e5-base-v2	quora	mteb	0.86555	intfloat__e5-base-v2/external/QuoraRetrieval.json	null
-intfloat/e5-base-v2	nq	mteb	0.58221	intfloat__e5-base-v2/external/NQ.json	null
-thenlper/gte-base	scifact	mteb	0.76178	thenlper__gte-base/external/SciFact.json	null
-thenlper/gte-base	nfcorpus	mteb	0.37897	thenlper__gte-base/external/NFCorpus.json	null
-thenlper/gte-base	arguana	mteb	0.57122	thenlper__gte-base/external/ArguAna.json	null
-thenlper/gte-base	scidocs	mteb	0.23132000000000003	thenlper__gte-base/external/SCIDOCS.json	null
-thenlper/gte-base	fiqa	mteb	0.40758000000000005	thenlper__gte-base/external/FiQA2018.json	null
-thenlper/gte-base	trec-covid	mteb	0.68783	thenlper__gte-base/external/TRECCOVID.json	null
-thenlper/gte-base	quora	mteb	0.88151	thenlper__gte-base/external/QuoraRetrieval.json	null
-thenlper/gte-base	nq	mteb	0.52835	thenlper__gte-base/external/NQ.json	null
-sentence-transformers/all-MiniLM-L6-v2	scifact	mteb	0.64508	sentence-transformers__all-MiniLM-L6-v2/8b3219a92973c328a8e22fadcfa821b5dc75636a/SciFact.json	1.12.75
-sentence-transformers/all-MiniLM-L6-v2	nfcorpus	mteb	0.31594	sentence-transformers__all-MiniLM-L6-v2/8b3219a92973c328a8e22fadcfa821b5dc75636a/NFCorpus.json	1.12.75
-sentence-transformers/all-MiniLM-L6-v2	arguana	mteb	0.50167	sentence-transformers__all-MiniLM-L6-v2/8b3219a92973c328a8e22fadcfa821b5dc75636a/ArguAna.json	1.12.75
-sentence-transformers/all-MiniLM-L6-v2	scidocs	mteb	0.21641	sentence-transformers__all-MiniLM-L6-v2/8b3219a92973c328a8e22fadcfa821b5dc75636a/SCIDOCS.json	1.12.75
-sentence-transformers/all-MiniLM-L6-v2	fiqa	mteb	0.36867	sentence-transformers__all-MiniLM-L6-v2/8b3219a92973c328a8e22fadcfa821b5dc75636a/FiQA2018.json	1.12.75
-sentence-transformers/all-MiniLM-L6-v2	trec-covid	mteb	0.47232	sentence-transformers__all-MiniLM-L6-v2/8b3219a92973c328a8e22fadcfa821b5dc75636a/TRECCOVID.json	1.12.75
-sentence-transformers/all-MiniLM-L6-v2	quora	mteb	0.87552	sentence-transformers__all-MiniLM-L6-v2/8b3219a92973c328a8e22fadcfa821b5dc75636a/QuoraRetrieval.json	1.18.0
-sentence-transformers/all-MiniLM-L6-v2	nq	mteb	0.43869	sentence-transformers__all-MiniLM-L6-v2/8b3219a92973c328a8e22fadcfa821b5dc75636a/NQ.json	1.18.0
-Snowflake/snowflake-arctic-embed-m-v1.5	scifact	mteb	0.71838	Snowflake__snowflake-arctic-embed-m-v1.5/97eab2e17fcb7ccb8bb94d6e547898fa1a6a0f47/SciFact.json	1.20.0
-Snowflake/snowflake-arctic-embed-m-v1.5	nfcorpus	mteb	0.36241	Snowflake__snowflake-arctic-embed-m-v1.5/97eab2e17fcb7ccb8bb94d6e547898fa1a6a0f47/NFCorpus.json	1.20.0
-Snowflake/snowflake-arctic-embed-m-v1.5	arguana	mteb	0.5953	Snowflake__snowflake-arctic-embed-m-v1.5/97eab2e17fcb7ccb8bb94d6e547898fa1a6a0f47/ArguAna.json	1.18.0
-Snowflake/snowflake-arctic-embed-m-v1.5	scidocs	mteb	0.2149	Snowflake__snowflake-arctic-embed-m-v1.5/97eab2e17fcb7ccb8bb94d6e547898fa1a6a0f47/SCIDOCS.json	1.18.0
-Snowflake/snowflake-arctic-embed-m-v1.5	fiqa	mteb	0.42396	Snowflake__snowflake-arctic-embed-m-v1.5/external/FiQA2018.json	null
-Snowflake/snowflake-arctic-embed-m-v1.5	trec-covid	mteb	0.84634	Snowflake__snowflake-arctic-embed-m-v1.5/97eab2e17fcb7ccb8bb94d6e547898fa1a6a0f47/TRECCOVID.json	1.20.0
-Snowflake/snowflake-arctic-embed-m-v1.5	quora	mteb	0.87366	Snowflake__snowflake-arctic-embed-m-v1.5/external/QuoraRetrieval.json	null
-Snowflake/snowflake-arctic-embed-m-v1.5	nq	mteb	0.62464	Snowflake__snowflake-arctic-embed-m-v1.5/external/NQ.json	null
-mixedbread-ai/mxbai-embed-large-v1	scifact	mteb	0.73917	mixedbread-ai__mxbai-embed-large-v1/990580e27d329c7408b3741ecff85876e128e203/SciFact.json	1.20.0
-mixedbread-ai/mxbai-embed-large-v1	nfcorpus	mteb	0.38666	mixedbread-ai__mxbai-embed-large-v1/990580e27d329c7408b3741ecff85876e128e203/NFCorpus.json	1.20.0
-mixedbread-ai/mxbai-embed-large-v1	arguana	mteb	0.65469	mixedbread-ai__mxbai-embed-large-v1/990580e27d329c7408b3741ecff85876e128e203/ArguAna.json	1.18.0
-mixedbread-ai/mxbai-embed-large-v1	scidocs	mteb	0.23101	mixedbread-ai__mxbai-embed-large-v1/990580e27d329c7408b3741ecff85876e128e203/SCIDOCS.json	1.18.0
-mixedbread-ai/mxbai-embed-large-v1	fiqa	mteb	0.4527	mixedbread-ai__mxbai-embed-large-v1/990580e27d329c7408b3741ecff85876e128e203/FiQA2018.json	1.18.0
-mixedbread-ai/mxbai-embed-large-v1	trec-covid	mteb	0.7553	mixedbread-ai__mxbai-embed-large-v1/990580e27d329c7408b3741ecff85876e128e203/TRECCOVID.json	1.20.0
-mixedbread-ai/mxbai-embed-large-v1	quora	mteb	0.88847	mixedbread-ai__mxbai-embed-large-v1/990580e27d329c7408b3741ecff85876e128e203/QuoraRetrieval.json	1.18.0
-mixedbread-ai/mxbai-embed-large-v1	nq	mteb	0.55804	mixedbread-ai__mxbai-embed-large-v1/990580e27d329c7408b3741ecff85876e128e203/NQ.json	1.18.0
-BAAI/bge-base-en-v1.5	scifact	pyserini	0.7408	bge-base-en-v1.5.lucene-flat	-
-BAAI/bge-base-en-v1.5	nfcorpus	pyserini	0.3738	bge-base-en-v1.5.lucene-flat	-
-BAAI/bge-base-en-v1.5	arguana	pyserini	0.6375	bge-base-en-v1.5.lucene-flat	-
-BAAI/bge-base-en-v1.5	scidocs	pyserini	0.2172	bge-base-en-v1.5.lucene-flat	-
-BAAI/bge-base-en-v1.5	fiqa	pyserini	0.4065	bge-base-en-v1.5.lucene-flat	-
-BAAI/bge-base-en-v1.5	trec-covid	pyserini	0.7815	bge-base-en-v1.5.lucene-flat	-
-BAAI/bge-base-en-v1.5	quora	pyserini	0.8876	bge-base-en-v1.5.lucene-flat	-
-BAAI/bge-base-en-v1.5	nq	pyserini	0.5415	bge-base-en-v1.5.lucene-flat	-
-bm25	quora	pyserini	0.7886	bm25-flat	-
-bm25	nq	pyserini	0.3055	bm25-flat	-
+model	dataset	source	ndcg_cut_10	file	mteb_version	recall_100
+BAAI/bge-small-en-v1.5	scifact	mteb	0.71273	BAAI__bge-small-en-v1.5/5c38ec7c405ec4b44b94cc5a9bb96e735b38267a/SciFact.json	1.20.0	-
+BAAI/bge-small-en-v1.5	nfcorpus	mteb	0.34264	BAAI__bge-small-en-v1.5/5c38ec7c405ec4b44b94cc5a9bb96e735b38267a/NFCorpus.json	1.20.0	-
+BAAI/bge-small-en-v1.5	arguana	mteb	0.60348	BAAI__bge-small-en-v1.5/5c38ec7c405ec4b44b94cc5a9bb96e735b38267a/ArguAna.json	1.18.0	-
+BAAI/bge-small-en-v1.5	scidocs	mteb	0.20518	BAAI__bge-small-en-v1.5/5c38ec7c405ec4b44b94cc5a9bb96e735b38267a/SCIDOCS.json	1.18.0	-
+BAAI/bge-small-en-v1.5	fiqa	mteb	0.40343	BAAI__bge-small-en-v1.5/external/FiQA2018.json	null	-
+BAAI/bge-small-en-v1.5	trec-covid	mteb	0.75525	BAAI__bge-small-en-v1.5/5c38ec7c405ec4b44b94cc5a9bb96e735b38267a/TRECCOVID.json	1.20.0	-
+BAAI/bge-small-en-v1.5	quora	mteb	0.8878	BAAI__bge-small-en-v1.5/external/QuoraRetrieval.json	null	-
+BAAI/bge-small-en-v1.5	nq	mteb	0.50178	BAAI__bge-small-en-v1.5/external/NQ.json	null	-
+BAAI/bge-base-en-v1.5	scifact	mteb	0.74345	BAAI__bge-base-en-v1.5/a5beb1e3e68b9ab74eb54cfd186867f64f240e1a/SciFact.json	1.20.0	-
+BAAI/bge-base-en-v1.5	nfcorpus	mteb	0.37367	BAAI__bge-base-en-v1.5/a5beb1e3e68b9ab74eb54cfd186867f64f240e1a/NFCorpus.json	1.20.0	-
+BAAI/bge-base-en-v1.5	arguana	mteb	0.63752	BAAI__bge-base-en-v1.5/a5beb1e3e68b9ab74eb54cfd186867f64f240e1a/ArguAna.json	1.18.0	-
+BAAI/bge-base-en-v1.5	scidocs	mteb	0.21725	BAAI__bge-base-en-v1.5/a5beb1e3e68b9ab74eb54cfd186867f64f240e1a/SCIDOCS.json	1.18.0	-
+BAAI/bge-base-en-v1.5	fiqa	mteb	0.40646	BAAI__bge-base-en-v1.5/external/FiQA2018.json	null	-
+BAAI/bge-base-en-v1.5	trec-covid	mteb	0.78029	BAAI__bge-base-en-v1.5/a5beb1e3e68b9ab74eb54cfd186867f64f240e1a/TRECCOVID.json	1.20.0	-
+BAAI/bge-base-en-v1.5	quora	mteb	0.889	BAAI__bge-base-en-v1.5/external/QuoraRetrieval.json	null	-
+BAAI/bge-base-en-v1.5	nq	mteb	0.54146	BAAI__bge-base-en-v1.5/external/NQ.json	null	-
+BAAI/bge-large-en-v1.5	scifact	mteb	0.74644	BAAI__bge-large-en-v1.5/d4aa6901d3a41ba39fb536a557fa166f842b0e09/SciFact.json	1.20.0	-
+BAAI/bge-large-en-v1.5	nfcorpus	mteb	0.38061	BAAI__bge-large-en-v1.5/d4aa6901d3a41ba39fb536a557fa166f842b0e09/NFCorpus.json	1.20.0	-
+BAAI/bge-large-en-v1.5	arguana	mteb	0.64516	BAAI__bge-large-en-v1.5/d4aa6901d3a41ba39fb536a557fa166f842b0e09/ArguAna.json	1.18.0	-
+BAAI/bge-large-en-v1.5	scidocs	mteb	0.2263	BAAI__bge-large-en-v1.5/d4aa6901d3a41ba39fb536a557fa166f842b0e09/SCIDOCS.json	1.18.0	-
+BAAI/bge-large-en-v1.5	fiqa	mteb	0.45021	BAAI__bge-large-en-v1.5/external/FiQA2018.json	null	-
+BAAI/bge-large-en-v1.5	trec-covid	mteb	0.74696	BAAI__bge-large-en-v1.5/d4aa6901d3a41ba39fb536a557fa166f842b0e09/TRECCOVID.json	1.20.0	-
+BAAI/bge-large-en-v1.5	quora	mteb	0.8906500000000002	BAAI__bge-large-en-v1.5/external/QuoraRetrieval.json	null	-
+BAAI/bge-large-en-v1.5	nq	mteb	0.55029	BAAI__bge-large-en-v1.5/external/NQ.json	null	-
+intfloat/e5-base-v2	scifact	mteb	0.7194400000000001	intfloat__e5-base-v2/external/SciFact.json	null	-
+intfloat/e5-base-v2	nfcorpus	mteb	0.35389	intfloat__e5-base-v2/external/NFCorpus.json	null	-
+intfloat/e5-base-v2	arguana	mteb	0.44568	intfloat__e5-base-v2/1c644c92ad3ba1efdad3f1451a637716616a20e8/ArguAna.json	1.18.0	-
+intfloat/e5-base-v2	scidocs	mteb	0.18681	intfloat__e5-base-v2/1c644c92ad3ba1efdad3f1451a637716616a20e8/SCIDOCS.json	1.18.0	-
+intfloat/e5-base-v2	fiqa	mteb	0.39883	intfloat__e5-base-v2/external/FiQA2018.json	null	-
+intfloat/e5-base-v2	trec-covid	mteb	0.69633	intfloat__e5-base-v2/1c644c92ad3ba1efdad3f1451a637716616a20e8/TRECCOVID.json	1.18.0	-
+intfloat/e5-base-v2	quora	mteb	0.86555	intfloat__e5-base-v2/external/QuoraRetrieval.json	null	-
+intfloat/e5-base-v2	nq	mteb	0.58221	intfloat__e5-base-v2/external/NQ.json	null	-
+thenlper/gte-base	scifact	mteb	0.76178	thenlper__gte-base/external/SciFact.json	null	-
+thenlper/gte-base	nfcorpus	mteb	0.37897	thenlper__gte-base/external/NFCorpus.json	null	-
+thenlper/gte-base	arguana	mteb	0.57122	thenlper__gte-base/external/ArguAna.json	null	-
+thenlper/gte-base	scidocs	mteb	0.23132000000000003	thenlper__gte-base/external/SCIDOCS.json	null	-
+thenlper/gte-base	fiqa	mteb	0.40758000000000005	thenlper__gte-base/external/FiQA2018.json	null	-
+thenlper/gte-base	trec-covid	mteb	0.68783	thenlper__gte-base/external/TRECCOVID.json	null	-
+thenlper/gte-base	quora	mteb	0.88151	thenlper__gte-base/external/QuoraRetrieval.json	null	-
+thenlper/gte-base	nq	mteb	0.52835	thenlper__gte-base/external/NQ.json	null	-
+sentence-transformers/all-MiniLM-L6-v2	scifact	mteb	0.64508	sentence-transformers__all-MiniLM-L6-v2/8b3219a92973c328a8e22fadcfa821b5dc75636a/SciFact.json	1.12.75	-
+sentence-transformers/all-MiniLM-L6-v2	nfcorpus	mteb	0.31594	sentence-transformers__all-MiniLM-L6-v2/8b3219a92973c328a8e22fadcfa821b5dc75636a/NFCorpus.json	1.12.75	-
+sentence-transformers/all-MiniLM-L6-v2	arguana	mteb	0.50167	sentence-transformers__all-MiniLM-L6-v2/8b3219a92973c328a8e22fadcfa821b5dc75636a/ArguAna.json	1.12.75	-
+sentence-transformers/all-MiniLM-L6-v2	scidocs	mteb	0.21641	sentence-transformers__all-MiniLM-L6-v2/8b3219a92973c328a8e22fadcfa821b5dc75636a/SCIDOCS.json	1.12.75	-
+sentence-transformers/all-MiniLM-L6-v2	fiqa	mteb	0.36867	sentence-transformers__all-MiniLM-L6-v2/8b3219a92973c328a8e22fadcfa821b5dc75636a/FiQA2018.json	1.12.75	-
+sentence-transformers/all-MiniLM-L6-v2	trec-covid	mteb	0.47232	sentence-transformers__all-MiniLM-L6-v2/8b3219a92973c328a8e22fadcfa821b5dc75636a/TRECCOVID.json	1.12.75	-
+sentence-transformers/all-MiniLM-L6-v2	quora	mteb	0.87552	sentence-transformers__all-MiniLM-L6-v2/8b3219a92973c328a8e22fadcfa821b5dc75636a/QuoraRetrieval.json	1.18.0	-
+sentence-transformers/all-MiniLM-L6-v2	nq	mteb	0.43869	sentence-transformers__all-MiniLM-L6-v2/8b3219a92973c328a8e22fadcfa821b5dc75636a/NQ.json	1.18.0	-
+Snowflake/snowflake-arctic-embed-m-v1.5	scifact	mteb	0.71838	Snowflake__snowflake-arctic-embed-m-v1.5/97eab2e17fcb7ccb8bb94d6e547898fa1a6a0f47/SciFact.json	1.20.0	-
+Snowflake/snowflake-arctic-embed-m-v1.5	nfcorpus	mteb	0.36241	Snowflake__snowflake-arctic-embed-m-v1.5/97eab2e17fcb7ccb8bb94d6e547898fa1a6a0f47/NFCorpus.json	1.20.0	-
+Snowflake/snowflake-arctic-embed-m-v1.5	arguana	mteb	0.5953	Snowflake__snowflake-arctic-embed-m-v1.5/97eab2e17fcb7ccb8bb94d6e547898fa1a6a0f47/ArguAna.json	1.18.0	-
+Snowflake/snowflake-arctic-embed-m-v1.5	scidocs	mteb	0.2149	Snowflake__snowflake-arctic-embed-m-v1.5/97eab2e17fcb7ccb8bb94d6e547898fa1a6a0f47/SCIDOCS.json	1.18.0	-
+Snowflake/snowflake-arctic-embed-m-v1.5	fiqa	mteb	0.42396	Snowflake__snowflake-arctic-embed-m-v1.5/external/FiQA2018.json	null	-
+Snowflake/snowflake-arctic-embed-m-v1.5	trec-covid	mteb	0.84634	Snowflake__snowflake-arctic-embed-m-v1.5/97eab2e17fcb7ccb8bb94d6e547898fa1a6a0f47/TRECCOVID.json	1.20.0	-
+Snowflake/snowflake-arctic-embed-m-v1.5	quora	mteb	0.87366	Snowflake__snowflake-arctic-embed-m-v1.5/external/QuoraRetrieval.json	null	-
+Snowflake/snowflake-arctic-embed-m-v1.5	nq	mteb	0.62464	Snowflake__snowflake-arctic-embed-m-v1.5/external/NQ.json	null	-
+mixedbread-ai/mxbai-embed-large-v1	scifact	mteb	0.73917	mixedbread-ai__mxbai-embed-large-v1/990580e27d329c7408b3741ecff85876e128e203/SciFact.json	1.20.0	-
+mixedbread-ai/mxbai-embed-large-v1	nfcorpus	mteb	0.38666	mixedbread-ai__mxbai-embed-large-v1/990580e27d329c7408b3741ecff85876e128e203/NFCorpus.json	1.20.0	-
+mixedbread-ai/mxbai-embed-large-v1	arguana	mteb	0.65469	mixedbread-ai__mxbai-embed-large-v1/990580e27d329c7408b3741ecff85876e128e203/ArguAna.json	1.18.0	-
+mixedbread-ai/mxbai-embed-large-v1	scidocs	mteb	0.23101	mixedbread-ai__mxbai-embed-large-v1/990580e27d329c7408b3741ecff85876e128e203/SCIDOCS.json	1.18.0	-
+mixedbread-ai/mxbai-embed-large-v1	fiqa	mteb	0.4527	mixedbread-ai__mxbai-embed-large-v1/990580e27d329c7408b3741ecff85876e128e203/FiQA2018.json	1.18.0	-
+mixedbread-ai/mxbai-embed-large-v1	trec-covid	mteb	0.7553	mixedbread-ai__mxbai-embed-large-v1/990580e27d329c7408b3741ecff85876e128e203/TRECCOVID.json	1.20.0	-
+mixedbread-ai/mxbai-embed-large-v1	quora	mteb	0.88847	mixedbread-ai__mxbai-embed-large-v1/990580e27d329c7408b3741ecff85876e128e203/QuoraRetrieval.json	1.18.0	-
+mixedbread-ai/mxbai-embed-large-v1	nq	mteb	0.55804	mixedbread-ai__mxbai-embed-large-v1/990580e27d329c7408b3741ecff85876e128e203/NQ.json	1.18.0	-
+BAAI/bge-base-en-v1.5	scifact	pyserini	0.7408	bge-base-en-v1.5.lucene-flat	-	-
+BAAI/bge-base-en-v1.5	nfcorpus	pyserini	0.3738	bge-base-en-v1.5.lucene-flat	-	-
+BAAI/bge-base-en-v1.5	arguana	pyserini	0.6375	bge-base-en-v1.5.lucene-flat	-	-
+BAAI/bge-base-en-v1.5	scidocs	pyserini	0.2172	bge-base-en-v1.5.lucene-flat	-	-
+BAAI/bge-base-en-v1.5	fiqa	pyserini	0.4065	bge-base-en-v1.5.lucene-flat	-	-
+BAAI/bge-base-en-v1.5	trec-covid	pyserini	0.7815	bge-base-en-v1.5.lucene-flat	-	-
+BAAI/bge-base-en-v1.5	quora	pyserini	0.8876	bge-base-en-v1.5.lucene-flat	-	-
+BAAI/bge-base-en-v1.5	nq	pyserini	0.5415	bge-base-en-v1.5.lucene-flat	-	-
+bm25	quora	pyserini	0.7886	bm25-flat	-	0.9733
+bm25	nq	pyserini	0.3055	bm25-flat	-	0.7513

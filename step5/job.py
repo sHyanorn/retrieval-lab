@@ -5,8 +5,11 @@ the repository), the exact run of the test queries over the documents
 (cmd/dense, top 1000, the query's own document removed, D011) and its
 per-query measures (cmd/eval -per-query); then check 3 of Section 5: each
 nDCG@10 against its anchors in results/anchors-step5.tsv. BM25 flat on Quora
-and NQ (cmd/bm25) against Pyserini's anchor (Section 4). Readings of
-amendment 18.
+and NQ (cmd/bm25) against Pyserini's anchor (Section 4): nDCG@10 by check 3,
+and, as SPEC §4 reads on the six (amendment 20), the difference in
+Recall@100, not gated, and whether nDCG@10 agrees to three decimals. The
+SHA-256 of BM25's Quora run file is reported beside that of amendment 19.
+Readings of amendment 18.
 
 Stops at once, and computes nothing further, if a vector file's SHA-256
 differs from step 4's committed one, or if cmd/eval and trec_eval disagree on
@@ -62,6 +65,10 @@ FILES = ("index", "docid", "queries/index", "queries/docid")
 DATASETS = ("scifact", "nfcorpus", "arguana", "scidocs", "fiqa", "trec-covid", "quora", "nq")
 BM25 = ("quora", "nq")
 TOL = decimal.Decimal("0.005")  # Section 5, check 3; SPEC §4
+THREE = decimal.Decimal("0.0005")  # SPEC §4: agreeing to the three printed decimals
+# The SHA-256 of the run file of BM25 on Quora made before step 5,
+# docs/PREREGISTRATION-AMENDMENTS.md, amendment 19.
+AMENDMENT_19_QUORA_RUN_SHA256 = "064e7c4d1eefcbc31230ec7764efc83b1e42511af298f1a35d58e7c1bcb4a0b4"
 
 
 class Stop(Exception):
@@ -109,13 +116,25 @@ def read_anchors(path=ANCHORS):
     with open(path, encoding="utf-8") as f:
         lines = f.read().splitlines()
     for ln in lines[1:]:
-        model, ds, source, value, _, version = ln.split("\t")
+        model, ds, source, value, _, version, _ = ln.split("\t")
         out.setdefault((model, ds), []).append((source, decimal.Decimal(value), source == "mteb" and version == "null"))
     return out
 
 
+def read_recall_anchors(path=ANCHORS):
+    """{(model, dataset): Recall@100 as Decimal}, the lines that give one (BM25's, amendment 20)."""
+    out = {}
+    with open(path, encoding="utf-8") as f:
+        lines = f.read().splitlines()
+    for ln in lines[1:]:
+        model, ds, _, _, _, _, recall = ln.split("\t")
+        if recall != "-":
+            out[model, ds] = decimal.Decimal(recall)
+    return out
+
+
 def delta(ours, anchor):
-    """Our nDCG@10 as trec_eval prints it, four decimals, minus the anchor as its file prints it, exactly."""
+    """Our measure as trec_eval prints it, four decimals, minus the anchor as its file prints it, exactly."""
     return decimal.Decimal(ours) - anchor
 
 
@@ -139,6 +158,34 @@ def classify(cells, anchors, unrun=()):
             alone = out_by_model[m] == {d}
             weak = all(x[6] for x in rows if x[0] == m and x[1] == d and x[7] != "inside")
             r[7] = ("pending" if m in unrun else "exception") if alone and weak and m != "bm25" else "investigate"
+    return rows
+
+
+def agrees3(dl):
+    """SPEC §4: an nDCG@10 difference up to 0.0005 agrees to the three printed decimals; exact."""
+    return abs(dl) <= THREE
+
+
+def bm25_report(results, anchors, recall_anchors):
+    """One row per BM25 run: nDCG@10 against Pyserini's anchor and whether it agrees to three decimals,
+    Recall@100 against Pyserini's, not gated (amendment 20); for Quora, the run file's SHA-256 beside
+    amendment 19's."""
+    rows = []
+    for r in sorted((r for r in results if r["model"] == "bm25"), key=lambda r: r["dataset"]):
+        d = r["dataset"]
+        row = {"dataset": d, "ndcg_cut_10": r["ndcg_cut_10"], "recall_100": r["recall_100"], "run_sha256": r["run_sha256"]}
+        a = [v for s, v, _ in anchors.get(("bm25", d), []) if s == "pyserini"]
+        if a:
+            dl = delta(r["ndcg_cut_10"], a[0])
+            row.update(ndcg_anchor=str(a[0]), ndcg_delta=f"{dl:+}", within_tolerance=abs(dl) <= TOL,
+                       agrees_to_three_decimals=agrees3(dl))
+        if ("bm25", d) in recall_anchors:
+            ra = recall_anchors["bm25", d]
+            row.update(recall_anchor=str(ra), recall_delta=f"{delta(r['recall_100'], ra):+}")
+        if d == "quora":
+            row.update(amendment_19_run_sha256=AMENDMENT_19_QUORA_RUN_SHA256,
+                       same_as_amendment_19=r["run_sha256"] == AMENDMENT_19_QUORA_RUN_SHA256)
+        rows.append(row)
     return rows
 
 
@@ -170,6 +217,8 @@ class Job:
         self.not_encoded = [list(s) for s in summary.get("not_done", [])]
         self.cuts = (summary.get("plan") or {}).get("cuts", [])
         self.bm25 = list(BM25 if a.bm25 is None else a.bm25)
+        # Read before any work, so that a malformed anchors file stops the job at once.
+        self.anchors, self.recall_anchors = read_anchors(a.anchors), read_recall_anchors(a.anchors)
         self.start = a.start or time.time()
         self.work, self.secs = 0.0, 0.0  # exact runs of this pod: bytes of vectors times queries, seconds
         self.lock, self.data_lock, self.proc_lock = threading.Lock(), threading.Lock(), threading.Lock()
@@ -395,7 +444,7 @@ class Job:
         return results + bm
 
     def finish(self, status, reason, results):
-        anchors = read_anchors(self.a.anchors)
+        anchors, recall_anchors = self.anchors, self.recall_anchors
         cells = {(r["model"], r["dataset"]): r["ndcg_cut_10"] for r in results}
         unrun = {m for m, d in self.encoded if (m, d) not in cells}
         rows = classify(cells, anchors, unrun)
@@ -427,6 +476,7 @@ class Job:
             "check3": {"inside": sum(r[7] == "inside" for r in rows), "exception": [r[:3] for r in rows if r[7] == "exception"],
                        "pending": [r[:3] for r in rows if r[7] == "pending"], "investigate": investigate,
                        "no_anchor": missing_anchor},
+            "bm25": bm25_report(results, anchors, recall_anchors),
         }
         write_json(os.path.join(self.out, "summary.json"), s)
         self.log(f"{status}{': ' + reason if reason else ''}; {len(results)} runs, {len(investigate)} deviations to investigate")
@@ -497,7 +547,7 @@ def parse(argv=None):
     p.add_argument("--workers", type=int, default=os.cpu_count(), help="queries of an exact run searched at a time")
     p.add_argument("--start", type=float, help="the pod's start, seconds since the epoch (default now)")
     p.add_argument("--deadline-h", type=float, help="hours from --start after which no run may go on")
-    p.add_argument("--anchors", default=ANCHORS, help="anchors of check 3 (default results/anchors-step5.tsv)")
+    p.add_argument("--anchors", default=ANCHORS, help="anchors of check 3, the seven columns of results/anchors-step5.tsv (its default)")
     p.add_argument("--models", nargs="+")
     p.add_argument("--datasets", nargs="+", choices=DATASETS)
     p.add_argument("--bm25", nargs="*", choices=DATASETS, help="datasets of the BM25 runs (default Quora and NQ)")

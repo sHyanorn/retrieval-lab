@@ -73,3 +73,95 @@ def test_committed_anchors_cover_every_cell():
             assert any(s == "mteb" for s, _, _ in a[m, d]), (m, d)
     assert all(any(s == "pyserini" for s, _, _ in a["BAAI/bge-base-en-v1.5", d]) for d in J.DATASETS)
     assert [s for s, _, _ in a["bm25", "quora"]] == ["pyserini"] and ("bm25", "nq") in a
+
+
+def bm25_result(d, ndcg, recall, sha="0" * 64):
+    return {"model": "bm25", "dataset": d, "ndcg_cut_10": ndcg, "recall_100": recall, "run_sha256": sha}
+
+
+# Known answers of the BM25 report against Pyserini's committed anchors: Quora nDCG@10 0.7886,
+# Recall@100 0.9733; NQ 0.3055, 0.7513.
+KNOWN = [
+    # (dataset, our nDCG@10, our Recall@100, nDCG delta, agrees to three decimals, Recall delta)
+    ("quora", "0.7891", "0.9733", "+0.0005", True, "+0.0000"),
+    ("quora", "0.7892", "0.9700", "+0.0006", False, "-0.0033"),
+    ("nq", "0.3050", "0.7600", "-0.0005", True, "+0.0087"),
+    ("nq", "0.3049", "0.7513", "-0.0006", False, "+0.0000"),
+]
+
+
+def known_answers_hold(report):
+    a, ra = J.read_anchors(), J.read_recall_anchors()
+    for d, ndcg, recall, dl, agrees, rdl in KNOWN:
+        (row,) = report([bm25_result(d, ndcg, recall)], a, ra)
+        if (row["ndcg_delta"], row["agrees_to_three_decimals"], row["recall_delta"]) != (dl, agrees, rdl):
+            return False
+    return True
+
+
+def test_bm25_report_known_answers():
+    assert known_answers_hold(J.bm25_report)
+    a, ra = J.read_anchors(), J.read_recall_anchors()
+    assert ra == {("bm25", "quora"): D("0.9733"), ("bm25", "nq"): D("0.7513")}
+    (row,) = J.bm25_report([bm25_result("nq", "0.3200", "0.7513")], a, ra)
+    assert row["within_tolerance"] is False and row["ndcg_anchor"] == "0.3055" and row["recall_anchor"] == "0.7513"
+
+
+def test_bm25_report_broken_variants_fail(monkeypatch):
+    # The difference in floating point: 0.7891 - 0.7886 is 0.000500000000000056, so the edge would not agree.
+    monkeypatch.setattr(J, "delta", lambda ours, anchor: float(ours) - float(anchor))
+    monkeypatch.setattr(J, "agrees3", lambda dl: abs(dl) <= 0.0005)
+    assert not known_answers_hold(J.bm25_report)
+    monkeypatch.undo()
+    # A strict comparison at 0.0005.
+    monkeypatch.setattr(J, "agrees3", lambda dl: abs(dl) < J.THREE)
+    assert not known_answers_hold(J.bm25_report)
+    monkeypatch.undo()
+    # The difference taken the other way round.
+    monkeypatch.setattr(J, "delta", lambda ours, anchor: anchor - D(ours))
+    assert not known_answers_hold(J.bm25_report)
+
+
+def test_quora_run_sha256_beside_amendment_19():
+    a, ra = J.read_anchors(), J.read_recall_anchors()
+    same = bm25_result("quora", "0.7886", "0.9733", J.AMENDMENT_19_QUORA_RUN_SHA256)
+    (row,) = J.bm25_report([same], a, ra)
+    assert row["amendment_19_run_sha256"] == "064e7c4d1eefcbc31230ec7764efc83b1e42511af298f1a35d58e7c1bcb4a0b4"
+    assert row["same_as_amendment_19"] is True
+    (row,) = J.bm25_report([bm25_result("quora", "0.7886", "0.9733", "f" * 64)], a, ra)
+    assert row["same_as_amendment_19"] is False and row["run_sha256"] == "f" * 64
+    (row,) = J.bm25_report([bm25_result("nq", "0.3055", "0.7513")], a, ra)
+    assert "same_as_amendment_19" not in row and "amendment_19_run_sha256" not in row
+
+
+def job(tmp_path, anchors=J.ANCHORS):
+    s4 = tmp_path / "step4"
+    s4.mkdir()
+    (s4 / "summary.json").write_text('{"status": "done", "reason": "", "steps": []}')
+    (s4 / "vectors.sha256").write_text("")
+    return J.Job(J.parse(["--vol", str(tmp_path / "vol"), "--step4", str(s4), "--bin", "x", "--trec-eval", "x",
+                          "--anchors", str(anchors)]))
+
+
+def test_recall_100_is_not_gated(tmp_path):
+    # nDCG@10 inside on both, Recall@100 far from Pyserini's: done, exit 0, both inside check 3.
+    j = job(tmp_path)
+    res = [dict(bm25_result("quora", "0.7886", "0.5000"), perquery_sha256="a" * 64),
+           dict(bm25_result("nq", "0.3055", "0.9999"), perquery_sha256="b" * 64)]
+    assert j.finish("done", "", res) == 0
+    out = tmp_path / "vol" / "step5" / "out"
+    rows = [ln.split("\t") for ln in (out / "check3.tsv").read_text().splitlines()[1:]]
+    assert [(r[0], r[1], r[7]) for r in rows] == [("bm25", "nq", "inside"), ("bm25", "quora", "inside")]
+    s = __import__("json").loads((out / "summary.json").read_text())
+    assert {r["dataset"]: r["recall_delta"] for r in s["bm25"]} == {"nq": "+0.2486", "quora": "-0.4733"}
+    assert s["check3"]["investigate"] == []
+
+
+def test_a_six_column_anchors_file_stops_the_job_before_any_work(tmp_path):
+    six = tmp_path / "anchors6.tsv"
+    six.write_text("".join("\t".join(ln.split("\t")[:6]) + "\n" for ln in open(J.ANCHORS, encoding="utf-8").read().splitlines()))
+    try:
+        job(tmp_path, six)
+    except ValueError:
+        return
+    raise AssertionError("a six-column anchors file was accepted")

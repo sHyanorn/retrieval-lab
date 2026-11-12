@@ -24,3 +24,20 @@ Committed before any vector, run or result of the study existed. None changes a 
 11. Section 3, Level of the confirmatory reading, "the same labels per dataset are reported for every dataset as exploratory results", with Section 8, Tests, "0.05 / 196 = 2.6e-4 for the exploratory per-dataset families": at each operating point of each hypothesis, one Holm family holds the pairs of all models on every confirmatory dataset, each model encoded there and not only the confirmatory ones. TREC-COVID's pairs form a family of their own, reported apart. Why: the table of Section 12 counts the family this way (196 = 28 × 7 in tier 2b); TREC-COVID in it would make 196 into 224.
 12. The same sentence, at a recall operating point: a dataset's label compares only the models matched on that dataset; the cells not matched are listed and their pairs are not tested. The family holds the pairs tested, and its size is reported. Why: the label presumes equal recall, which a model at clearly higher recall breaks; amendment 10 covers the reading with every model in.
 13. Section 3, H3, "Kendall's τ-b between the two orders is reported, on the average and per dataset": per dataset on each dataset of `S_0.95`. Why: H3's order under HNSW is defined at matched `ef`, which `S_0.95` gives every model.
+
+## 2026-11-12: what the exploratory tables compute
+
+Committed before any vector, run or result of the study existed.
+
+14. Section 9, "Every other table is exploratory: ...": the list names the tables, not what each computes. The code of step 2 computes the following for them, and nothing else.
+    - `ef = 10`: the label of Section 3 over the confirmatory models and datasets, as for H1.
+    - Recall targets 0.80, 0.85, 0.90, 0.95 and 0.99: at each, H2 and H3 by their rules (the label, H2's verdict and reading, H3's verdict with its reversals, unordered pairs and τ-b), once with each build at the smallest `ef` that reaches the target, over `S_r`, not testable on fewer than three datasets, and once with each build at the `ef` of closest recall, over every confirmatory dataset (amendment 10). At 0.95 the first is H2 and H3 themselves.
+    - The labels per dataset (amendments 11 and 12): only at the operating points of the hypotheses that have a label, `ef = 40` (H1) and recall 0.95 (H2).
+    - δ at 0.0025 and 0.01: one column beside each averaged and each per-dataset label above, read from the same tests and the same resamples with the other threshold. No test and no family is added, and no verdict of H1 to H5 is read again.
+    - Seed 0, M 8 and M 32: each model's loss on each dataset at `ef = 40` and at recall 0.95, each build at its own `ef`, one build each, beside the mean of seeds 1 to 4 and, for M 8 and M 32, beside M 16 at seed 1. No test.
+    - Recall@100 at `ef = 100` (seeds 1 to 4) and of exact search; the share of unjudged documents in the top 10, of exact search and at `ef = 40` (seeds 1 to 4); the nDCG@10 of the anchor build. Means, no test.
+    - Models outside the confirmatory set: in the labels per dataset and in the tables of means above only.
+    - Normalize fusion: `L_D`, `L_F` and `φ` as H5 computes them, with the 95% interval of `φ`, without a verdict.
+    - The rest of the grid: the means of every cell (amendment 9), descriptive, without a test.
+
+    Why: Section 9 has its analyses run once by the code frozen at step 2; the list does not say what that code computes for each item.

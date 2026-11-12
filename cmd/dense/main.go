@@ -51,7 +51,7 @@ func main() {
 	switch *grid {
 	case "m3":
 	case "study":
-		g.efs = dense.StudyEFs
+		g.efs, g.study = dense.StudyEFs, true
 	default:
 		fmt.Fprintf(os.Stderr, "dense: unknown -grid %q\n", *grid)
 		os.Exit(2)
@@ -67,6 +67,7 @@ type graph struct {
 	seed   uint64
 	m, efc int
 	efs    []int
+	study  bool // the study's grid: runs cut as trec_eval ranks them
 }
 
 func run(data, vectors, queryVecs, model, ortLib, out, tag string, k int, ann string, gr graph) error {
@@ -138,9 +139,12 @@ type efTimes struct {
 
 // approximate builds the graph of gr over x and writes one run per ef of
 // gr.efs, dense.GraphDepth(ef) hits deep. A query's own document is
-// skipped inside the search, so each query gets that many lines. It returns
-// the time per query on one goroutine of the graph at each ef and, with
-// timeExact, of exact search at depth k.
+// skipped inside the search, so each query gets that many lines. On the
+// study's grid a run holds the top of all ef documents the search found, as
+// cut cuts them; on M3's, the top of the graph's order. It returns the time
+// per query on one goroutine of the graph search at each ef and, with
+// timeExact, of exact search at depth k. On the study's grid that time
+// includes scoring all ef documents, not GraphDepth(ef) as on M3's.
 func approximate(x *dense.Index, qvecs map[string][]float32, k int, prefix, tag string, gr graph, timeExact bool) (any, error) {
 	qids := slices.Sorted(maps.Keys(qvecs))
 	start := time.Now()
@@ -156,8 +160,17 @@ func approximate(x *dense.Index, qvecs map[string][]float32, k int, prefix, tag 
 	var graph []efTimes
 	for _, ef := range gr.efs {
 		k := dense.GraphDepth(ef)
+		found := k
+		if gr.study {
+			found = ef // every document of layer 0's search, ef >= k on the grid
+		}
 		hits := make(map[string][]eval.Hit, len(qids))
-		t := timed(qids, func(qid string) { hits[qid] = x.SearchGraph(g, qvecs[qid], k, ef, qid) })
+		t := timed(qids, func(qid string) { hits[qid] = x.SearchGraph(g, qvecs[qid], found, ef, qid) })
+		if gr.study {
+			for qid, h := range hits {
+				hits[qid] = cut(h, k)
+			}
+		}
 		graph = append(graph, efTimes{ef, k, t})
 		if err := writeRun(fmt.Sprintf("%s-ef%d.run", prefix, ef), qids, hits, fmt.Sprintf("%s-hnsw-ef%d", tag, ef)); err != nil {
 			return nil, err
@@ -165,6 +178,20 @@ func approximate(x *dense.Index, qvecs map[string][]float32, k int, prefix, tag 
 	}
 	out["hnsw"] = graph
 	return out, nil
+}
+
+// cut returns the top k of hits as trec_eval ranks them in the run file:
+// score as eval.WriteRun prints it, descending, ties by document ID
+// descending (docs/PREREGISTRATION-AMENDMENTS.md, 15). Of documents tied at
+// the cut that the search found, the run then keeps those that sort first
+// in the exact run, not those of the lower node.
+func cut(hits []eval.Hit, k int) []eval.Hit {
+	r := make([]eval.Hit, len(hits))
+	for i, h := range hits {
+		r[i] = eval.Hit{DocID: h.DocID, Score: eval.Printed(h.Score)}
+	}
+	r = eval.Ranked(r)
+	return r[:min(k, len(r))]
 }
 
 func timed(qids []string, search func(qid string)) times {

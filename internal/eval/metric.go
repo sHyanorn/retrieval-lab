@@ -102,24 +102,76 @@ func Recall(judged map[string]int, ranked []Hit, k int) float64 {
 }
 
 // Overlap is the share of exact's top k that approx's top k holds, both
-// ranked as trec_eval ranks them: the recall of an approximate search
-// against the exact one. exact must not be empty.
+// ranked as trec_eval ranks them and cut at rank k: the recall of an
+// approximate search against the exact one, as M3's tables count it.
+// exact must not be empty.
 func Overlap(exact, approx []Hit, k int) float64 {
-	found, of := OverlapCount(exact, approx, k)
+	found, of := overlapCount(exact, approx, k, byRank)
 	return float64(found) / float64(of)
 }
 
-// OverlapCount returns the counts behind Overlap: how many of exact's top k
-// approx's top k holds, and the size of exact's top k.
+// OverlapCount returns the study's counts of neighbour recall@k
+// (docs/PREREGISTRATION-AMENDMENTS.md, 15), both runs ranked as trec_eval
+// ranks them: of approx's top k, the documents exact holds at a score above
+// its k-th, plus those it holds at exactly the k-th score, up to the number
+// of these in exact's top k; and the size of exact's top k. Which of the
+// documents tied at the cut a run holds does not count against it. The
+// scores are compared as given; read from run files, they are compared as
+// the files print them.
 func OverlapCount(exact, approx []Hit, k int) (found, of int) {
+	return overlapCount(exact, approx, k, tiesCapped)
+}
+
+// overlapRule is how overlapCount treats documents tied at exact's k-th
+// score.
+type overlapRule int
+
+const (
+	tiesCapped overlapRule = iota // OverlapCount's rule
+	byRank                        // only exact's top k by rank, as M3's Overlap
+	uncapped                      // every tied document, however many
+)
+
+func overlapCount(exact, approx []Hit, k int, rule overlapRule) (found, of int) {
 	e, a := Ranked(exact), Ranked(approx)
-	e, a = e[:min(k, len(e))], a[:min(k, len(a))]
+	of = min(k, len(e))
+	if of == 0 {
+		return 0, 0
+	}
+	a = a[:min(k, len(a))]
+	in := func(set []Hit, id string) bool {
+		return slices.ContainsFunc(set, func(x Hit) bool { return x.DocID == id })
+	}
+	if rule == byRank {
+		for _, h := range a {
+			if in(e[:of], h.DocID) {
+				found++
+			}
+		}
+		return found, of
+	}
+	last := e[of-1].Score
+	above := 0 // exact's documents above the k-th score, all in its top k
+	for above < of && e[above].Score > last {
+		above++
+	}
+	end := of // exact's documents tied at the k-th score are e[above:end]
+	for end < len(e) && e[end].Score == last {
+		end++
+	}
+	tied := 0
 	for _, h := range a {
-		if slices.ContainsFunc(e, func(x Hit) bool { return x.DocID == h.DocID }) {
+		switch {
+		case in(e[:above], h.DocID):
 			found++
+		case in(e[above:end], h.DocID):
+			tied++
 		}
 	}
-	return found, len(e)
+	if rule == tiesCapped {
+		tied = min(tied, of-above)
+	}
+	return found + tied, of
 }
 
 // Unjudged is the share of the top k of ranked that qrels do not judge,

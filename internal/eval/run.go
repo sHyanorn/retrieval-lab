@@ -68,6 +68,15 @@ func WriteRun(w io.Writer, qid string, hits []Hit, tag string) error {
 	return nil
 }
 
+// Printed is score as WriteRun prints it and ReadRun reads it back.
+func Printed(score float64) float64 {
+	v, err := strconv.ParseFloat(fmt.Sprintf("%f", score), 64)
+	if err != nil {
+		panic(err) // %f of a float64 always parses
+	}
+	return v
+}
+
 // RunQueries runs search on every query in ID order and writes the top k
 // hits of each as a TREC run. A hit whose document ID equals the query ID
 // is left out after retrieval, as Pyserini's --remove-query does, so such a

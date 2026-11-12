@@ -3,6 +3,7 @@ package eval
 import (
 	"bytes"
 	"reflect"
+	"slices"
 	"testing"
 )
 
@@ -48,5 +49,53 @@ func TestOverlapCountTakesTheTopKOfBoth(t *testing.T) {
 	// approx's top 2 is {e, a}: one of exact's top 2, {a, b}.
 	if f, o := OverlapCount(exact, approx, 2); f != 1 || o != 2 {
 		t.Errorf("OverlapCount(k=2) = %d of %d, want 1 of 2", f, o)
+	}
+}
+
+// tiedAtTen is an exact run whose 10th and 11th documents, z and a, have
+// the same score: trec_eval ranks z 10th, its ID being the higher.
+func tiedAtTen() []Hit {
+	var exact []Hit
+	for i, id := range []string{"d1", "d2", "d3", "d4", "d5", "d6", "d7", "d8", "d9"} {
+		exact = append(exact, Hit{id, 0.9 - 0.01*float64(i)})
+	}
+	return append(exact, Hit{"a", 0.5}, Hit{"z", 0.5}, Hit{"c", 0.4})
+}
+
+func TestOverlapCountCountsTiesAtK(t *testing.T) {
+	exact := tiedAtTen()
+	top9 := func(h Hit) []Hit { return append(slices.Clone(exact[:9]), h) }
+	// A run that keeps a, not z, holds the same exact neighbours: of the two
+	// tied at the cut, which one it keeps is not an error of the search.
+	withA := top9(Hit{"a", 0.5})
+	if f, o := OverlapCount(exact, withA, 10); f != 10 || o != 10 {
+		t.Errorf("OverlapCount with the tied a = %d of %d, want 10 of 10", f, o)
+	}
+	if f, _ := overlapCount(exact, withA, 10, byRank); f == 10 {
+		t.Error("the variant counting exact's top 10 by rank passed")
+	}
+	// A run that misses d9 and holds both a and z holds one of the tied
+	// documents more than the exact top 10 has room for: no exact top 10
+	// leaves out d9.
+	both := append(slices.Clone(exact[:8]), Hit{"a", 0.5}, Hit{"z", 0.5})
+	if f, _ := OverlapCount(exact, both, 10); f != 9 {
+		t.Errorf("OverlapCount without d9, with a and z = %d, want 9", f)
+	}
+	if f, _ := overlapCount(exact, both, 10, uncapped); f == 9 {
+		t.Error("the variant counting every tied document passed")
+	}
+	// A run that holds neither of the tied documents misses one, whatever
+	// it holds below them.
+	if f, _ := OverlapCount(exact, top9(Hit{"c", 0.4}), 10); f != 9 {
+		t.Errorf("OverlapCount with c below the cut = %d, want 9", f)
+	}
+	// Nor does a score equal to the 10th count for a document the exact run
+	// does not hold.
+	if f, _ := OverlapCount(exact, top9(Hit{"x", 0.5}), 10); f != 9 {
+		t.Errorf("OverlapCount with x, not in the exact run = %d, want 9", f)
+	}
+	// Overlap, M3's measure, keeps counting by rank.
+	if got := Overlap(exact, withA, 10); got != 0.9 {
+		t.Errorf("Overlap = %v, want 0.9", got)
 	}
 }

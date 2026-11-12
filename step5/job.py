@@ -10,25 +10,30 @@ amendment 18.
 
 Stops at once, and computes nothing further, if a vector file's SHA-256
 differs from step 4's committed one, or if cmd/eval and trec_eval disagree on
-a run (scripts/check-eval.sh). A run outside its anchor's tolerance does not
-stop the job: it is listed, with its class, in check3.tsv and the summary.
+a run (scripts/check-eval.sh): the run of the other thread is ended too. A run
+outside its anchor's tolerance does not stop the job: it is listed, with its
+class, in check3.tsv and the summary.
 
 A unit (one exact run, or one BM25 run) counts as done once its record
-done/<unit>.json exists and the run file's SHA-256 equals the record's; a
-rerun skips it, and redoes a unit without a valid record from the start. Files
-are written beside their final name and renamed into place.
+done/<unit>.json exists and the SHA-256 of its run and per-query files equal
+the record's; a rerun skips it, and redoes a unit without a valid record from
+the start. Files are written beside their final name and renamed into place.
+
+--deadline-h counts from --start, the pod's start: no exact run starts that
+would end after it, at the rate of the exact runs so far (this pod's, or the
+records' before its first), and at it whatever still runs is ended.
 
 VOL/data/<dataset>                         BEIR datasets (scripts/data.sh)
 VOL/step4/vectors/<dataset>/<model>        step 4's vectors
 VOL/step5/runs/<model>/<dataset>.run       exact runs; bm25/<dataset>.run
 VOL/step5/study/<model>/<dataset>/exact.tsv  per-query measures, cmd/study's layout
+VOL/step5/bm25/<dataset>.tsv               BM25's per-query measures
 VOL/step5/done/                            records of the units done
 VOL/step5/out                              log, summary, check 3, checksums
 
 Exit status: 0 done, every run inside its anchors or a recorded exception;
-3 done, with deviations to investigate; 2 stopped by a checksum or by
-trec_eval; 4 stopped before an exact run that would end after --deadline-h,
-at the rate of this pod's exact runs so far; 1 an error.
+3 done, with deviations to investigate or a run without an anchor; 2 stopped
+by a checksum or by trec_eval; 4 stopped by --deadline-h; 1 an error.
 
 usage: python3 step5/job.py --vol DIR --step4 results/step4/<attempt> --bin DIR --trec-eval PATH [--workers N]
 """
@@ -62,7 +67,7 @@ class Stop(Exception):
 
 
 class Deadline(Exception):
-    """The next exact run would not end before the job's time limit."""
+    """The next exact run would not end before the job's time limit, or the limit came."""
 
 
 def slug(model):
@@ -138,7 +143,8 @@ class Job:
         self.data = a.data or os.path.join(a.vol, "data")
         self.vectors = a.vectors or os.path.join(a.vol, "step4", "vectors")
         summary = read_json(os.path.join(a.step4, "summary.json"))
-        if summary["status"] != "done":
+        if summary is None or summary["status"] != "done":
+            summary = summary or {"status": "missing", "reason": os.path.join(a.step4, "summary.json")}
             raise SystemExit(f"step 4's summary says {summary['status']}: {summary['reason']}")
         self.sums = {}
         with open(os.path.join(a.step4, "vectors.sha256"), encoding="utf-8") as f:
@@ -154,11 +160,12 @@ class Job:
             self.cells = [c for c in self.cells if c[1] in a.datasets]
         self.not_encoded = [list(s) for s in summary.get("not_done", [])]
         self.cuts = (summary.get("plan") or {}).get("cuts", [])
-        self.bm25 = [d for d in BM25 if d in (a.bm25 if a.bm25 is not None else BM25)]
-        self.start = time.time()
+        self.bm25 = list(BM25 if a.bm25 is None else a.bm25)
+        self.start = a.start or time.time()
         self.work, self.secs = 0.0, 0.0  # exact runs of this pod: bytes of vectors times queries, seconds
-        self.lock = threading.Lock()
+        self.lock, self.data_lock, self.proc_lock = threading.Lock(), threading.Lock(), threading.Lock()
         self.stopped = threading.Event()
+        self.procs, self.cause = set(), None  # running subprocesses; the first exception that ended the job
 
     def log(self, msg):
         line = time.strftime("%Y-%m-%dT%H:%M:%SZ ", time.gmtime()) + msg
@@ -168,8 +175,30 @@ class Job:
                 f.write(line + "\n")
 
     def sh(self, cmd, stdout=None):
+        """Runs cmd; end() terminates it."""
         self.log("run: " + " ".join(cmd))
-        subprocess.run(cmd, check=True, cwd=REPO, stdout=stdout)
+        p = subprocess.Popen(cmd, cwd=REPO, stdout=stdout)
+        with self.proc_lock:
+            self.procs.add(p)
+        if self.stopped.is_set():
+            p.terminate()
+        try:
+            code = p.wait()
+        finally:
+            with self.proc_lock:
+                self.procs.discard(p)
+        if code != 0:
+            raise subprocess.CalledProcessError(code, cmd)
+
+    def end(self, e):
+        """Ends the job: keeps the first cause, stops both threads, terminates what runs."""
+        with self.proc_lock:
+            if self.cause is None:
+                self.cause = e
+            self.stopped.set()
+            procs = list(self.procs)
+        for p in procs:
+            p.terminate()
 
     def bin(self, name):
         return os.path.join(self.a.bin, name)
@@ -177,24 +206,26 @@ class Job:
     def record(self, unit):
         return os.path.join(self.s5, "done", unit + ".json")
 
-    def done(self, unit, run):
-        """The unit's record, if it exists and the run file is the one it names."""
+    def done(self, unit, run, perquery):
+        """The unit's record, if it exists and the run and per-query files are those it names."""
         r = read_json(self.record(unit))
         if r is None:
             return None
-        if not os.path.exists(run) or sha256(run) != r["run_sha256"]:
-            self.log(f"{unit}: the run file differs from its record; done again")
-            os.remove(self.record(unit))
-            return None
+        for path, key in ((run, "run_sha256"), (perquery, "perquery_sha256")):
+            if not os.path.exists(path) or sha256(path) != r[key]:
+                self.log(f"{unit}: {os.path.basename(path)} differs from its record; done again")
+                os.remove(self.record(unit))
+                return None
         return r
 
     def dataset(self, d):
         path, ok = os.path.join(self.data, d), os.path.join(self.data, d + ".ok")
-        if not os.path.exists(ok):
-            if os.path.exists(path + ".zip") and os.path.isdir(path):
-                shutil.rmtree(path)  # perhaps unzipped in part
-            self.sh([os.path.join(REPO, "scripts", "data.sh"), self.data, d])
-            open(ok, "w").close()
+        with self.data_lock:  # both threads read Quora and NQ
+            if not os.path.exists(ok):
+                if os.path.exists(path + ".zip") and os.path.isdir(path):
+                    shutil.rmtree(path)  # perhaps unzipped in part
+                self.sh([os.path.join(REPO, "scripts", "data.sh"), self.data, d])
+                open(ok, "w").close()
         return path
 
     def verify(self, m, d):
@@ -225,14 +256,16 @@ class Job:
     def exact(self, m, d):
         unit = f"exact/{slug(m)}/{d}"
         run = os.path.join(self.s5, "runs", slug(m), d + ".run")
-        if r := self.done(unit, run):
+        perquery = os.path.join(self.s5, "study", slug(m), d, "exact.tsv")
+        if r := self.done(unit, run, perquery):
             return r
         data = self.dataset(d)
         vec = os.path.join(self.vectors, d, slug(m))
         work = os.path.getsize(os.path.join(vec, "index")) * queries(data)
-        if self.secs > 0 and self.a.deadline_h:
+        rate = (self.secs / self.work) if self.secs > 0 else self.prior_rate
+        if rate and self.a.deadline_h:
             left = self.start + self.a.deadline_h * 3600 - time.time()
-            need = work * self.secs / self.work
+            need = work * rate
             if need > left:
                 raise Deadline(f"exact {m} on {d} needs about {need / 3600:.2f} h, {left / 3600:.2f} h left")
         self.verify(m, d)
@@ -242,11 +275,10 @@ class Job:
                  "-run", run + ".tmp", "-tag", slug(m), "-workers", str(self.a.workers)])
         secs = time.time() - t
         self.work, self.secs = self.work + work, self.secs + secs
-        perquery = os.path.join(self.s5, "study", slug(m), d, "exact.tsv")
         ndcg, recall = self.evaluate(data, run + ".tmp", perquery, unit)
         os.replace(run + ".tmp", run)
         r = {"model": m, "dataset": d, "ndcg_cut_10": ndcg, "recall_100": recall, "seconds": round(secs, 1),
-             "workers": self.a.workers, "run_sha256": sha256(run), "perquery_sha256": sha256(perquery)}
+             "work": work, "workers": self.a.workers, "run_sha256": sha256(run), "perquery_sha256": sha256(perquery)}
         write_json(self.record(unit), r)
         self.log(f"exact {m} on {d}: nDCG@10 {ndcg}, {r['seconds']} s")
         return r
@@ -254,7 +286,8 @@ class Job:
     def bm25_run(self, d):
         unit = f"bm25/{d}"
         run = os.path.join(self.s5, "runs", "bm25", d + ".run")
-        if r := self.done(unit, run):
+        perquery = os.path.join(self.s5, "bm25", d + ".tsv")  # outside study/: not an input of cmd/study
+        if r := self.done(unit, run, perquery):
             return r
         data = self.dataset(d)
         index = os.path.join(self.a.local, "bm25-index", d)  # on the pod's own disk
@@ -265,7 +298,6 @@ class Job:
             self.sh([self.bin("bm25"), "-data", data, "-index", index, "-run", run + ".tmp"], stdout=f)
         secs = time.time() - t
         os.replace(run + ".stats.json.tmp", run + ".stats.json")
-        perquery = os.path.join(self.s5, "study", "bm25", d, "bm25.tsv")
         ndcg, recall = self.evaluate(data, run + ".tmp", perquery, unit)
         os.replace(run + ".tmp", run)
         shutil.rmtree(index, ignore_errors=True)
@@ -275,37 +307,50 @@ class Job:
         self.log(f"bm25 on {d}: nDCG@10 {ndcg}, {r['seconds']} s")
         return r
 
-    def bm25_all(self, results, errors):
+    def bm25_all(self, results):
         try:
             for d in self.bm25:
                 if self.stopped.is_set():
                     return
                 results.append(self.bm25_run(d))
         except BaseException as e:  # noqa: BLE001 - handed to the main thread
-            errors.append(e)
-            self.stopped.set()
+            self.end(e)
+
+    @property
+    def prior_rate(self):
+        """Seconds per unit of work of the exact runs recorded before this pod's first."""
+        rs = [r for m, d in self.cells if (r := read_json(self.record(f"exact/{slug(m)}/{d}"))) and r.get("work")]
+        work = sum(r["work"] for r in rs)
+        return sum(r["seconds"] for r in rs) / work if work else None
 
     def go(self):
         self.log(f"start: {len(self.cells)} exact runs, BM25 on {', '.join(self.bm25) or 'none'}, {self.a.workers} workers")
-        results, bm, errors = [], [], []
-        th = threading.Thread(target=self.bm25_all, args=(bm, errors))
+        results, bm = [], []
+        timer = None
+        if self.a.deadline_h:
+            left = self.start + self.a.deadline_h * 3600 - time.time()
+            timer = threading.Timer(max(left, 0), lambda: self.end(Deadline(f"{self.a.deadline_h} h from the pod's start")))
+            timer.daemon = True
+            timer.start()
+        th = threading.Thread(target=self.bm25_all, args=(bm,))
         th.start()
         try:
             for m, d in self.cells:
                 if self.stopped.is_set():
                     break
                 results.append(self.exact(m, d))
-        except BaseException:
-            self.stopped.set()
-            raise
+        except BaseException as e:  # noqa: BLE001 - raised below as the first cause
+            self.end(e)
         finally:
             th.join()
-        if errors:
-            raise errors[0]
+            if timer:
+                timer.cancel()
+        if self.cause is not None:
+            raise self.cause
         return results + bm
 
     def finish(self, status, reason, results):
-        anchors = read_anchors()
+        anchors = read_anchors(self.a.anchors)
         cells = {(r["model"], r["dataset"]): r["ndcg_cut_10"] for r in results}
         rows = classify(cells, anchors)
         with open(os.path.join(self.out, "check3.tsv"), "w", encoding="utf-8") as f:
@@ -317,15 +362,15 @@ class Job:
                 f.write(f"{r['run_sha256']}  runs/{slug(r['model'])}/{r['dataset']}.run\n")
         with open(os.path.join(self.out, "perquery.sha256"), "w", encoding="utf-8") as f:
             for r in sorted(results, key=lambda r: (r["model"], r["dataset"])):
-                name = "bm25.tsv" if r["model"] == "bm25" else "exact.tsv"
-                f.write(f"{r['perquery_sha256']}  study/{slug(r['model'])}/{r['dataset']}/{name}\n")
+                rel = f"bm25/{r['dataset']}.tsv" if r["model"] == "bm25" else f"study/{slug(r['model'])}/{r['dataset']}/exact.tsv"
+                f.write(f"{r['perquery_sha256']}  {rel}\n")
         missing_anchor = [list(c) for c in cells if c not in anchors]
         investigate = [r[:3] for r in rows if r[7] == "investigate"]
         s = {
             "status": status,
             "reason": reason,
             "pod": os.environ.get("RUNPOD_POD_ID", "local"),
-            "hours": round((time.time() - self.start) / 3600, 3),
+            "hours_since_pod_start": round((time.time() - self.start) / 3600, 3),
             "cpus": os.cpu_count(),
             "workers": self.a.workers,
             "runs": sorted(results, key=lambda r: (r["model"], r["dataset"])),
@@ -398,10 +443,12 @@ def parse(argv=None):
     p.add_argument("--data", help="BEIR datasets (default VOL/data)")
     p.add_argument("--vectors", help="step 4's vectors (default VOL/step4/vectors)")
     p.add_argument("--workers", type=int, default=os.cpu_count(), help="queries of an exact run searched at a time")
-    p.add_argument("--deadline-h", type=float, help="hours from the job's start after which no exact run may end")
+    p.add_argument("--start", type=float, help="the pod's start, seconds since the epoch (default now)")
+    p.add_argument("--deadline-h", type=float, help="hours from --start after which no run may go on")
+    p.add_argument("--anchors", default=ANCHORS, help="anchors of check 3 (default results/anchors-step5.tsv)")
     p.add_argument("--models", nargs="+")
     p.add_argument("--datasets", nargs="+", choices=DATASETS)
-    p.add_argument("--bm25", nargs="*", choices=BM25, help="datasets of the BM25 runs (default Quora and NQ)")
+    p.add_argument("--bm25", nargs="*", choices=DATASETS, help="datasets of the BM25 runs (default Quora and NQ)")
     return p.parse_args(argv)
 
 

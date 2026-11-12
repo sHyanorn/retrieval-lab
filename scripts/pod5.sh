@@ -7,8 +7,9 @@
 # (default 45), within the pod's time limit, for the log to be read.
 # Environment: HARD_LIMIT_MIN, STEP4 (step 4's committed files, a directory
 # of the repository); VOL (default /workspace/rl), WORKERS (default the CPUs),
-# GRACE_MIN, DEADLINE_H (default the pod's time limit less the grace and a
-# quarter of an hour), SKIP_SETUP=1 where Go 1.27.3 is installed. The
+# GRACE_MIN, DEADLINE_H (hours from the pod's start; default its time limit
+# less the grace and a quarter of an hour), SKIP_SETUP=1 where Go 1.27.3 is
+# installed, JOB_ARGS (more arguments of step5/job.py, for a dry run). The
 # binaries, trec_eval and the BM25 indexes stay on the pod's own disk; only
 # run files, per-query measures and records go to VOL.
 set -euo pipefail
@@ -54,7 +55,7 @@ step4=${STEP4:?STEP4 names the committed files of step 4}
 deadline=${DEADLINE_H:-$(awk "BEGIN { print (${HARD_LIMIT_MIN:?} - ${GRACE_MIN:-45} - 15) / 60 }")}
 set +e
 python3 step5/job.py --vol "$vol" --step4 "$step4" --bin "$bin" --trec-eval "${TREC_EVAL_DIR:-/root/trec_eval}/trec_eval" \
-	--local "${LOCAL:-/root}" --workers "${WORKERS:-$(nproc)}" --deadline-h "$deadline"
+	--local "${LOCAL:-/root}" --workers "${WORKERS:-$(nproc)}" --start "$start" --deadline-h "$deadline" ${JOB_ARGS:-}
 code=$?
 echo "step5/job.py exited with $code"
 exit $code

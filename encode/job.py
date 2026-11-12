@@ -7,7 +7,8 @@ with CPU vectors that scripts/reference.sh computes on the pod's CPU while
 the GPU encodes, and records whether those equal step 3's checksums
 (results/reference-scifact-cpu.sha256). A failed check or any error stops
 the job. Everything lives under VOL; a rerun on the same VOL skips the steps
-whose summary exists, and encode.py resumes a step after its last chunk.
+whose summary exists, and encode.py resumes a step after its last chunk; a
+check failed before stops it again.
 
 VOL/data/<dataset>                       BEIR datasets (scripts/data.sh)
 VOL/dense/prebuilt/<dataset>             Pyserini's indexes (scripts/dense.sh)
@@ -347,6 +348,10 @@ class Job:
 
     def go(self):
         self.log(f"start: pod {self.pod}, device {self.a.device}, {self.prior / 3600:.2f} h before this pod, limit {self.limit_h:.2f} h")
+        for k in ("check1", "check2"):  # a check failed before stops a rerun too
+            for p in sorted(glob.glob(os.path.join(self.out, k, "*.json"))):
+                if not read_json(p)["pass"]:
+                    raise Stop(f"check {k[-1]} failed before on this volume: {os.path.basename(p)[:-5]}")
         while True:
             if self.plan is None and self.done(self.first):
                 self.measure()

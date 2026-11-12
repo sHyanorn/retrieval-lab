@@ -114,6 +114,14 @@ def test_check1_failure_stops(vol, tmp_path):
     assert not s["check1"][BASE]["pass"] and s["check2"]["nfcorpus"]["pass"]
 
 
+def test_failed_check_stops_a_rerun(vol, tmp_path):
+    assert make_job(vol, tmp_path, agree=AGREE_LOW("*/reference/*")).run() == 2
+    # The pod restarted, or a new one on the same volume: no further encoding.
+    j = make_job(vol, tmp_path)
+    assert j.run() == 2 and j.calls == []
+    assert summary(vol)["reason"] == "check 1 failed before on this volume: " + J.slug(BASE)
+
+
 def test_check2_failure_stops(vol, tmp_path):
     j = make_job(vol, tmp_path, agree=AGREE_LOW("*/prebuilt/scifact"))
     assert j.run() == 2

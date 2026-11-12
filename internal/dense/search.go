@@ -9,7 +9,8 @@ import (
 	"github.com/sHyanorn/retrieval-lab/internal/hnsw"
 )
 
-// Index holds document vectors for exact search, row i for IDs[i].
+// Index holds document vectors for exact search, row i for IDs[i], all
+// of one dimension.
 type Index struct {
 	IDs  []string
 	Vecs []float32
@@ -32,8 +33,11 @@ func byScore(a, b eval.Hit) int {
 	return cmp.Or(cmp.Compare(b.Score, a.Score), strings.Compare(a.DocID, b.DocID))
 }
 
+// hit scores document i for q; the rows are as wide as the vectors are
+// long per ID.
 func (x *Index) hit(q []float32, i int) eval.Hit {
-	return eval.Hit{DocID: x.IDs[i], Score: float64(score(q, x.Vecs[i*Dim:(i+1)*Dim]))}
+	d := len(x.Vecs) / len(x.IDs)
+	return eval.Hit{DocID: x.IDs[i], Score: float64(score(q, x.Vecs[i*d:(i+1)*d]))}
 }
 
 // Search scores every document and returns the top k, with the scores as

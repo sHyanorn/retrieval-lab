@@ -104,3 +104,20 @@ func TestDocTextDropsFormatCharacters(t *testing.T) {
 		t.Fatalf("DocText = %q, want %q", got, want)
 	}
 }
+
+func TestSearchTakesTheDimensionFromTheVectors(t *testing.T) {
+	// Three documents of dimension 3; the second is nearest to q.
+	x := &Index{IDs: []string{"a", "b", "c"}, Vecs: []float32{1, 0, 0, 0, 1, 0, 0, 0, 1}}
+	q := []float32{0.6, 0.8, 0}
+	got := x.Search(q, 2)
+	if len(got) != 2 || got[0].DocID != "b" || got[1].DocID != "a" {
+		t.Fatalf("Search = %v", got)
+	}
+	g, err := hnsw.Build(x.Vecs, 3, hnsw.Config{M: 2, EfConstruction: 4, Seed: 1, Workers: 1})
+	if err != nil {
+		t.Fatal(err)
+	}
+	if hits := x.SearchGraph(g, q, 2, 10, "a"); len(hits) != 2 || hits[0].DocID != "b" || hits[1].DocID != "c" {
+		t.Fatalf("SearchGraph = %v", hits)
+	}
+}

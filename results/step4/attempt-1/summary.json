@@ -1,0 +1,311 @@
+{
+ "check1": {},
+ "check2": {},
+ "device": "cuda",
+ "elapsed_h": 0.027,
+ "gpu": "NVIDIA GeForce RTX 5090",
+ "not_done": [
+  [
+   "BAAI/bge-base-en-v1.5",
+   "scifact"
+  ],
+  [
+   "sentence-transformers/all-MiniLM-L6-v2",
+   "scifact"
+  ],
+  [
+   "BAAI/bge-small-en-v1.5",
+   "scifact"
+  ],
+  [
+   "intfloat/e5-base-v2",
+   "scifact"
+  ],
+  [
+   "thenlper/gte-base",
+   "scifact"
+  ],
+  [
+   "Snowflake/snowflake-arctic-embed-m-v1.5",
+   "scifact"
+  ],
+  [
+   "BAAI/bge-large-en-v1.5",
+   "scifact"
+  ],
+  [
+   "mixedbread-ai/mxbai-embed-large-v1",
+   "scifact"
+  ],
+  [
+   "BAAI/bge-base-en-v1.5",
+   "arguana"
+  ],
+  [
+   "BAAI/bge-base-en-v1.5",
+   "scidocs"
+  ],
+  [
+   "BAAI/bge-base-en-v1.5",
+   "fiqa"
+  ],
+  [
+   "BAAI/bge-base-en-v1.5",
+   "trec-covid"
+  ],
+  [
+   "BAAI/bge-base-en-v1.5",
+   "quora"
+  ],
+  [
+   "sentence-transformers/all-MiniLM-L6-v2",
+   "nfcorpus"
+  ],
+  [
+   "sentence-transformers/all-MiniLM-L6-v2",
+   "arguana"
+  ],
+  [
+   "sentence-transformers/all-MiniLM-L6-v2",
+   "scidocs"
+  ],
+  [
+   "sentence-transformers/all-MiniLM-L6-v2",
+   "fiqa"
+  ],
+  [
+   "sentence-transformers/all-MiniLM-L6-v2",
+   "trec-covid"
+  ],
+  [
+   "sentence-transformers/all-MiniLM-L6-v2",
+   "quora"
+  ],
+  [
+   "BAAI/bge-small-en-v1.5",
+   "nfcorpus"
+  ],
+  [
+   "BAAI/bge-small-en-v1.5",
+   "arguana"
+  ],
+  [
+   "BAAI/bge-small-en-v1.5",
+   "scidocs"
+  ],
+  [
+   "BAAI/bge-small-en-v1.5",
+   "fiqa"
+  ],
+  [
+   "BAAI/bge-small-en-v1.5",
+   "trec-covid"
+  ],
+  [
+   "BAAI/bge-small-en-v1.5",
+   "quora"
+  ],
+  [
+   "intfloat/e5-base-v2",
+   "nfcorpus"
+  ],
+  [
+   "intfloat/e5-base-v2",
+   "arguana"
+  ],
+  [
+   "intfloat/e5-base-v2",
+   "scidocs"
+  ],
+  [
+   "intfloat/e5-base-v2",
+   "fiqa"
+  ],
+  [
+   "intfloat/e5-base-v2",
+   "trec-covid"
+  ],
+  [
+   "intfloat/e5-base-v2",
+   "quora"
+  ],
+  [
+   "thenlper/gte-base",
+   "nfcorpus"
+  ],
+  [
+   "thenlper/gte-base",
+   "arguana"
+  ],
+  [
+   "thenlper/gte-base",
+   "scidocs"
+  ],
+  [
+   "thenlper/gte-base",
+   "fiqa"
+  ],
+  [
+   "thenlper/gte-base",
+   "trec-covid"
+  ],
+  [
+   "thenlper/gte-base",
+   "quora"
+  ],
+  [
+   "Snowflake/snowflake-arctic-embed-m-v1.5",
+   "nfcorpus"
+  ],
+  [
+   "Snowflake/snowflake-arctic-embed-m-v1.5",
+   "arguana"
+  ],
+  [
+   "Snowflake/snowflake-arctic-embed-m-v1.5",
+   "scidocs"
+  ],
+  [
+   "Snowflake/snowflake-arctic-embed-m-v1.5",
+   "fiqa"
+  ],
+  [
+   "Snowflake/snowflake-arctic-embed-m-v1.5",
+   "trec-covid"
+  ],
+  [
+   "Snowflake/snowflake-arctic-embed-m-v1.5",
+   "quora"
+  ],
+  [
+   "BAAI/bge-large-en-v1.5",
+   "nfcorpus"
+  ],
+  [
+   "BAAI/bge-large-en-v1.5",
+   "arguana"
+  ],
+  [
+   "BAAI/bge-large-en-v1.5",
+   "scidocs"
+  ],
+  [
+   "BAAI/bge-large-en-v1.5",
+   "fiqa"
+  ],
+  [
+   "BAAI/bge-large-en-v1.5",
+   "trec-covid"
+  ],
+  [
+   "BAAI/bge-large-en-v1.5",
+   "quora"
+  ],
+  [
+   "mixedbread-ai/mxbai-embed-large-v1",
+   "nfcorpus"
+  ],
+  [
+   "mixedbread-ai/mxbai-embed-large-v1",
+   "arguana"
+  ],
+  [
+   "mixedbread-ai/mxbai-embed-large-v1",
+   "scidocs"
+  ],
+  [
+   "mixedbread-ai/mxbai-embed-large-v1",
+   "fiqa"
+  ],
+  [
+   "mixedbread-ai/mxbai-embed-large-v1",
+   "trec-covid"
+  ],
+  [
+   "mixedbread-ai/mxbai-embed-large-v1",
+   "quora"
+  ],
+  [
+   "BAAI/bge-base-en-v1.5",
+   "nq"
+  ],
+  [
+   "sentence-transformers/all-MiniLM-L6-v2",
+   "nq"
+  ],
+  [
+   "BAAI/bge-small-en-v1.5",
+   "nq"
+  ],
+  [
+   "intfloat/e5-base-v2",
+   "nq"
+  ],
+  [
+   "thenlper/gte-base",
+   "nq"
+  ],
+  [
+   "Snowflake/snowflake-arctic-embed-m-v1.5",
+   "nq"
+  ],
+  [
+   "BAAI/bge-large-en-v1.5",
+   "nq"
+  ],
+  [
+   "mixedbread-ai/mxbai-embed-large-v1",
+   "nq"
+  ]
+ ],
+ "plan": {
+  "cuts": [],
+  "elapsed_h": 0.026200931866963706,
+  "limit_h": 9.0,
+  "line": 17.9,
+  "measured": {
+   "dataset": "nfcorpus",
+   "model": "BAAI/bge-base-en-v1.5",
+   "seconds": 7.6,
+   "tokens": 1264140
+  },
+  "nq": [
+   "BAAI/bge-base-en-v1.5",
+   "sentence-transformers/all-MiniLM-L6-v2",
+   "BAAI/bge-small-en-v1.5",
+   "intfloat/e5-base-v2",
+   "thenlper/gte-base",
+   "Snowflake/snowflake-arctic-embed-m-v1.5",
+   "BAAI/bge-large-en-v1.5",
+   "mixedbread-ai/mxbai-embed-large-v1"
+  ],
+  "price": 1.19,
+  "projected_h": 7.258488407058706,
+  "projected_usd": 8.637601204399859,
+  "rate": 166334.2105263158,
+  "stop": false
+ },
+ "pod": "qadvlv1a0bt0o7",
+ "reason": "CalledProcessError: Command '['/root/rl/scripts/dense.sh', '/workspace/rl/dense', 'nfcorpus']' returned non-zero exit status 2.",
+ "reference": null,
+ "status": "failed",
+ "steps": [
+  {
+   "batch": 128,
+   "chunk": 4096,
+   "dataset": "nfcorpus",
+   "device": "NVIDIA GeForce RTX 5090",
+   "docs": 3633,
+   "docs_per_second": 475.6281995933459,
+   "model": "BAAI/bge-base-en-v1.5",
+   "python": "3.13.18",
+   "queries": 323,
+   "resumed_after": 0,
+   "revision": "a5beb1e3e68b9ab74eb54cfd186867f64f240e1a",
+   "seconds": 7.6,
+   "sentence_transformers": "6.3.0",
+   "torch": "2.15.0+cu132",
+   "transformers": "5.22.2"
+  }
+ ]
+}

@@ -56,6 +56,8 @@ Committed before any vector, run or result of the study existed.
 
 Committed before any vector, run or result of the study existed.
 
+Correction, 2026-11-12: the CPU reference vectors of step 3 existed when this section was committed (their checksums are in def4bdd). It was committed before the GPU session of step 4, and before any other vector, any run and any result of the study.
+
 16. Section 11, step 4, with Section 12, Order of encoding and the cut rule, and Section 5: how the GPU session reads them.
     - Section 12, "if they alone would exceed the tier's GPU line with its reserve, the session stops after the measurement": it stops if the projection of the six small datasets and Quora exceeds the GPU line times 1.2 (21.48 USD in tier 2b), or exceeds the pod's time limit less an hour. Why: the reserve is the 20% above the line, and a projection past the time limit cannot finish in the pod.
     - Section 12, "After the rate measurement the cost of the approved tier is projected": the projection is the hours elapsed, a fixed 0.25 hours for what is left besides encoding (model loads, downloads, check 2, checksums), and the tokens still to encode (Section 4, scaled by each model's forward cost) over the measured rate; it is held under the GPU line and under the pod's time limit less an hour (D017). Why: the GPU hours of the table include about an hour of set-up and checks.

@@ -90,5 +90,9 @@ jobs:
       # anchors, the anchors file.
       - run: python -m pytest -q -p no:cacheprovider
         working-directory: step5
+      # The test of the log route: its files at full size, their check, a
+      # truncated or changed log, the start command in its dry run.
+      - run: python -m pytest -q -p no:cacheprovider
+        working-directory: scripts
       # How many of the dry run's CPU reference files equal step 3's.
       - run: python -c 'import glob, json, sys; [print(json.load(open(p))["reference"]) for p in glob.glob(sys.argv[1] + "/*/a/step4/out/summary.json")]' "$RUNNER_TEMP/pytest"

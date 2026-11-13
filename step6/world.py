@@ -141,8 +141,26 @@ def measures(vol):
     return {v for v in vals if len(re.sub(r"[^1-9]", "", v)) >= 4}
 
 
+TIMES = {"build_seconds", "hnsw", "exact"}
+TIME = {"ef", "k", "mean_ms", "median_ms"}
+
+
+def times_only(line):
+    """Whether line is a line of dense-times.jsonl: cmd/dense's times of one unit and nothing else."""
+    try:
+        x = json.loads(line)
+    except ValueError:
+        return False
+    if not isinstance(x, dict) or set(x) != {"unit", "times"} or not set(x["times"]) <= TIMES:
+        return False
+    return all(set(t) <= TIME for t in x["times"].get("hnsw", [])) and set(x["times"].get("exact", {})) <= TIME
+
+
 def assert_no_measure(text, vol):
-    """No measure value of vol's per-query files or grid.tsv, no per-query header and no trec_eval line in text."""
+    """No measure value of vol's per-query files or grid.tsv, no per-query header and no trec_eval line in text.
+    Lines of cmd/dense's times are checked to hold times alone and then left out: a time in milliseconds can
+    print as a fraction that a per-query measure also takes."""
+    text = "\n".join(ln for ln in text.splitlines() if not times_only(ln))
     assert "qid\tndcg_cut_10\trecall_100" not in text
     assert not re.search(r"^(ndcg_cut_10|recall_100)\s", text, re.M)
     for word in ("ndcg", "recall_100", "unjudged"):

@@ -6,7 +6,11 @@ the BGE model with ONNX Runtime, and NFCorpus's document vectors. NFCorpus's
 dev qrels stand in for its test qrels, so that nothing of the study's test
 split is measured here: the dataset's copy holds qrels/dev.tsv as
 qrels/test.tsv and no other qrels, and its query vectors are those of the dev
-queries, the BGE instruction in front, encoded by cmd/embed. The exact run
+queries, the BGE instruction in front, encoded by cmd/embed. That query
+encoding is for the dry run only: step 4 encoded every query with
+encode/encode.py (sentence-transformers on the GPU), and cmd/embed encodes a
+document, its empty title and a space before the text, through BGE-base's
+ONNX model with characters of Unicode category C removed (D009, D010). The exact run
 (cmd/dense), its per-query file (cmd/eval -per-query), BM25 flat's run
 (cmd/bm25), and the files of steps 4 and 5 that name them, in place of the
 committed ones, are made here too.

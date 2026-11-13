@@ -153,7 +153,7 @@ def test_the_job_end_to_end(tmp_path, tools):
     p = cli(args(w, tools, tmp_path, "--deadline-h", "1", "--start", str(time.time())))
     assert p.returncode == 0, p.stdout[-3000:]
     s = summary(w)
-    assert s["status"] == "done" and s["not_done"] == [] and s["collect"] == {"files": 7}
+    assert s["status"] == "done" and s["not_done"] == [] and s["collect"]["files"] == 8
     # BGE: 7 builds and the anchor on each dataset; MiniLM: 7; BM25 of NFCorpus only, Quora's is step 5's.
     assert s["counts"] == {"builds": 30, "runs": 1950, "perquery": 28 * 65 + 2, "fused": 40, "bm25": 1}
     assert len(records(w)) == 30 + 4 + 1 + 1
@@ -192,16 +192,53 @@ def test_the_job_end_to_end(tmp_path, tools):
         with open(out(w, name)) as f:
             W.assert_no_measure(f.read(), w["vol"])
     W.assert_no_measure(p.stdout + p.stderr, w["vol"])
-    # The report: every file round-trips, and those with measures are in base64 only.
-    rep = subprocess.run([sys.executable, os.path.join(HERE, "report.py"), out(w, "")], capture_output=True, text=True, check=True).stdout
-    files = REP.R.read(rep)
-    assert "results/grid.tsv" in files and "results/quora/" + J.slug(BGE) + ".tsv.gz" in files
-    assert f"step5/study/{J.slug(MINI)}/quora/exact.tsv" in files and "step5/bm25/quora.tsv" in files
-    for rel, data in files.items():
-        with open(out(w, rel), "rb") as f:
-            assert f.read() == data, rel
-    assert "=== begin64 results/grid.tsv ===" in rep and "=== begin results/grid.tsv ===" not in rep
-    W.assert_no_measure(rep, w["vol"])
+    # grid.tsv gzipped beside collect's output.
+    with open(out(w, "grid.tsv.gz"), "rb") as f, open(out(w, "results/grid.tsv"), "rb") as g:
+        assert __import__("gzip").decompress(f.read()) == g.read()
+    assert s["collect"]["grid_tsv_sha256"] == W.sha(out(w, "results/grid.tsv"))
+    # The reports: three groups and any list of files; every file round-trips; the files with measures in base64 only.
+    def rep(*more):
+        return subprocess.run([sys.executable, os.path.join(HERE, "report.py"), out(w, "")] + list(more), capture_output=True, text=True,
+                              check=True).stdout
+    text, sums, meas = rep(), rep("--sums"), rep("--measures")
+    groups = [REP.R.read(x) for x in (text, sums, meas)]
+    assert sorted(groups[0]) == sorted(REP.TEXT) and sorted(groups[1]) == sorted(REP.SUMS)
+    assert sorted(groups[2]) == sorted(["grid.tsv.gz"] + [f"results/{d}/{J.slug(m)}.tsv.gz" for d in ("nfcorpus", "quora") for m in (BGE, MINI)]
+                                       + [f"step5/study/{J.slug(m)}/{d}/exact.tsv" for d in ("nfcorpus", "quora") for m in (BGE, MINI)]
+                                       + ["step5/bm25/quora.tsv"])
+    for files in groups:
+        for rel, data in files.items():
+            with open(out(w, rel), "rb") as f:
+                assert f.read() == data, rel
+    assert "=== begin " not in meas and meas.count("=== begin64 ") == len(groups[2])
+    assert "=== begin64 " not in text + sums
+    for x in (text, sums, meas):
+        W.assert_no_measure(x, w["vol"])
+    # A list of files: one report; a file with measures in it still in base64; a missing file refused.
+    one = rep("--files", "units.tsv", "results/grid.tsv", "step5/bm25/quora.tsv")
+    assert sorted(REP.R.read(one)) == ["results/grid.tsv", "step5/bm25/quora.tsv", "units.tsv"]
+    assert "=== begin64 results/grid.tsv ===" in one and "=== begin units.tsv ===" in one
+    bad = subprocess.run([sys.executable, os.path.join(HERE, "report.py"), out(w, ""), "--files", "nothing.tsv"], capture_output=True, text=True)
+    assert bad.returncode != 0 and "nothing.tsv" in bad.stderr
+    listed = [ln.split("\t") for ln in rep("--list").splitlines()]
+    assert {r[0] for r in listed} == set(groups[0]) | set(groups[1]) | set(groups[2])
+    assert all(r[2] == ("text" if r[0] in REP.LABEL_FREE else "base64") for r in listed)
+    # The reader: every report of a log that checks, its files written and nothing of their content printed.
+    log_ = tmp_path / "reports.log"
+    cut = meas[: len(meas) // 2]
+    log_.write_text("noise\n" + sums + cut + "\n" + text)
+    r = subprocess.run([sys.executable, os.path.join(HERE, "report.py"), "--read", str(log_), str(tmp_path / "back")], capture_output=True,
+                       text=True)
+    assert r.returncode == 1 and "report 1: 3 files" in r.stdout and "hold an incomplete report" in r.stdout
+    assert f"report 3: {len(groups[0])} files" in r.stdout
+    assert all(open(tmp_path / "back" / rel, "rb").read() == data for rel, data in {**groups[0], **groups[1]}.items())
+    W.assert_no_measure(r.stdout, w["vol"])
+    log_.write_text(sums + meas + text)
+    r = subprocess.run([sys.executable, os.path.join(HERE, "report.py"), "--read", str(log_), str(tmp_path / "back2")], capture_output=True,
+                       text=True)
+    assert r.returncode == 0 and r.stdout.count("report ") == 3
+    for files in groups:
+        assert all(open(tmp_path / "back2" / rel, "rb").read() == data for rel, data in files.items())
 
 
 def test_resumption_after_sigterm_gives_the_same_files(tmp_path, tools):
@@ -570,8 +607,10 @@ def test_the_start_command_dry_run(tmp_path, tools):
     text = logf.read_text()
     assert p.returncode == 0, text[-3000:]
     assert "step6/job.py exited with 0" in text and f"commit {head}" in text
-    files = REP.R.read(text)
-    assert json.loads(files["summary.json"])["status"] == "done" and "results/grid.tsv" in files
+    # The checksum lists, then the small files, each a report of its own; nothing of a measure in the log.
+    reports = REP.read_all(text)
+    assert [sorted(x) for x in reports] == [sorted(REP.SUMS), sorted(REP.TEXT)]
+    assert json.loads(reports[1]["summary.json"])["status"] == "done" and "=== begin64 " not in text
     assert text.rstrip().endswith("dry run: curl -fsS -X DELETE -H 'Authorization: Bearer $RUNPOD_API_KEY' https://api.runpod.io/v2/pods/test")
     assert re.search(r"exit 0 in \d+ s", text)
-    W.assert_no_measure(text.split("=== begin")[0], w["vol"])
+    W.assert_no_measure(text, w["vol"])

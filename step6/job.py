@@ -61,8 +61,9 @@ VOL/step5/{runs,study,bm25}                   step 5's runs and per-query files
 VOL/step6/study/<slug>/<dataset>/             the layout cmd/study collect reads
 VOL/step6/bm25/<dataset>.run                  BM25 flat of the six small datasets
 VOL/step6/done/<unit>.json                    records of the units done
-VOL/step6/out                                 log, summary and the files of the report;
-                                              out/results is collect's output
+VOL/step6/out                                 log, summary and the files of the reports
+                                              (step6/report.py); out/results is collect's
+                                              output, out/grid.tsv.gz its grid.tsv gzipped
 
 Exit status: 0 done; 2 stopped by a check; 3 space; 4 deadline; 1 an error,
 a child killed by signal 9, or a signal.
@@ -73,6 +74,7 @@ usage: python3 step6/job.py --vol DIR --bin DIR --trec-eval PATH --vol-quota-gb 
 import argparse
 import concurrent.futures
 import fractions
+import gzip
 import hashlib
 import json
 import math
@@ -1165,11 +1167,19 @@ class Job:
                 return r
             os.remove(self.record_path("collect"))
         shutil.rmtree(res, ignore_errors=True)
+        if os.path.exists(os.path.join(self.out, "grid.tsv.gz")):
+            os.remove(os.path.join(self.out, "grid.tsv.gz"))
         t = time.time()
         err = os.path.join(self.s6, "logs", "collect.err")
         os.makedirs(os.path.dirname(err), exist_ok=True)
         self.child(None, [self.bin("study"), "collect", "-in", self.study, "-out", res], os.path.join(self.s6, "logs", "collect.out"), err)
-        files = {}
+        # grid.tsv holds the means of nDCG@10: gzipped, so that a report carries it in base64 only.
+        with open(os.path.join(res, "grid.tsv"), "rb") as f:
+            gz = gzip.compress(f.read(), compresslevel=9, mtime=0)
+        with open(os.path.join(self.out, "grid.tsv.gz.tmp"), "wb") as f:
+            f.write(gz)
+        os.replace(os.path.join(self.out, "grid.tsv.gz.tmp"), os.path.join(self.out, "grid.tsv.gz"))
+        files = {"out/grid.tsv.gz": sha256(os.path.join(self.out, "grid.tsv.gz"))}
         for root, _, names in os.walk(res):
             for n in names:
                 files[os.path.relpath(os.path.join(root, n), self.s6)] = sha256(os.path.join(root, n))
@@ -1229,7 +1239,8 @@ class Job:
             "canary": self.canary_result,
             "space": {"du_bytes": self.du, "renamed_since_bytes": self.renamed, "still_to_write_bytes": self.to_write(),
                       "quota_gb": self.a.vol_quota_gb},
-            "collect": {"files": len(self.collected["files"])} if self.collected else None,
+            "collect": {"files": len(self.collected["files"]), "grid_tsv_sha256": self.collected["files"]["out/results/grid.tsv"],
+                        "grid_tsv_gz_sha256": self.collected["files"]["out/grid.tsv.gz"]} if self.collected else None,
         }
         write_json(os.path.join(self.out, "summary.json"), s)
         self.log(f"{status}{': ' + reason if reason else ''}; {sum(x['done'] for x in by.values())} of {len(self.units)} "

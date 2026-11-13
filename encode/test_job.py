@@ -261,6 +261,7 @@ def cut_session(vol, tmp_path):
 
 
 def one_step(vol, tmp_path, step=(MXBAI, "nq"), **kw):
+    kw.setdefault("min_free_gb", "0")  # the rule has its own test; the machine's free space is no premise
     j = make_job(vol, tmp_path, only=list(step), out=str(vol / "step4" / "out3"), **kw)
     run, j.kwargs = j.encode_run, []
 

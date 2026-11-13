@@ -3,9 +3,11 @@
 follow: GETs URL with Accept: text/event-stream and appends the data of every
 event to FILE, one data line per line. It keeps the id of the last event and,
 on any drop or timeout, connects again with that id in Last-Event-ID, skipping
-events it already wrote (the same id and data). It stops once an event holds
---until (default the done line of scripts/logtest.py) or after --max-min
-minutes. SIDE.json: start and end (UTC), bytes and lines written, every
+events it already wrote (the same id and data). --connect-timeout bounds the
+wait for a connection and its first line; --timeout the wait between lines once
+the stream flows, so a shorter --timeout turns a mid-stream silence into a
+reconnect. It stops once an event holds --until (default the done line of
+scripts/logtest.py) or after --max-min minutes. SIDE.json: start and end (UTC), bytes and lines written, every
 reconnection with the id it resumed from, the first id the new connection
 sent and the events it skipped, events of several data lines, ids out of
 order. Lines that are not base64 or report markers are echoed to stderr, with
@@ -14,7 +16,7 @@ a progress line every minute.
 Standard library only. The proxy and its CA come from the environment.
 
 usage: python3 scripts/logread.py follow --url URL --out FILE --side SIDE.json [--last-event-id ID]
-           [--until TEXT] [--max-min M] [--timeout S] [--retry-s S]
+           [--until TEXT] [--max-min M] [--timeout S] [--connect-timeout S] [--retry-s S]
 """
 
 import argparse
@@ -72,6 +74,15 @@ def events(resp, last_id):
             eid = value
 
 
+def set_read_timeout(resp, t):
+    """Lower the connection's socket timeout to t once data flows; True if it took."""
+    try:
+        resp.fp.raw._sock.settimeout(t)
+        return True
+    except (AttributeError, OSError):
+        return False
+
+
 def shown(d):
     """The log line of a data line, if it is worth echoing."""
     try:
@@ -110,10 +121,11 @@ def follow(a, err=sys.stderr):
             side["connections"] += 1
             reason = "eof"
             try:
-                with urllib.request.urlopen(urllib.request.Request(a.url, headers=head), timeout=a.timeout) as resp:
+                with urllib.request.urlopen(urllib.request.Request(a.url, headers=head), timeout=a.connect_timeout) as resp:
                     for eid, data in events(resp, last_id):
                         if conn["first_id"] is None:
                             conn["first_id"] = eid
+                            set_read_timeout(resp, a.timeout)  # a tight idle timeout once the stream flows
                         key = hashlib.blake2b((f"{eid}\n" + "\n".join(data)).encode(), digest_size=12).digest()
                         if key in seen:
                             side["skipped"] += 1
@@ -189,7 +201,8 @@ def main(argv):
     f.add_argument("--last-event-id", help="the id to resume after")
     f.add_argument("--until", default=DONE, help="stop once an event holds this text; empty: never")
     f.add_argument("--max-min", type=float, default=90, help="stop after this many minutes")
-    f.add_argument("--timeout", type=float, default=60, help="seconds without data before connecting again")
+    f.add_argument("--timeout", type=float, default=60, help="seconds without data mid-stream before connecting again")
+    f.add_argument("--connect-timeout", type=float, default=90, help="seconds to wait for the connection and its first line")
     f.add_argument("--retry-s", type=float, default=1, help="first wait before connecting again, doubled up to 30 s")
     a = p.parse_args(argv)
     return follow(a)

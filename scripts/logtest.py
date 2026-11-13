@@ -18,8 +18,10 @@ chunks of chunk_kib KiB, each chunk its own report of one binary file named
 <phase>-c0001.bin and so on, with a pause after each chunk. Phase lines
 before and after each phase, the done line after the last, then the wait of
 print. With REPRINT (A:12,57;C:3-9) only those chunks, with the same names and
-pacing. Refused, before anything is printed, if the pauses alone take more
-than --max-print-min minutes.
+pacing. With --lead-s S, S lines of no value, one a second, before the first
+phase, so that the start of the log stream falls on them. Refused, before
+anything is printed, if the lead and the pauses take more than
+--max-print-min minutes.
 
 check-chunks LOG [LOG ...]: every chunk of every phase intact, damaged (some
 of it seen, a check failed) or missing (neither its begin nor its end line
@@ -32,7 +34,7 @@ Standard library only; the files depend only on SEED and the sizes.
 
 usage: python3 scripts/logtest.py print --tmp DIR [--start EPOCH --limit-min M --grace-min G] [--scale K]
        python3 scripts/logtest.py check LOG [--scale K]
-       python3 scripts/logtest.py paced --phases PHASES [--reprint R] [--max-print-min M] [--start EPOCH --limit-min M --grace-min G] [--scale K]
+       python3 scripts/logtest.py paced --phases PHASES [--reprint R] [--lead-s S] [--max-print-min M] [--start EPOCH --limit-min M --grace-min G] [--scale K]
        python3 scripts/logtest.py check-chunks LOG [LOG ...] [--side SIDE.json ...] [--phases PHASES] [--scale K]
 """
 
@@ -232,12 +234,19 @@ def plan(phases, reprint, scale):
 
 def paced(a, out=sys.stdout):
     todo = plan(parse_phases(a.phases), a.reprint, a.scale)
-    pauses = sum(len(nums) * p for _, _, p, nums in todo)
+    lead = max(0, round(a.lead_s))
+    pauses = lead + sum(len(nums) * p for _, _, p, nums in todo)
     if pauses > a.max_print_min * 60:
         out.write(f"refused: the pauses alone take {pauses / 60:.1f} min, more than {a.max_print_min} min\n")
         out.flush()
         return 2
     data, size = stream(a.scale), 0
+    for i in range(1, lead + 1):  # lines of no value while the log stream starts
+        line = f"=== lead {i} of {lead} {utc()} ===\n"
+        out.write(line)
+        out.flush()
+        size += len(line)
+        sleep(1)
     for name, cb, pause, nums in todo:
         extra = f" reprint {ranges(nums)}" if a.reprint else ""
         line = f"{PHASE}{name} start {utc()} chunks {len(nums)} chunk_bytes {cb} pause {pause}{extra} ===\n"
@@ -290,6 +299,17 @@ def log_lines(path, stats):
                 yield text if text.endswith("\n") else text + "\n"
 
 
+def phase_of(ln):
+    """The phase a phase line or a chunk's begin or end line names, else None."""
+    if ln.startswith(PHASE):
+        return ln.split()[2]
+    for mark in (R.BEGIN64, R.END):
+        if ln.startswith(mark):
+            m = CHUNK.match(ln[len(mark):])
+            return m[1] if m else None
+    return None
+
+
 def check_chunks(logs, phases=None, scale=1, sides=()):
     """The summary of every chunk of every phase found in logs (or named in phases)."""
     data = stream(scale)
@@ -322,10 +342,12 @@ def check_chunks(logs, phases=None, scale=1, sides=()):
 
     for k, path in enumerate(logs):
         st = {"log": os.path.basename(path), "file_bytes": 0, "lines": 0, "bytes": 0, "events": 0, "events_of_several_lines": 0, "unparsed": 0}
-        block, run = None, None
+        block, run, run_phase = None, None, None
         for ln in log_lines(path, st):
             st["lines"] += 1
             st["bytes"] += len(ln.encode())
+            if run is not None and ln.startswith("=== ") and phase_of(ln) not in (None, run_phase):
+                run = None  # its end line was lost: the run ends at the first line of another phase
             if run is not None:
                 run["log_bytes"] += len(ln.encode())
             if ln.startswith(R.BEGIN64):
@@ -356,10 +378,10 @@ def check_chunks(logs, phases=None, scale=1, sides=()):
                     if m[1] in known and (known[m[1]]["chunk_bytes"], known[m[1]]["pause"]) != (cb, pause):
                         raise ValueError(f"phase {m[1]}: chunk_bytes or pause differs from an earlier one")
                     known[m[1]] = {"chunk_bytes": cb, "pause": pause, "chunks": count(len(data), cb)}
-                    run = {"log": k + 1, "start": m[2], "end": None, "log_bytes": len(ln.encode())}
+                    run, run_phase = {"log": k + 1, "start": m[2], "end": None, "seconds": None, "log_bytes": len(ln.encode())}, m[1]
                     runs.setdefault(m[1], []).append(run)
                 elif m := STOP.fullmatch(ln.rstrip("\n")):
-                    if run is not None:
+                    if run is not None and run_phase == m[1]:
                         run["end"] = m[2]
                         run["seconds"] = seconds(run["start"], m[2])
                     run = None
@@ -409,6 +431,7 @@ def main(argv):
     pa.add_argument("--phases", required=True, help="name:chunk_kib:pause_s, comma-separated")
     pa.add_argument("--reprint", help="only these chunks, as A:12,57;C:3-9")
     pa.add_argument("--max-print-min", type=float, default=45, help="refuse if the pauses alone take longer")
+    pa.add_argument("--lead-s", type=float, default=0, help="seconds of one lead line a second before the first phase")
     pa.add_argument("--start", type=float, help="the pod's start, seconds since the epoch")
     pa.add_argument("--limit-min", type=float, help="the pod's time limit in minutes")
     pa.add_argument("--grace-min", type=float, default=30, help="minutes to wait after the done line")

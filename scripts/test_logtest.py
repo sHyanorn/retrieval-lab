@@ -2,6 +2,7 @@ import hashlib
 import io
 import json
 import os
+import re
 import signal
 import subprocess
 import sys
@@ -116,7 +117,7 @@ def test_start_command_without_a_limit_deletes_at_once(tmp_path):
 
 def paced(scale=100, phases="A:16:0", reprint=None, **kw):
     out = io.StringIO()
-    a = dict(phases=phases, reprint=reprint, max_print_min=45, start=None, limit_min=None, grace_min=0, scale=scale)
+    a = dict(phases=phases, reprint=reprint, lead_s=0, max_print_min=45, start=None, limit_min=None, grace_min=0, scale=scale)
     a.update(kw)
     rc = L.paced(SimpleNamespace(**a), out)
     return rc, out.getvalue()
@@ -261,8 +262,10 @@ def start(tmp_path, **env):
                     reason="the start command fetches HEAD; commit first")
 def test_start_command_paced_dry_run(tmp_path):
     t = time.time()
-    rc, log, head = start(tmp_path, HARD_LIMIT_MIN="1.2", GRACE_MIN="0.05", PHASES="A:16:0.01,B:16:0", LOGTEST_ARGS="--scale 100")
+    rc, log, head = start(tmp_path, HARD_LIMIT_MIN="1.2", GRACE_MIN="0.05", PHASES="A:16:0.01,B:16:0", LEAD_S="2",
+                          LOGTEST_ARGS="--scale 100")
     assert rc == 0 and time.time() - t < 60 and f"commit {head}" in log and "waiting 3 s" in log
+    assert "=== lead 2 of 2 " in log and log.index("=== lead 2 of 2 ") < log.index("=== phase A start ")
     (tmp_path / "pod.log").write_text(log)
     s = L.check_chunks([str(tmp_path / "pod.log")], scale=100)
     assert s["pass"] and s["done"] and [v["intact"] for v in s["phases"].values()] == [69, 69]
@@ -272,3 +275,42 @@ def test_start_command_paced_dry_run(tmp_path):
     rc, log, head = start(tmp_path, HARD_LIMIT_MIN="1.2", PHASES="A:16:1", MAX_PRINT_MIN="1", LOGTEST_ARGS="--scale 100")
     assert rc == 2 and "refused: the pauses alone take 1.1 min, more than 1.0 min" in log and "=== begin64" not in log
     assert log.rstrip().endswith("https://api.runpod.io/v2/pods/test")
+
+
+def test_a_lost_end_line_does_not_borrow_the_next_phases_run(tmp_path):
+    """When a phase's end line is lost, the next phase's begin or end line must not close the first
+    phase's run: its end and seconds stay null, and its log_bytes stop at the next phase's first line."""
+    rc, log = paced(phases="A:16:0,B:16:0,C:16:0")
+    lines = log.splitlines(keepends=True)
+    # Drop phase A's end line and phase C's start line.
+    a_end = next(k for k, ln in enumerate(lines) if ln.startswith("=== phase A end "))
+    c_start = next(k for k, ln in enumerate(lines) if ln.startswith("=== phase C start "))
+    cut = "".join(ln for k, ln in enumerate(lines) if k not in (a_end, c_start))
+    s = check_text(tmp_path, cut, phases="A:16:0,B:16:0,C:16:0")
+    A, B, C = s["phases"]["A"], s["phases"]["B"], s["phases"]["C"]
+    # A's run has no end (its end line is gone); B closes its own run; C's start is gone so it has none.
+    assert A["start"] and A["end"] is None and A["seconds"] is None
+    assert B["start"] and B["end"] and B["seconds"] is not None
+    assert C["start"] is None and C["end"] is None
+    # A's bytes stop at B's start line, not run into B.
+    phase_b_start = log.index("=== phase B start")
+    assert A["log_bytes"] < len(log[:phase_b_start].encode()) + 200
+    # Every chunk still intact: losing marker lines does not touch the chunk classes.
+    assert [s["phases"][p]["intact"] for p in "ABC"] == [69, 69, 69] and s["pass"]
+
+
+def test_lead_lines_print_before_the_first_phase(tmp_path, monkeypatch):
+    calls = []
+    monkeypatch.setattr(L, "sleep", calls.append)
+    rc, log = paced(phases="A:16:0.0,B:16:0.0", lead_s=3)
+    lines = log.splitlines()
+    leads = [ln for ln in lines if ln.startswith("=== lead ")]
+    assert rc == 0 and len(leads) == 3
+    assert all(re.fullmatch(rf"=== lead {i} of 3 \S+ ===", ln) for i, ln in enumerate(leads, 1))
+    # The lead lines are the first lines, before the first phase, and sleep one second each.
+    assert lines[:3] == leads and lines[3].startswith("=== phase A start") and calls[:3] == [1, 1, 1]
+    assert check_text(tmp_path, log)["pass"]
+    # The lead counts toward the guard, and a refusal sleeps not at all.
+    before = len(calls)
+    rc, log = paced(scale=1, phases="A:256:0.1", lead_s=60, max_print_min=1)  # 42.9 s + 60 s
+    assert rc == 2 and log == "refused: the pauses alone take 1.7 min, more than 1 min\n" and len(calls) == before

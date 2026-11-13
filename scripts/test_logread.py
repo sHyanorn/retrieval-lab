@@ -50,12 +50,18 @@ class Feed:
                 self.end_headers()
                 try:
                     self.wfile.write(b": hello\n\nretry: 1000\n\n")
-                    send = feed.events[pos:pos + plan.get("send", len(feed.events))]
+                    n_send = plan.get("send", len(feed.events) - pos)
+                    send = feed.events[pos:pos + n_send]
                     for k, (eid, data) in enumerate(send):
                         self.wfile.write(encode(eid, data))
                         if plan.get("repeat") == pos + k:
                             self.wfile.write(encode(eid, data))
                     self.wfile.flush()
+                    if plan.get("quiet"):  # hold the connection open, silent, then send the rest
+                        time.sleep(plan["quiet"])
+                        for eid, data in feed.events[pos + n_send:]:
+                            self.wfile.write(encode(eid, data))
+                        self.wfile.flush()
                     end = plan.get("then", "hold")
                     if end == "partial":
                         self.wfile.write(b"id: x\ndata: {\"line\": \"half")
@@ -92,7 +98,7 @@ def feed():
 
 def args(tmp_path, url, **kw):
     a = dict(url=url, out=str(tmp_path / "log.jsonl"), side=str(tmp_path / "side.json"), last_event_id=None,
-             until=LR.DONE, max_min=1, timeout=0.5, retry_s=0.01)
+             until=LR.DONE, max_min=1, timeout=0.5, connect_timeout=5, retry_s=0.01)
     a.update(kw)
     return SimpleNamespace(**a)
 
@@ -169,7 +175,7 @@ def test_paced_log_read_through_drops_passes_the_check(tmp_path, feed):
     """The whole route at a small scale: paced's log as Runpod's events, a reader that loses its connection
     three times, then check-chunks on what the reader wrote."""
     out = io.StringIO()
-    a = SimpleNamespace(phases="A:16:0,B:8:0", reprint=None, max_print_min=45, start=None, limit_min=None, grace_min=0, scale=100)
+    a = SimpleNamespace(phases="A:16:0,B:8:0", reprint=None, lead_s=0, max_print_min=45, start=None, limit_min=None, grace_min=0, scale=100)
     assert L.paced(a, out) == 0
     log = out.getvalue().splitlines()
     ev = [(stamp(i), [json.dumps({"line": ln, "stream": "stdout"})]) for i, ln in enumerate(log)]
@@ -190,3 +196,25 @@ def test_command_line(tmp_path, feed):
                        capture_output=True, text=True, timeout=60)
     assert p.returncode == 0 and "line 0" in p.stderr and LR.DONE in p.stderr and "connection ended (eof)" in p.stderr
     assert len((tmp_path / "o").read_text().splitlines()) == 31
+
+
+def test_a_mid_stream_silence_becomes_a_reconnect_that_resumes(tmp_path, feed):
+    """A quiet gap longer than --timeout but shorter than --connect-timeout: the reader reconnects
+    with Last-Event-ID, the server replays from there, and the stream is whole with no gap."""
+    ev = lines_events(200)
+    f = feed(ev, [{"send": 80, "quiet": 1.2, "then": "hold"}, {}])
+    a = args(tmp_path, f.url, timeout=0.3, connect_timeout=5)
+    err = io.StringIO()
+    assert LR.follow(a, err) == 0
+    assert (tmp_path / "log.jsonl").read_text().splitlines() == [e[1][0] for e in ev]
+    side = json.loads((tmp_path / "side.json").read_text())
+    assert side["stop"] == "until" and side["lines"] == len(ev) and side["skipped"] == 0
+    # One reconnect, resuming after the last line before the silence; the first connection timed out.
+    assert [r["resumed_from"] for r in side["reconnects"]] == [stamp(79)]
+    assert side["reconnects"][0]["first_id"] == stamp(80) and side["reconnects"][0]["ended"] == "until"
+    assert "connection ended (timeout)" in err.getvalue() and f.asked[1][0] == stamp(79)
+    # A --timeout longer than the silence: no reconnect, the gap rides through on one connection.
+    f2 = feed(lines_events(200), [{"send": 80, "quiet": 0.6, "then": "hold"}])
+    a2 = args(tmp_path, f2.url, timeout=2.0, connect_timeout=5, out=str(tmp_path / "l2"), side=str(tmp_path / "s2"))
+    assert LR.follow(a2, io.StringIO()) == 0
+    assert json.loads((tmp_path / "s2").read_text())["reconnects"] == []

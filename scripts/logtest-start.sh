@@ -6,8 +6,8 @@
 # COMMIT, prints the log, and waits GRACE_MIN minutes (default 30), ending at
 # least a minute before the time limit, for the log to be read.
 # With PHASES set it prints the paced log instead (logtest.py paced), with
-# REPRINT and MAX_PRINT_MIN if set.
-# Environment: COMMIT, HARD_LIMIT_MIN, GRACE_MIN; PHASES, REPRINT,
+# REPRINT, LEAD_S and MAX_PRINT_MIN if set.
+# Environment: COMMIT, HARD_LIMIT_MIN, GRACE_MIN; PHASES, REPRINT, LEAD_S,
 # MAX_PRINT_MIN; WORK (default /root) and REPO_URL; LOGTEST_ARGS (more
 # arguments of logtest.py print or paced, for tests).
 # Runpod sets RUNPOD_POD_ID and RUNPOD_API_KEY, the pod's own key. Without
@@ -37,7 +37,7 @@ git clone -q "${REPO_URL:-https://github.com/sHyanorn/retrieval-lab}" "$work/rl"
 	echo "commit $(git -C "$work/rl" rev-parse HEAD), $(python3 --version)" &&
 	if [ -n "${PHASES:-}" ]; then
 		python3 "$work/rl/scripts/logtest.py" paced --phases "$PHASES" ${REPRINT:+--reprint "$REPRINT"} \
-			--max-print-min "${MAX_PRINT_MIN:-45}" --start "$start" --limit-min "$HARD_LIMIT_MIN" \
+			--lead-s "${LEAD_S:-0}" --max-print-min "${MAX_PRINT_MIN:-45}" --start "$start" --limit-min "$HARD_LIMIT_MIN" \
 			--grace-min "${GRACE_MIN:-30}" ${LOGTEST_ARGS:-}
 	else
 		python3 "$work/rl/scripts/logtest.py" print --tmp "$work/logtest" --start "$start" --limit-min "$HARD_LIMIT_MIN" \

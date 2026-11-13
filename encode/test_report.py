@@ -125,3 +125,59 @@ def test_pod_sh_only_and_out(tmp_path):
     args = json.loads(R.read(p.stdout)["summary.json"])["args"]
     assert f"--out {out} " in args and args.endswith("--only mixedbread-ai/mxbai-embed-large-v1 nq --dry-run --python " + str(py))
     assert (out / f"pod-local-{start}.log").exists() and not (tmp_path / "vol" / "step4" / "out").exists()
+
+
+def test_text_report_as_before(tmp_path):
+    # The report of out_dir's files as the code before base64 printed it.
+    text = R.report(str(out_dir(tmp_path)))
+    assert hashlib.sha256(text.encode()).hexdigest() == "81d2e2868ee52c0b4a6b519c1f8bc876fad2b4361db361506b90b234fac33cd3"
+    assert R.BEGIN64 not in text
+
+
+def binary_dir(tmp_path):
+    out = out_dir(tmp_path)
+    (out / "check2" / "z.gz").write_bytes(bytes(range(256)) * 9 + b"\xff\xfe")  # not UTF-8, 2,306 bytes
+    (out / "check2" / "empty.gz").write_bytes(b"")
+    return out
+
+
+def test_binary_round_trip(tmp_path, monkeypatch):
+    monkeypatch.setattr(R, "FILES", R.FILES + ("check2/*.gz",))
+    monkeypatch.setattr(R, "BINARY", ("*.gz",))
+    out = binary_dir(tmp_path)
+    text = R.report(str(out))
+    lines = text.splitlines()
+    i = lines.index("=== begin64 check2/z.gz ===")
+    body = lines[i + 1:lines.index(next(ln for ln in lines if ln.startswith("=== end check2/z.gz ")))]
+    assert all(len(ln) == 76 for ln in body[:-1]) and 0 < len(body[-1]) <= 76
+    assert "=== begin64 check2/empty.gz ===" in lines
+    files = R.read("noise\n" + text + "exit 0\n")
+    assert files == {rel: (out / rel).read_bytes() for rel in files} and len(files) == 8
+
+
+@pytest.mark.parametrize("change, match", [
+    (lambda b: b[:10] + ("B" if b[10] != "B" else "C") + b[11:], "z.gz: SHA-256 differs"),  # a character changed
+    (lambda b: b[:10] + "*" + b[11:], "z.gz: not base64"),  # not a base64 character
+    (lambda b: b.replace("\n", "\n\n", 1), "z.gz: "),  # a line put in
+])
+def test_changed_base64_fails(tmp_path, monkeypatch, change, match):
+    monkeypatch.setattr(R, "FILES", ("check2/*.gz",))
+    monkeypatch.setattr(R, "BINARY", ("*.gz",))
+    text = R.report(str(binary_dir(tmp_path)))
+    head, rest = text.split("=== begin64 check2/z.gz ===\n")
+    body, tail = rest.split("=== end check2/z.gz ", 1)
+    block = head + "=== begin64 check2/z.gz ===\n" + change(body) + "=== end check2/z.gz " + tail[: tail.index("=== report")]
+    bad = block + f"=== report sha256 {hashlib.sha256(block.encode()).hexdigest()} ==="
+    with pytest.raises(ValueError, match=match):
+        R.read(bad + "\n")
+
+
+def test_read_all(tmp_path, monkeypatch):
+    monkeypatch.setattr(R, "FILES", ("summary.json",))
+    one = R.report(str(out_dir(tmp_path / "a")))
+    monkeypatch.setattr(R, "FILES", ("plan.json", "vectors.sha256"))
+    two = R.report(str(out_dir(tmp_path / "b")))
+    bad = two.replace("scifact", "nfcorpus")
+    got = R.read_all("start\n" + one + "between\n" + bad + two + two[:40])
+    assert [sorted(g) if isinstance(g, dict) else type(g) for g in got] == [["summary.json"], ValueError, ["plan.json", "vectors.sha256"]]
+    assert R.read_all("no report\n") == []

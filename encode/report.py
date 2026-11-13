@@ -6,17 +6,25 @@ SHA-256 of everything from the first begin line to the last end line. read()
 takes the files back from a copy of the log and checks every hash. The files
 on the volume stay the originals. Standard library only.
 
+A file whose path matches a pattern of BINARY is printed in base64, in lines
+of 76 characters, after a begin64 line; its end line holds the SHA-256 of its
+bytes. With BINARY empty, as here, a report is the same text as before.
+
 usage: python encode/report.py OUT              print OUT's files
        python encode/report.py --read LOG DIR   check the last report in LOG, write its files under DIR
 """
 
+import base64
+import binascii
+import fnmatch
 import glob
 import hashlib
 import os
 import sys
 
 FILES = ("summary.json", "plan.json", "clock.json", "check1/*.json", "check2/*.json", "vectors.sha256", "reference.sha256")
-BEGIN, END, TOTAL = "=== begin ", "=== end ", "=== report sha256 "
+BINARY = ()
+BEGIN, BEGIN64, END, TOTAL = "=== begin ", "=== begin64 ", "=== end ", "=== report sha256 "
 
 
 def sha(b):
@@ -30,47 +38,90 @@ def paths(out):
                 yield os.path.relpath(p, out)
 
 
+def binary(rel):
+    return any(fnmatch.fnmatch(rel, pattern) for pattern in BINARY)
+
+
 def report(out):
-    """The report of OUT's files; a file without a final newline gets one in the report."""
+    """The report of OUT's files; a text file without a final newline gets one in the report."""
     parts = []
     for rel in paths(out):
         with open(os.path.join(out, rel), "rb") as f:
             data = f.read()
+        if binary(rel):
+            parts += [f"{BEGIN64}{rel} ===\n", base64.encodebytes(data).decode("ascii"), f"{END}{rel} {sha(data)} ===\n"]
+            continue
         text = data.decode("utf-8")
         parts += [f"{BEGIN}{rel} ===\n", text if not text or text.endswith("\n") else text + "\n", f"{END}{rel} {sha(data)} ===\n"]
     block = "".join(parts)
     return block + f"{TOTAL}{sha(block.encode())} ===\n"
 
 
-def read(log):
-    """The files of the last report in log, {path: bytes}; ValueError if a hash differs."""
-    lines = log.splitlines(keepends=True)
-    totals = [i for i, ln in enumerate(lines) if ln.startswith(TOTAL)]
-    if not totals:
-        raise ValueError("no report")
-    last = totals[-1]
-    begins = [i for i in range(totals[-2] + 1 if len(totals) > 1 else 0, last) if lines[i].startswith(BEGIN)]
-    first = begins[0] if begins else last
+def blocks(lines):
+    """(first, last) of every report in lines: its first begin line and its total line."""
+    out, start = [], 0
+    for i, ln in enumerate(lines):
+        if ln.startswith(TOTAL):
+            begins = [j for j in range(start, i) if lines[j].startswith((BEGIN, BEGIN64))]
+            out.append((begins[0] if begins else i, i))
+            start = i + 1
+    return out
+
+
+def unpack(lines, first, last):
+    """The files of the report lines[first:last + 1], {path: bytes}; ValueError if a hash differs."""
     if sha("".join(lines[first:last]).encode()) != lines[last][len(TOTAL):].split()[0]:
         raise ValueError("the report's SHA-256 differs")
-    files, rel, body = {}, None, []
+    out, rel, b64, body = {}, None, False, []
     for ln in lines[first:last]:
         if rel is None:
-            if not ln.startswith(BEGIN):
+            if not ln.startswith((BEGIN, BEGIN64)):
                 raise ValueError(f"outside a file: {ln!r}")
-            rel, body = ln[len(BEGIN):].rsplit(" ===", 1)[0], []
+            b64 = ln.startswith(BEGIN64)
+            rel, body = ln[len(BEGIN64 if b64 else BEGIN):].rsplit(" ===", 1)[0], []
         elif ln.startswith(f"{END}{rel} "):
-            want, data = ln.split()[-2], "".join(body).encode()
-            if sha(data) != want and sha(data[:-1]) == want:
-                data = data[:-1]  # the newline the report added
+            want = ln.split()[-2]
+            if b64:
+                rows = [x.rstrip("\n") for x in body]
+                if any(len(x) != 76 for x in rows[:-1]) or (rows and not 0 < len(rows[-1]) <= 76):
+                    raise ValueError(f"{rel}: base64 lines are not those of the report")
+                try:
+                    data = base64.b64decode("".join(rows), validate=True)
+                except binascii.Error as e:
+                    raise ValueError(f"{rel}: not base64: {e}") from None
+            else:
+                data = "".join(body).encode()
+                if sha(data) != want and sha(data[:-1]) == want:
+                    data = data[:-1]  # the newline the report added
             if sha(data) != want:
                 raise ValueError(f"{rel}: SHA-256 differs")
-            files[rel], rel = data, None
+            out[rel], rel = data, None
         else:
             body.append(ln)
     if rel is not None:
         raise ValueError(f"{rel}: no end line")
-    return files
+    return out
+
+
+def read(log):
+    """The files of the last report in log, {path: bytes}; ValueError if a hash differs."""
+    lines = log.splitlines(keepends=True)
+    found = blocks(lines)
+    if not found:
+        raise ValueError("no report")
+    return unpack(lines, *found[-1])
+
+
+def read_all(log):
+    """Every report in log, in order: its files, or the ValueError that its check raised."""
+    lines = log.splitlines(keepends=True)
+    out = []
+    for first, last in blocks(lines):
+        try:
+            out.append(unpack(lines, first, last))
+        except ValueError as e:
+            out.append(e)
+    return out
 
 
 def main(argv):

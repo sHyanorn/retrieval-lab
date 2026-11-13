@@ -404,6 +404,8 @@ class Job:
         cuts = [c["model"] for c in (self.record or {}).get("cuts", [])]
         if d != "nq" or m not in cuts:
             raise Stop(f"{m} on {d} is not a cut recorded in {os.path.join(self.base, 'plan.json')}")
+        # free is f_bavail × f_frsize of statvfs for the filesystem that holds VOL/step4; on a
+        # network volume that need not reflect the volume's quota, which the job does not read (amendment 23).
         free = shutil.disk_usage(self.s4).free / 1e9
         self.log(f"free space on the volume: {free:.1f} GB")
         if free < self.a.min_free_gb:

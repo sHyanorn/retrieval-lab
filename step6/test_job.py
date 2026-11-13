@@ -552,7 +552,10 @@ def test_the_start_command_dry_run(tmp_path, tools):
     head = subprocess.run(["git", "-C", REPO, "rev-parse", "HEAD"], capture_output=True, text=True, check=True).stdout.strip()
     with open(os.path.join(REPO, "scripts", "pod6-start.sh")) as f:
         cmd = f.read()
-    env = dict(os.environ, DRY_RUN="1", COMMIT=head, REPO_URL=REPO, WORK=str(tmp_path / "pod"), HARD_LIMIT_MIN="2", GRACE_MIN="30",
+    # The toolchain go.mod names first on PATH, as on the pod, where pod6.sh sets GOTOOLCHAIN=local.
+    goroot = subprocess.run([GO, "env", "GOROOT"], capture_output=True, text=True, check=True).stdout.strip()
+    env = dict(os.environ, PATH=os.path.join(goroot, "bin") + os.pathsep + os.environ["PATH"])
+    env.update(DRY_RUN="1", COMMIT=head, REPO_URL=REPO, WORK=str(tmp_path / "pod"), HARD_LIMIT_MIN="2", GRACE_MIN="30",
                SKIP_SETUP="1", VOL=w["vol"], VOL_QUOTA_GB="100", MEM_GB="12", VCPU="4", RUNPOD_POD_ID="test", DEADLINE_H="0.5",
                TREC_EVAL_DIR=os.path.dirname(tools["trec_eval"]),
                JOB_ARGS=f"--step4 {w['step4']} --step5 {w['step5']} --bm25-sha256 {w['bm25']} --canary {BGE}:nfcorpus:16:200:1 "

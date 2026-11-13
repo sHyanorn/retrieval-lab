@@ -1,0 +1,34 @@
+{
+ "cuts": [
+  {
+   "hours": 8.572,
+   "model": "mixedbread-ai/mxbai-embed-large-v1",
+   "rate": 142835.18877172624,
+   "usd": 10.2,
+   "when": "before NQ of BAAI/bge-base-en-v1.5"
+  }
+ ],
+ "elapsed_h": 0.026200931866963706,
+ "limit_h": 9.0,
+ "line": 17.9,
+ "measured": {
+  "dataset": "nfcorpus",
+  "model": "BAAI/bge-base-en-v1.5",
+  "seconds": 7.6,
+  "tokens": 1264140
+ },
+ "nq": [
+  "BAAI/bge-base-en-v1.5",
+  "sentence-transformers/all-MiniLM-L6-v2",
+  "BAAI/bge-small-en-v1.5",
+  "intfloat/e5-base-v2",
+  "thenlper/gte-base",
+  "Snowflake/snowflake-arctic-embed-m-v1.5",
+  "BAAI/bge-large-en-v1.5"
+ ],
+ "price": 1.19,
+ "projected_h": 7.258488407058706,
+ "projected_usd": 8.637601204399859,
+ "rate": 166334.2105263158,
+ "stop": false
+}

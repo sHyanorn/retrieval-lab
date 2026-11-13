@@ -13,7 +13,9 @@ import (
 
 // ReadFaissFlat reads a Pyserini faiss flat index directory: "index", a
 // faiss IndexFlatIP (faiss/impl/index_write.cpp), and "docid", one document
-// ID per line for each row. It is used only to compare vectors.
+// ID per line for each row. cmd/dense reads the vectors it searches with
+// it, and cmd/agree and cmd/table the vectors they compare. It holds the
+// whole file and the vectors read from it in memory at once.
 func ReadFaissFlat(dir string) (ids []string, vecs []float32, dim int, err error) {
 	raw, err := os.ReadFile(filepath.Join(dir, "index"))
 	if err != nil {

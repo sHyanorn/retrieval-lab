@@ -1,0 +1,43 @@
+{
+ "canary": null,
+ "collect": {
+  "files": 68,
+  "grid_tsv_gz_sha256": "448329d71069affc609c944d782f43c365296daec7479f86476986c2f8f35860",
+  "grid_tsv_sha256": "3885e52fc02cd6da55c1da3866a6d308fed13a0c225f96b44b3649f634e83739"
+ },
+ "commit": "a21ec28b7b9ff2af3633f60f355431830516f08d",
+ "counts": {
+  "bm25": 6,
+  "builds": 440,
+  "fused": 640,
+  "perquery": 28088,
+  "runs": 28600
+ },
+ "deadline_h": 8.5,
+ "hours_since_pod_start": 7.134,
+ "not_done": [],
+ "pod": "w3iwy73r8pkxx7",
+ "reason": "",
+ "run_id": "w3iwy73r8pkxx7-1794581500",
+ "space": {
+  "du_bytes": 104348758603,
+  "quota_gb": 120.0,
+  "renamed_since_bytes": 150121651,
+  "still_to_write_bytes": 300000000
+ },
+ "status": "done",
+ "units": {
+  "bm25": {
+   "all": 6,
+   "done": 6
+  },
+  "build": {
+   "all": 440,
+   "done": 440
+  },
+  "fuse": {
+   "all": 64,
+   "done": 64
+  }
+ }
+}

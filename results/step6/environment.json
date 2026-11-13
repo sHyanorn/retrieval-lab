@@ -1,0 +1,58 @@
+{
+ "environment": {
+  "base": "bd072df",
+  "binaries": {
+   "bm25": {
+    "vcs.modified": "false",
+    "vcs.revision": "a21ec28b7b9ff2af3633f60f355431830516f08d"
+   },
+   "dense": {
+    "vcs.modified": "false",
+    "vcs.revision": "a21ec28b7b9ff2af3633f60f355431830516f08d"
+   },
+   "eval": {
+    "vcs.modified": "false",
+    "vcs.revision": "a21ec28b7b9ff2af3633f60f355431830516f08d"
+   },
+   "fuse": {
+    "vcs.modified": "false",
+    "vcs.revision": "a21ec28b7b9ff2af3633f60f355431830516f08d"
+   },
+   "study": {
+    "vcs.modified": "false",
+    "vcs.revision": "a21ec28b7b9ff2af3633f60f355431830516f08d"
+   }
+  },
+  "commit": "a21ec28b7b9ff2af3633f60f355431830516f08d",
+  "cpu_flags_sha256": "edee798a575528fd2fdae7f15116512a8f60bf4de920b512030840be55c5b394",
+  "cpu_model": "AMD EPYC 9655P 96-Core Processor",
+  "go": "go1.27.3",
+  "goamd64": "v1",
+  "goarch": "amd64",
+  "pod": "w3iwy73r8pkxx7",
+  "python": "3.13.18",
+  "trec_eval_sha256": "1bbc81a53bde1fb2175412c5a013c4b95c4acf6d7af63d253fff9576fbcf2e34",
+  "uname_m": "x86_64"
+ },
+ "limits": {
+  "budget": 213600000000,
+  "cgroup": {
+   "v1": {
+    "cpu": null,
+    "memory": null
+   },
+   "v2": {
+    "cpu": null,
+    "memory": 256000000000
+   }
+  },
+  "cpus": 32,
+  "host_cpus": 192,
+  "host_memory": 810700627968,
+  "mem_gb_passed": 256.0,
+  "memory": 256000000000,
+  "nproc": 32,
+  "slots": 30,
+  "vcpu_passed": 32
+ }
+}

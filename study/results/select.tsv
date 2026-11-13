@@ -1,0 +1,2161 @@
+model	dataset	m	efc	seed	target	ef	reached	status	closest_ef	closest_reached
+BAAI_bge-base-en-v1.5	arguana	16	200	0	0.80	10	3424/3515	below reach	10	3424/3515
+BAAI_bge-base-en-v1.5	arguana	16	200	0	0.85	10	3424/3515	below reach	10	3424/3515
+BAAI_bge-base-en-v1.5	arguana	16	200	0	0.90	10	3424/3515	below reach	10	3424/3515
+BAAI_bge-base-en-v1.5	arguana	16	200	0	0.95	10	3424/3515	below reach	10	3424/3515
+BAAI_bge-base-en-v1.5	arguana	16	200	0	0.99	18	3482/3515	matched	17	2783/2812
+BAAI_bge-base-en-v1.5	arguana	16	200	1	0.80	10	6851/7030	below reach	10	6851/7030
+BAAI_bge-base-en-v1.5	arguana	16	200	1	0.85	10	6851/7030	below reach	10	6851/7030
+BAAI_bge-base-en-v1.5	arguana	16	200	1	0.90	10	6851/7030	below reach	10	6851/7030
+BAAI_bge-base-en-v1.5	arguana	16	200	1	0.95	10	6851/7030	below reach	10	6851/7030
+BAAI_bge-base-en-v1.5	arguana	16	200	1	0.99	16	6961/7030	matched	16	6961/7030
+BAAI_bge-base-en-v1.5	arguana	16	200	2	0.80	10	2745/2812	below reach	10	2745/2812
+BAAI_bge-base-en-v1.5	arguana	16	200	2	0.85	10	2745/2812	below reach	10	2745/2812
+BAAI_bge-base-en-v1.5	arguana	16	200	2	0.90	10	2745/2812	below reach	10	2745/2812
+BAAI_bge-base-en-v1.5	arguana	16	200	2	0.95	10	2745/2812	below reach	10	2745/2812
+BAAI_bge-base-en-v1.5	arguana	16	200	2	0.99	16	13921/14060	matched	16	13921/14060
+BAAI_bge-base-en-v1.5	arguana	16	200	3	0.80	10	13679/14060	below reach	10	13679/14060
+BAAI_bge-base-en-v1.5	arguana	16	200	3	0.85	10	13679/14060	below reach	10	13679/14060
+BAAI_bge-base-en-v1.5	arguana	16	200	3	0.90	10	13679/14060	below reach	10	13679/14060
+BAAI_bge-base-en-v1.5	arguana	16	200	3	0.95	10	13679/14060	below reach	10	13679/14060
+BAAI_bge-base-en-v1.5	arguana	16	200	3	0.99	18	3484/3515	matched	17	6959/7030
+BAAI_bge-base-en-v1.5	arguana	16	200	4	0.80	10	361/370	below reach	10	361/370
+BAAI_bge-base-en-v1.5	arguana	16	200	4	0.85	10	361/370	below reach	10	361/370
+BAAI_bge-base-en-v1.5	arguana	16	200	4	0.90	10	361/370	below reach	10	361/370
+BAAI_bge-base-en-v1.5	arguana	16	200	4	0.95	10	361/370	below reach	10	361/370
+BAAI_bge-base-en-v1.5	arguana	16	200	4	0.99	18	6967/7030	matched	17	6959/7030
+BAAI_bge-base-en-v1.5	arguana	8	200	1	0.80	10	2659/2812	below reach	10	2659/2812
+BAAI_bge-base-en-v1.5	arguana	8	200	1	0.85	10	2659/2812	below reach	10	2659/2812
+BAAI_bge-base-en-v1.5	arguana	8	200	1	0.90	10	2659/2812	below reach	10	2659/2812
+BAAI_bge-base-en-v1.5	arguana	8	200	1	0.95	11	1339/1406	matched	11	1339/1406
+BAAI_bge-base-en-v1.5	arguana	8	200	1	0.99	30	3481/3515	matched	29	13919/14060
+BAAI_bge-base-en-v1.5	arguana	32	200	1	0.80	10	3457/3515	below reach	10	3457/3515
+BAAI_bge-base-en-v1.5	arguana	32	200	1	0.85	10	3457/3515	below reach	10	3457/3515
+BAAI_bge-base-en-v1.5	arguana	32	200	1	0.90	10	3457/3515	below reach	10	3457/3515
+BAAI_bge-base-en-v1.5	arguana	32	200	1	0.95	10	3457/3515	below reach	10	3457/3515
+BAAI_bge-base-en-v1.5	arguana	32	200	1	0.99	13	3483/3515	matched	12	13911/14060
+BAAI_bge-base-en-v1.5	fiqa	16	200	0	0.80	13	217/270	matched	13	217/270
+BAAI_bge-base-en-v1.5	fiqa	16	200	0	0.85	19	461/540	matched	18	5491/6480
+BAAI_bge-base-en-v1.5	fiqa	16	200	0	0.90	28	65/72	matched	27	5821/6480
+BAAI_bge-base-en-v1.5	fiqa	16	200	0	0.95	52	3079/3240	matched	52	3079/3240
+BAAI_bge-base-en-v1.5	fiqa	16	200	0	0.99	200	2141/2160	matched	200	2141/2160
+BAAI_bge-base-en-v1.5	fiqa	16	200	1	0.80	13	326/405	matched	13	326/405
+BAAI_bge-base-en-v1.5	fiqa	16	200	1	0.85	18	1841/2160	matched	18	1841/2160
+BAAI_bge-base-en-v1.5	fiqa	16	200	1	0.90	28	2917/3240	matched	28	2917/3240
+BAAI_bge-base-en-v1.5	fiqa	16	200	1	0.95	54	6157/6480	matched	54	6157/6480
+BAAI_bge-base-en-v1.5	fiqa	16	200	1	0.99	250	6443/6480	matched	200	1283/1296
+BAAI_bge-base-en-v1.5	fiqa	16	200	2	0.80	13	65/81	matched	13	65/81
+BAAI_bge-base-en-v1.5	fiqa	16	200	2	0.85	19	371/432	matched	18	611/720
+BAAI_bge-base-en-v1.5	fiqa	16	200	2	0.90	29	5857/6480	matched	28	727/810
+BAAI_bge-base-en-v1.5	fiqa	16	200	2	0.95	55	19/20	matched	55	19/20
+BAAI_bge-base-en-v1.5	fiqa	16	200	2	0.99	200	134/135	matched	200	134/135
+BAAI_bge-base-en-v1.5	fiqa	16	200	3	0.80	13	5221/6480	matched	13	5221/6480
+BAAI_bge-base-en-v1.5	fiqa	16	200	3	0.85	18	919/1080	matched	18	919/1080
+BAAI_bge-base-en-v1.5	fiqa	16	200	3	0.90	30	217/240	matched	29	1943/2160
+BAAI_bge-base-en-v1.5	fiqa	16	200	3	0.95	52	1541/1620	matched	51	3077/3240
+BAAI_bge-base-en-v1.5	fiqa	16	200	3	0.99	200	3217/3240	matched	150	2137/2160
+BAAI_bge-base-en-v1.5	fiqa	16	200	4	0.80	13	1301/1620	matched	13	1301/1620
+BAAI_bge-base-en-v1.5	fiqa	16	200	4	0.85	19	1109/1296	matched	18	5501/6480
+BAAI_bge-base-en-v1.5	fiqa	16	200	4	0.90	29	65/72	matched	28	583/648
+BAAI_bge-base-en-v1.5	fiqa	16	200	4	0.95	51	19/20	matched	51	19/20
+BAAI_bge-base-en-v1.5	fiqa	16	200	4	0.99	150	3209/3240	matched	150	3209/3240
+BAAI_bge-base-en-v1.5	fiqa	8	200	1	0.80	26	1043/1296	matched	25	2587/3240
+BAAI_bge-base-en-v1.5	fiqa	8	200	1	0.85	37	551/648	matched	37	551/648
+BAAI_bge-base-en-v1.5	fiqa	8	200	1	0.90	60	2921/3240	matched	60	2921/3240
+BAAI_bge-base-en-v1.5	fiqa	8	200	1	0.95	150	623/648	overshoot	120	1231/1296
+BAAI_bge-base-en-v1.5	fiqa	8	200	1	0.99	600	3211/3240	matched	500	641/648
+BAAI_bge-base-en-v1.5	fiqa	32	200	1	0.80	11	5243/6480	matched	10	2581/3240
+BAAI_bge-base-en-v1.5	fiqa	32	200	1	0.85	15	5539/6480	matched	14	5479/6480
+BAAI_bge-base-en-v1.5	fiqa	32	200	1	0.90	24	733/810	matched	23	647/720
+BAAI_bge-base-en-v1.5	fiqa	32	200	1	0.95	43	2053/2160	matched	43	2053/2160
+BAAI_bge-base-en-v1.5	fiqa	32	200	1	0.99	150	6419/6480	matched	150	6419/6480
+BAAI_bge-base-en-v1.5	nfcorpus	16	200	0	0.80	13	2619/3230	overshoot	12	1288/1615
+BAAI_bge-base-en-v1.5	nfcorpus	16	200	0	0.85	18	1379/1615	matched	18	1379/1615
+BAAI_bge-base-en-v1.5	nfcorpus	16	200	0	0.90	27	9/10	matched	27	9/10
+BAAI_bge-base-en-v1.5	nfcorpus	16	200	0	0.95	51	1537/1615	matched	49	613/646
+BAAI_bge-base-en-v1.5	nfcorpus	16	200	0	0.99	150	3201/3230	matched	150	3201/3230
+BAAI_bge-base-en-v1.5	nfcorpus	16	200	1	0.80	12	1297/1615	matched	12	1297/1615
+BAAI_bge-base-en-v1.5	nfcorpus	16	200	1	0.85	16	2747/3230	matched	16	2747/3230
+BAAI_bge-base-en-v1.5	nfcorpus	16	200	1	0.90	26	2913/3230	matched	25	1451/1615
+BAAI_bge-base-en-v1.5	nfcorpus	16	200	1	0.95	48	615/646	matched	46	1534/1615
+BAAI_bge-base-en-v1.5	nfcorpus	16	200	1	0.99	150	3201/3230	matched	150	3201/3230
+BAAI_bge-base-en-v1.5	nfcorpus	16	200	2	0.80	12	261/323	matched	12	261/323
+BAAI_bge-base-en-v1.5	nfcorpus	16	200	2	0.85	16	2747/3230	matched	16	2747/3230
+BAAI_bge-base-en-v1.5	nfcorpus	16	200	2	0.90	25	2911/3230	matched	25	2911/3230
+BAAI_bge-base-en-v1.5	nfcorpus	16	200	2	0.95	46	1536/1615	matched	45	3067/3230
+BAAI_bge-base-en-v1.5	nfcorpus	16	200	2	0.99	150	1602/1615	matched	150	1602/1615
+BAAI_bge-base-en-v1.5	nfcorpus	16	200	3	0.80	13	69/85	overshoot	12	258/323
+BAAI_bge-base-en-v1.5	nfcorpus	16	200	3	0.85	18	2753/3230	matched	18	2753/3230
+BAAI_bge-base-en-v1.5	nfcorpus	16	200	3	0.90	27	2909/3230	matched	27	2909/3230
+BAAI_bge-base-en-v1.5	nfcorpus	16	200	3	0.95	47	307/323	matched	46	1534/1615
+BAAI_bge-base-en-v1.5	nfcorpus	16	200	3	0.99	150	3203/3230	matched	120	639/646
+BAAI_bge-base-en-v1.5	nfcorpus	16	200	4	0.80	11	260/323	matched	11	260/323
+BAAI_bge-base-en-v1.5	nfcorpus	16	200	4	0.85	16	81/95	matched	16	81/95
+BAAI_bge-base-en-v1.5	nfcorpus	16	200	4	0.90	24	291/323	matched	24	291/323
+BAAI_bge-base-en-v1.5	nfcorpus	16	200	4	0.95	46	615/646	matched	45	3067/3230
+BAAI_bge-base-en-v1.5	nfcorpus	16	200	4	0.99	150	1602/1615	matched	120	639/646
+BAAI_bge-base-en-v1.5	nfcorpus	8	200	1	0.80	19	1296/1615	matched	19	1296/1615
+BAAI_bge-base-en-v1.5	nfcorpus	8	200	1	0.85	25	2749/3230	matched	25	2749/3230
+BAAI_bge-base-en-v1.5	nfcorpus	8	200	1	0.90	40	2909/3230	matched	40	2909/3230
+BAAI_bge-base-en-v1.5	nfcorpus	8	200	1	0.95	80	1551/1615	overshoot	70	1534/1615
+BAAI_bge-base-en-v1.5	nfcorpus	8	200	1	0.99	250	3201/3230	matched	250	3201/3230
+BAAI_bge-base-en-v1.5	nfcorpus	32	200	1	0.80	10	2621/3230	below reach	10	2621/3230
+BAAI_bge-base-en-v1.5	nfcorpus	32	200	1	0.85	14	2767/3230	matched	13	2739/3230
+BAAI_bge-base-en-v1.5	nfcorpus	32	200	1	0.90	21	1461/1615	matched	20	1453/1615
+BAAI_bge-base-en-v1.5	nfcorpus	32	200	1	0.95	38	3069/3230	matched	38	3069/3230
+BAAI_bge-base-en-v1.5	nfcorpus	32	200	1	0.99	150	641/646	matched	120	639/646
+BAAI_bge-base-en-v1.5	nq	16	200	0	0.80	12	6993/8630	overshoot	11	13717/17260
+BAAI_bge-base-en-v1.5	nq	16	200	0	0.85	16	5873/6904	matched	16	5873/6904
+BAAI_bge-base-en-v1.5	nq	16	200	0	0.90	26	3901/4315	matched	25	31051/34520
+BAAI_bge-base-en-v1.5	nq	16	200	0	0.95	52	32799/34520	matched	52	32799/34520
+BAAI_bge-base-en-v1.5	nq	16	200	0	0.99	400	17133/17260	matched	300	17087/17260
+BAAI_bge-base-en-v1.5	nq	16	200	1	0.80	13	14037/17260	overshoot	12	27563/34520
+BAAI_bge-base-en-v1.5	nq	16	200	1	0.85	17	14699/17260	matched	17	14699/17260
+BAAI_bge-base-en-v1.5	nq	16	200	1	0.90	27	9/10	matched	27	9/10
+BAAI_bge-base-en-v1.5	nq	16	200	1	0.95	70	32973/34520	matched	60	8177/8630
+BAAI_bge-base-en-v1.5	nq	16	200	1	0.99	500	34177/34520	matched	500	34177/34520
+BAAI_bge-base-en-v1.5	nq	16	200	2	0.80	13	13909/17260	matched	13	13909/17260
+BAAI_bge-base-en-v1.5	nq	16	200	2	0.85	18	5869/6904	matched	18	5869/6904
+BAAI_bge-base-en-v1.5	nq	16	200	2	0.90	30	15567/17260	matched	29	31007/34520
+BAAI_bge-base-en-v1.5	nq	16	200	2	0.95	70	32903/34520	matched	70	32903/34520
+BAAI_bge-base-en-v1.5	nq	16	200	2	0.99	600	17101/17260	matched	500	34151/34520
+BAAI_bge-base-en-v1.5	nq	16	200	3	0.80	13	6977/8630	matched	12	13719/17260
+BAAI_bge-base-en-v1.5	nq	16	200	3	0.85	17	29411/34520	matched	17	29411/34520
+BAAI_bge-base-en-v1.5	nq	16	200	3	0.90	28	7787/8630	matched	27	31029/34520
+BAAI_bge-base-en-v1.5	nq	16	200	3	0.95	70	16467/17260	matched	60	32761/34520
+BAAI_bge-base-en-v1.5	nq	16	200	3	0.99	600	3419/3452	matched	600	3419/3452
+BAAI_bge-base-en-v1.5	nq	16	200	4	0.80	13	5575/6904	matched	12	27507/34520
+BAAI_bge-base-en-v1.5	nq	16	200	4	0.85	18	3683/4315	matched	18	3683/4315
+BAAI_bge-base-en-v1.5	nq	16	200	4	0.90	29	15571/17260	matched	28	31051/34520
+BAAI_bge-base-en-v1.5	nq	16	200	4	0.95	70	4109/4315	matched	70	4109/4315
+BAAI_bge-base-en-v1.5	nq	16	200	4	0.99	600	34209/34520	matched	500	34157/34520
+BAAI_bge-base-en-v1.5	quora	16	200	0	0.80	10	47053/50000	below reach	10	47053/50000
+BAAI_bge-base-en-v1.5	quora	16	200	0	0.85	10	47053/50000	below reach	10	47053/50000
+BAAI_bge-base-en-v1.5	quora	16	200	0	0.90	10	47053/50000	below reach	10	47053/50000
+BAAI_bge-base-en-v1.5	quora	16	200	0	0.95	12	5961/6250	matched	11	4741/5000
+BAAI_bge-base-en-v1.5	quora	16	200	0	0.99	46	24753/25000	matched	45	98991/100000
+BAAI_bge-base-en-v1.5	quora	16	200	1	0.80	10	3763/4000	below reach	10	3763/4000
+BAAI_bge-base-en-v1.5	quora	16	200	1	0.85	10	3763/4000	below reach	10	3763/4000
+BAAI_bge-base-en-v1.5	quora	16	200	1	0.90	10	3763/4000	below reach	10	3763/4000
+BAAI_bge-base-en-v1.5	quora	16	200	1	0.95	12	23821/25000	matched	11	94743/100000
+BAAI_bge-base-en-v1.5	quora	16	200	1	0.99	41	12377/12500	matched	41	12377/12500
+BAAI_bge-base-en-v1.5	quora	16	200	2	0.80	10	93957/100000	below reach	10	93957/100000
+BAAI_bge-base-en-v1.5	quora	16	200	2	0.85	10	93957/100000	below reach	10	93957/100000
+BAAI_bge-base-en-v1.5	quora	16	200	2	0.90	10	93957/100000	below reach	10	93957/100000
+BAAI_bge-base-en-v1.5	quora	16	200	2	0.95	12	47649/50000	matched	12	47649/50000
+BAAI_bge-base-en-v1.5	quora	16	200	2	0.99	42	99009/100000	matched	42	99009/100000
+BAAI_bge-base-en-v1.5	quora	16	200	3	0.80	10	2943/3125	below reach	10	2943/3125
+BAAI_bge-base-en-v1.5	quora	16	200	3	0.85	10	2943/3125	below reach	10	2943/3125
+BAAI_bge-base-en-v1.5	quora	16	200	3	0.90	10	2943/3125	below reach	10	2943/3125
+BAAI_bge-base-en-v1.5	quora	16	200	3	0.95	12	3813/4000	matched	11	4741/5000
+BAAI_bge-base-en-v1.5	quora	16	200	3	0.99	42	6189/6250	matched	41	98989/100000
+BAAI_bge-base-en-v1.5	quora	16	200	4	0.80	10	94113/100000	below reach	10	94113/100000
+BAAI_bge-base-en-v1.5	quora	16	200	4	0.85	10	94113/100000	below reach	10	94113/100000
+BAAI_bge-base-en-v1.5	quora	16	200	4	0.90	10	94113/100000	below reach	10	94113/100000
+BAAI_bge-base-en-v1.5	quora	16	200	4	0.95	12	47693/50000	matched	11	94833/100000
+BAAI_bge-base-en-v1.5	quora	16	200	4	0.99	43	99013/100000	matched	42	49497/50000
+BAAI_bge-base-en-v1.5	quora	8	200	1	0.80	10	42859/50000	below reach	10	42859/50000
+BAAI_bge-base-en-v1.5	quora	8	200	1	0.85	10	42859/50000	matched	10	42859/50000
+BAAI_bge-base-en-v1.5	quora	8	200	1	0.90	15	90559/100000	matched	14	89913/100000
+BAAI_bge-base-en-v1.5	quora	8	200	1	0.95	28	23779/25000	matched	28	23779/25000
+BAAI_bge-base-en-v1.5	quora	8	200	1	0.99	200	99133/100000	matched	150	12367/12500
+BAAI_bge-base-en-v1.5	quora	32	200	1	0.80	10	24059/25000	below reach	10	24059/25000
+BAAI_bge-base-en-v1.5	quora	32	200	1	0.85	10	24059/25000	below reach	10	24059/25000
+BAAI_bge-base-en-v1.5	quora	32	200	1	0.90	10	24059/25000	below reach	10	24059/25000
+BAAI_bge-base-en-v1.5	quora	32	200	1	0.95	10	24059/25000	below reach	10	24059/25000
+BAAI_bge-base-en-v1.5	quora	32	200	1	0.99	26	49521/50000	matched	25	49483/50000
+BAAI_bge-base-en-v1.5	scidocs	16	200	0	0.80	10	7/8	below reach	10	7/8
+BAAI_bge-base-en-v1.5	scidocs	16	200	0	0.85	10	7/8	below reach	10	7/8
+BAAI_bge-base-en-v1.5	scidocs	16	200	0	0.90	13	1813/2000	matched	12	4487/5000
+BAAI_bge-base-en-v1.5	scidocs	16	200	0	0.95	21	19/20	matched	21	19/20
+BAAI_bge-base-en-v1.5	scidocs	16	200	0	0.99	70	9927/10000	matched	59	4943/5000
+BAAI_bge-base-en-v1.5	scidocs	16	200	1	0.80	10	8743/10000	below reach	10	8743/10000
+BAAI_bge-base-en-v1.5	scidocs	16	200	1	0.85	10	8743/10000	below reach	10	8743/10000
+BAAI_bge-base-en-v1.5	scidocs	16	200	1	0.90	12	564/625	matched	12	564/625
+BAAI_bge-base-en-v1.5	scidocs	16	200	1	0.95	20	9501/10000	matched	20	9501/10000
+BAAI_bge-base-en-v1.5	scidocs	16	200	1	0.99	55	9903/10000	matched	55	9903/10000
+BAAI_bge-base-en-v1.5	scidocs	16	200	2	0.80	10	2171/2500	below reach	10	2171/2500
+BAAI_bge-base-en-v1.5	scidocs	16	200	2	0.85	10	2171/2500	below reach	10	2171/2500
+BAAI_bge-base-en-v1.5	scidocs	16	200	2	0.90	13	1133/1250	matched	12	4483/5000
+BAAI_bge-base-en-v1.5	scidocs	16	200	2	0.95	22	4761/5000	matched	21	9499/10000
+BAAI_bge-base-en-v1.5	scidocs	16	200	2	0.99	56	9901/10000	matched	56	9901/10000
+BAAI_bge-base-en-v1.5	scidocs	16	200	3	0.80	10	8763/10000	below reach	10	8763/10000
+BAAI_bge-base-en-v1.5	scidocs	16	200	3	0.85	10	8763/10000	below reach	10	8763/10000
+BAAI_bge-base-en-v1.5	scidocs	16	200	3	0.90	13	567/625	matched	12	4497/5000
+BAAI_bge-base-en-v1.5	scidocs	16	200	3	0.95	21	9511/10000	matched	21	9511/10000
+BAAI_bge-base-en-v1.5	scidocs	16	200	3	0.99	57	9901/10000	matched	57	9901/10000
+BAAI_bge-base-en-v1.5	scidocs	16	200	4	0.80	10	1737/2000	below reach	10	1737/2000
+BAAI_bge-base-en-v1.5	scidocs	16	200	4	0.85	10	1737/2000	below reach	10	1737/2000
+BAAI_bge-base-en-v1.5	scidocs	16	200	4	0.90	13	9037/10000	matched	13	9037/10000
+BAAI_bge-base-en-v1.5	scidocs	16	200	4	0.95	21	19/20	matched	21	19/20
+BAAI_bge-base-en-v1.5	scidocs	16	200	4	0.99	55	99/100	matched	55	99/100
+BAAI_bge-base-en-v1.5	scidocs	8	200	1	0.80	11	2037/2500	overshoot	10	7977/10000
+BAAI_bge-base-en-v1.5	scidocs	8	200	1	0.85	14	4251/5000	matched	14	4251/5000
+BAAI_bge-base-en-v1.5	scidocs	8	200	1	0.90	21	9019/10000	matched	21	9019/10000
+BAAI_bge-base-en-v1.5	scidocs	8	200	1	0.95	35	9509/10000	matched	35	9509/10000
+BAAI_bge-base-en-v1.5	scidocs	8	200	1	0.99	120	2479/2500	matched	100	4943/5000
+BAAI_bge-base-en-v1.5	scidocs	32	200	1	0.80	10	1131/1250	below reach	10	1131/1250
+BAAI_bge-base-en-v1.5	scidocs	32	200	1	0.85	10	1131/1250	below reach	10	1131/1250
+BAAI_bge-base-en-v1.5	scidocs	32	200	1	0.90	10	1131/1250	matched	10	1131/1250
+BAAI_bge-base-en-v1.5	scidocs	32	200	1	0.95	17	596/625	matched	16	4747/5000
+BAAI_bge-base-en-v1.5	scidocs	32	200	1	0.99	41	9901/10000	matched	41	9901/10000
+BAAI_bge-base-en-v1.5	scifact	16	200	0	0.80	10	1309/1500	below reach	10	1309/1500
+BAAI_bge-base-en-v1.5	scifact	16	200	0	0.85	10	1309/1500	below reach	10	1309/1500
+BAAI_bge-base-en-v1.5	scifact	16	200	0	0.90	12	903/1000	matched	12	903/1000
+BAAI_bge-base-en-v1.5	scifact	16	200	0	0.95	22	1427/1500	matched	22	1427/1500
+BAAI_bge-base-en-v1.5	scifact	16	200	0	0.99	50	99/100	matched	50	99/100
+BAAI_bge-base-en-v1.5	scifact	16	200	1	0.80	10	439/500	below reach	10	439/500
+BAAI_bge-base-en-v1.5	scifact	16	200	1	0.85	10	439/500	below reach	10	439/500
+BAAI_bge-base-en-v1.5	scifact	16	200	1	0.90	13	903/1000	matched	13	903/1000
+BAAI_bge-base-en-v1.5	scifact	16	200	1	0.95	23	19/20	matched	23	19/20
+BAAI_bge-base-en-v1.5	scifact	16	200	1	0.99	51	2971/3000	matched	50	2969/3000
+BAAI_bge-base-en-v1.5	scifact	16	200	2	0.80	10	177/200	below reach	10	177/200
+BAAI_bge-base-en-v1.5	scifact	16	200	2	0.85	10	177/200	below reach	10	177/200
+BAAI_bge-base-en-v1.5	scifact	16	200	2	0.90	12	451/500	matched	12	451/500
+BAAI_bge-base-en-v1.5	scifact	16	200	2	0.95	21	951/1000	matched	21	951/1000
+BAAI_bge-base-en-v1.5	scifact	16	200	2	0.99	51	2971/3000	matched	50	2969/3000
+BAAI_bge-base-en-v1.5	scifact	16	200	3	0.80	10	659/750	below reach	10	659/750
+BAAI_bge-base-en-v1.5	scifact	16	200	3	0.85	10	659/750	below reach	10	659/750
+BAAI_bge-base-en-v1.5	scifact	16	200	3	0.90	13	679/750	matched	12	179/200
+BAAI_bge-base-en-v1.5	scifact	16	200	3	0.95	22	19/20	matched	22	19/20
+BAAI_bge-base-en-v1.5	scifact	16	200	3	0.99	53	743/750	matched	52	2969/3000
+BAAI_bge-base-en-v1.5	scifact	16	200	4	0.80	10	439/500	below reach	10	439/500
+BAAI_bge-base-en-v1.5	scifact	16	200	4	0.85	10	439/500	below reach	10	439/500
+BAAI_bge-base-en-v1.5	scifact	16	200	4	0.90	13	451/500	matched	13	451/500
+BAAI_bge-base-en-v1.5	scifact	16	200	4	0.95	22	119/125	matched	21	1423/1500
+BAAI_bge-base-en-v1.5	scifact	16	200	4	0.99	53	743/750	matched	51	371/375
+BAAI_bge-base-en-v1.5	scifact	8	200	1	0.80	11	813/1000	overshoot	10	399/500
+BAAI_bge-base-en-v1.5	scifact	8	200	1	0.85	15	427/500	matched	14	2539/3000
+BAAI_bge-base-en-v1.5	scifact	8	200	1	0.90	22	2713/3000	matched	21	2693/3000
+BAAI_bge-base-en-v1.5	scifact	8	200	1	0.95	35	951/1000	matched	34	2849/3000
+BAAI_bge-base-en-v1.5	scifact	8	200	1	0.99	100	2971/3000	matched	100	2971/3000
+BAAI_bge-base-en-v1.5	scifact	32	200	1	0.80	10	2717/3000	below reach	10	2717/3000
+BAAI_bge-base-en-v1.5	scifact	32	200	1	0.85	10	2717/3000	below reach	10	2717/3000
+BAAI_bge-base-en-v1.5	scifact	32	200	1	0.90	10	2717/3000	matched	10	2717/3000
+BAAI_bge-base-en-v1.5	scifact	32	200	1	0.95	17	1427/1500	matched	17	1427/1500
+BAAI_bge-base-en-v1.5	scifact	32	200	1	0.99	43	743/750	matched	40	2969/3000
+BAAI_bge-base-en-v1.5	trec-covid	16	200	0	0.80	12	201/250	matched	12	201/250
+BAAI_bge-base-en-v1.5	trec-covid	16	200	0	0.85	16	109/125	overshoot	15	419/500
+BAAI_bge-base-en-v1.5	trec-covid	16	200	0	0.90	20	453/500	matched	19	447/500
+BAAI_bge-base-en-v1.5	trec-covid	16	200	0	0.95	29	19/20	matched	29	19/20
+BAAI_bge-base-en-v1.5	trec-covid	16	200	0	0.99	80	124/125	matched	80	124/125
+BAAI_bge-base-en-v1.5	trec-covid	16	200	1	0.80	10	102/125	below reach	10	102/125
+BAAI_bge-base-en-v1.5	trec-covid	16	200	1	0.85	12	213/250	matched	12	213/250
+BAAI_bge-base-en-v1.5	trec-covid	16	200	1	0.90	22	461/500	overshoot	21	111/125
+BAAI_bge-base-en-v1.5	trec-covid	16	200	1	0.95	33	481/500	overshoot	32	471/500
+BAAI_bge-base-en-v1.5	trec-covid	16	200	1	0.99	56	99/100	matched	56	99/100
+BAAI_bge-base-en-v1.5	trec-covid	16	200	2	0.80	11	102/125	overshoot	10	399/500
+BAAI_bge-base-en-v1.5	trec-covid	16	200	2	0.85	13	433/500	overshoot	12	209/250
+BAAI_bge-base-en-v1.5	trec-covid	16	200	2	0.90	19	457/500	overshoot	18	112/125
+BAAI_bge-base-en-v1.5	trec-covid	16	200	2	0.95	35	119/125	matched	30	237/250
+BAAI_bge-base-en-v1.5	trec-covid	16	200	2	0.99	58	99/100	matched	58	99/100
+BAAI_bge-base-en-v1.5	trec-covid	16	200	3	0.80	11	101/125	matched	11	101/125
+BAAI_bge-base-en-v1.5	trec-covid	16	200	3	0.85	14	43/50	matched	13	423/500
+BAAI_bge-base-en-v1.5	trec-covid	16	200	3	0.90	19	114/125	overshoot	19	114/125
+BAAI_bge-base-en-v1.5	trec-covid	16	200	3	0.95	30	19/20	matched	30	19/20
+BAAI_bge-base-en-v1.5	trec-covid	16	200	3	0.99	90	99/100	matched	90	99/100
+BAAI_bge-base-en-v1.5	trec-covid	16	200	4	0.80	11	201/250	matched	11	201/250
+BAAI_bge-base-en-v1.5	trec-covid	16	200	4	0.85	17	17/20	matched	17	17/20
+BAAI_bge-base-en-v1.5	trec-covid	16	200	4	0.90	22	451/500	matched	22	451/500
+BAAI_bge-base-en-v1.5	trec-covid	16	200	4	0.95	43	481/500	overshoot	42	471/500
+BAAI_bge-base-en-v1.5	trec-covid	16	200	4	0.99	80	124/125	matched	70	247/250
+BAAI_bge-base-en-v1.5	trec-covid	8	200	1	0.80	14	401/500	matched	14	401/500
+BAAI_bge-base-en-v1.5	trec-covid	8	200	1	0.85	20	439/500	overshoot	19	21/25
+BAAI_bge-base-en-v1.5	trec-covid	8	200	1	0.90	25	451/500	matched	25	451/500
+BAAI_bge-base-en-v1.5	trec-covid	8	200	1	0.95	42	19/20	matched	42	19/20
+BAAI_bge-base-en-v1.5	trec-covid	8	200	1	0.99	200	124/125	matched	200	124/125
+BAAI_bge-base-en-v1.5	trec-covid	32	200	1	0.80	10	43/50	below reach	10	43/50
+BAAI_bge-base-en-v1.5	trec-covid	32	200	1	0.85	10	43/50	matched	10	43/50
+BAAI_bge-base-en-v1.5	trec-covid	32	200	1	0.90	15	9/10	matched	15	9/10
+BAAI_bge-base-en-v1.5	trec-covid	32	200	1	0.95	26	19/20	matched	26	19/20
+BAAI_bge-base-en-v1.5	trec-covid	32	200	1	0.99	51	124/125	matched	45	247/250
+BAAI_bge-large-en-v1.5	arguana	16	200	0	0.80	10	6823/7030	below reach	10	6823/7030
+BAAI_bge-large-en-v1.5	arguana	16	200	0	0.85	10	6823/7030	below reach	10	6823/7030
+BAAI_bge-large-en-v1.5	arguana	16	200	0	0.90	10	6823/7030	below reach	10	6823/7030
+BAAI_bge-large-en-v1.5	arguana	16	200	0	0.95	10	6823/7030	below reach	10	6823/7030
+BAAI_bge-large-en-v1.5	arguana	16	200	0	0.99	19	1393/1406	matched	18	13917/14060
+BAAI_bge-large-en-v1.5	arguana	16	200	1	0.80	10	13613/14060	below reach	10	13613/14060
+BAAI_bge-large-en-v1.5	arguana	16	200	1	0.85	10	13613/14060	below reach	10	13613/14060
+BAAI_bge-large-en-v1.5	arguana	16	200	1	0.90	10	13613/14060	below reach	10	13613/14060
+BAAI_bge-large-en-v1.5	arguana	16	200	1	0.95	10	13613/14060	below reach	10	13613/14060
+BAAI_bge-large-en-v1.5	arguana	16	200	1	0.99	20	1393/1406	matched	19	13917/14060
+BAAI_bge-large-en-v1.5	arguana	16	200	2	0.80	10	3406/3515	below reach	10	3406/3515
+BAAI_bge-large-en-v1.5	arguana	16	200	2	0.85	10	3406/3515	below reach	10	3406/3515
+BAAI_bge-large-en-v1.5	arguana	16	200	2	0.90	10	3406/3515	below reach	10	3406/3515
+BAAI_bge-large-en-v1.5	arguana	16	200	2	0.95	10	3406/3515	below reach	10	3406/3515
+BAAI_bge-large-en-v1.5	arguana	16	200	2	0.99	18	13921/14060	matched	18	13921/14060
+BAAI_bge-large-en-v1.5	arguana	16	200	3	0.80	10	13611/14060	below reach	10	13611/14060
+BAAI_bge-large-en-v1.5	arguana	16	200	3	0.85	10	13611/14060	below reach	10	13611/14060
+BAAI_bge-large-en-v1.5	arguana	16	200	3	0.90	10	13611/14060	below reach	10	13611/14060
+BAAI_bge-large-en-v1.5	arguana	16	200	3	0.95	10	13611/14060	below reach	10	13611/14060
+BAAI_bge-large-en-v1.5	arguana	16	200	3	0.99	20	13923/14060	matched	20	13923/14060
+BAAI_bge-large-en-v1.5	arguana	16	200	4	0.80	10	6823/7030	below reach	10	6823/7030
+BAAI_bge-large-en-v1.5	arguana	16	200	4	0.85	10	6823/7030	below reach	10	6823/7030
+BAAI_bge-large-en-v1.5	arguana	16	200	4	0.90	10	6823/7030	below reach	10	6823/7030
+BAAI_bge-large-en-v1.5	arguana	16	200	4	0.95	10	6823/7030	below reach	10	6823/7030
+BAAI_bge-large-en-v1.5	arguana	16	200	4	0.99	19	13923/14060	matched	19	13923/14060
+BAAI_bge-large-en-v1.5	arguana	8	200	1	0.80	10	661/703	below reach	10	661/703
+BAAI_bge-large-en-v1.5	arguana	8	200	1	0.85	10	661/703	below reach	10	661/703
+BAAI_bge-large-en-v1.5	arguana	8	200	1	0.90	10	661/703	below reach	10	661/703
+BAAI_bge-large-en-v1.5	arguana	8	200	1	0.95	12	6703/7030	matched	11	3329/3515
+BAAI_bge-large-en-v1.5	arguana	8	200	1	0.99	33	2785/2812	matched	32	13917/14060
+BAAI_bge-large-en-v1.5	arguana	32	200	1	0.80	10	93/95	below reach	10	93/95
+BAAI_bge-large-en-v1.5	arguana	32	200	1	0.85	10	93/95	below reach	10	93/95
+BAAI_bge-large-en-v1.5	arguana	32	200	1	0.90	10	93/95	below reach	10	93/95
+BAAI_bge-large-en-v1.5	arguana	32	200	1	0.95	10	93/95	below reach	10	93/95
+BAAI_bge-large-en-v1.5	arguana	32	200	1	0.99	15	13921/14060	matched	15	13921/14060
+BAAI_bge-large-en-v1.5	fiqa	16	200	0	0.80	12	2603/3240	matched	12	2603/3240
+BAAI_bge-large-en-v1.5	fiqa	16	200	0	0.85	17	277/324	matched	16	343/405
+BAAI_bge-large-en-v1.5	fiqa	16	200	0	0.90	25	2917/3240	matched	25	2917/3240
+BAAI_bge-large-en-v1.5	fiqa	16	200	0	0.95	47	6157/6480	matched	47	6157/6480
+BAAI_bge-large-en-v1.5	fiqa	16	200	0	0.99	150	643/648	matched	120	89/90
+BAAI_bge-large-en-v1.5	fiqa	16	200	1	0.80	12	1297/1620	matched	12	1297/1620
+BAAI_bge-large-en-v1.5	fiqa	16	200	1	0.85	17	1381/1620	matched	17	1381/1620
+BAAI_bge-large-en-v1.5	fiqa	16	200	1	0.90	25	1171/1296	matched	24	5821/6480
+BAAI_bge-large-en-v1.5	fiqa	16	200	1	0.95	44	19/20	matched	44	19/20
+BAAI_bge-large-en-v1.5	fiqa	16	200	1	0.99	150	6427/6480	matched	150	6427/6480
+BAAI_bge-large-en-v1.5	fiqa	16	200	2	0.80	12	2623/3240	matched	11	643/810
+BAAI_bge-large-en-v1.5	fiqa	16	200	2	0.85	17	1847/2160	matched	16	1373/1620
+BAAI_bge-large-en-v1.5	fiqa	16	200	2	0.90	26	65/72	matched	25	583/648
+BAAI_bge-large-en-v1.5	fiqa	16	200	2	0.95	47	19/20	matched	47	19/20
+BAAI_bge-large-en-v1.5	fiqa	16	200	2	0.99	150	119/120	matched	150	119/120
+BAAI_bge-large-en-v1.5	fiqa	16	200	3	0.80	12	5201/6480	matched	12	5201/6480
+BAAI_bge-large-en-v1.5	fiqa	16	200	3	0.85	17	5543/6480	matched	16	5497/6480
+BAAI_bge-large-en-v1.5	fiqa	16	200	3	0.90	26	1169/1296	matched	25	5819/6480
+BAAI_bge-large-en-v1.5	fiqa	16	200	3	0.95	43	77/81	matched	42	769/810
+BAAI_bge-large-en-v1.5	fiqa	16	200	3	0.99	150	134/135	matched	120	6401/6480
+BAAI_bge-large-en-v1.5	fiqa	16	200	4	0.80	12	5227/6480	matched	11	2573/3240
+BAAI_bge-large-en-v1.5	fiqa	16	200	4	0.85	16	23/27	matched	16	23/27
+BAAI_bge-large-en-v1.5	fiqa	16	200	4	0.90	25	5843/6480	matched	25	5843/6480
+BAAI_bge-large-en-v1.5	fiqa	16	200	4	0.95	45	2053/2160	matched	45	2053/2160
+BAAI_bge-large-en-v1.5	fiqa	16	200	4	0.99	150	803/810	matched	150	803/810
+BAAI_bge-large-en-v1.5	fiqa	8	200	1	0.80	22	5231/6480	matched	21	2587/3240
+BAAI_bge-large-en-v1.5	fiqa	8	200	1	0.85	31	613/720	matched	30	5503/6480
+BAAI_bge-large-en-v1.5	fiqa	8	200	1	0.90	48	731/810	matched	47	5831/6480
+BAAI_bge-large-en-v1.5	fiqa	8	200	1	0.95	100	3091/3240	matched	90	1231/1296
+BAAI_bge-large-en-v1.5	fiqa	8	200	1	0.99	400	3217/3240	matched	300	6409/6480
+BAAI_bge-large-en-v1.5	fiqa	32	200	1	0.80	10	5327/6480	below reach	10	5327/6480
+BAAI_bge-large-en-v1.5	fiqa	32	200	1	0.85	13	2777/3240	matched	12	203/240
+BAAI_bge-large-en-v1.5	fiqa	32	200	1	0.90	19	391/432	matched	18	97/108
+BAAI_bge-large-en-v1.5	fiqa	32	200	1	0.95	31	257/270	matched	30	3073/3240
+BAAI_bge-large-en-v1.5	fiqa	32	200	1	0.99	90	401/405	matched	90	401/405
+BAAI_bge-large-en-v1.5	nfcorpus	16	200	0	0.80	12	263/323	overshoot	11	2583/3230
+BAAI_bge-large-en-v1.5	nfcorpus	16	200	0	0.85	16	276/323	matched	15	2733/3230
+BAAI_bge-large-en-v1.5	nfcorpus	16	200	0	0.90	25	292/323	matched	24	1453/1615
+BAAI_bge-large-en-v1.5	nfcorpus	16	200	0	0.95	47	3073/3230	matched	46	3067/3230
+BAAI_bge-large-en-v1.5	nfcorpus	16	200	0	0.99	200	643/646	matched	150	3197/3230
+BAAI_bge-large-en-v1.5	nfcorpus	16	200	1	0.80	12	1312/1615	overshoot	11	515/646
+BAAI_bge-large-en-v1.5	nfcorpus	16	200	1	0.85	16	2761/3230	matched	16	2761/3230
+BAAI_bge-large-en-v1.5	nfcorpus	16	200	1	0.90	24	86/95	matched	23	1451/1615
+BAAI_bge-large-en-v1.5	nfcorpus	16	200	1	0.95	43	81/85	matched	42	1534/1615
+BAAI_bge-large-en-v1.5	nfcorpus	16	200	1	0.99	120	1599/1615	matched	120	1599/1615
+BAAI_bge-large-en-v1.5	nfcorpus	16	200	2	0.80	11	517/646	matched	11	517/646
+BAAI_bge-large-en-v1.5	nfcorpus	16	200	2	0.85	15	2753/3230	matched	15	2753/3230
+BAAI_bge-large-en-v1.5	nfcorpus	16	200	2	0.90	23	583/646	matched	22	290/323
+BAAI_bge-large-en-v1.5	nfcorpus	16	200	2	0.95	42	307/323	matched	42	307/323
+BAAI_bge-large-en-v1.5	nfcorpus	16	200	2	0.99	120	1601/1615	matched	120	1601/1615
+BAAI_bge-large-en-v1.5	nfcorpus	16	200	3	0.80	11	260/323	matched	11	260/323
+BAAI_bge-large-en-v1.5	nfcorpus	16	200	3	0.85	15	275/323	matched	15	275/323
+BAAI_bge-large-en-v1.5	nfcorpus	16	200	3	0.90	23	2917/3230	matched	22	1452/1615
+BAAI_bge-large-en-v1.5	nfcorpus	16	200	3	0.95	43	181/190	matched	42	1533/1615
+BAAI_bge-large-en-v1.5	nfcorpus	16	200	3	0.99	120	320/323	matched	120	320/323
+BAAI_bge-large-en-v1.5	nfcorpus	16	200	4	0.80	12	1306/1615	matched	12	1306/1615
+BAAI_bge-large-en-v1.5	nfcorpus	16	200	4	0.85	16	2787/3230	overshoot	15	1372/1615
+BAAI_bge-large-en-v1.5	nfcorpus	16	200	4	0.90	22	1454/1615	matched	22	1454/1615
+BAAI_bge-large-en-v1.5	nfcorpus	16	200	4	0.95	41	3073/3230	matched	40	1534/1615
+BAAI_bge-large-en-v1.5	nfcorpus	16	200	4	0.99	120	3201/3230	matched	120	3201/3230
+BAAI_bge-large-en-v1.5	nfcorpus	8	200	1	0.80	18	1302/1615	matched	17	27/34
+BAAI_bge-large-en-v1.5	nfcorpus	8	200	1	0.85	25	29/34	matched	24	72/85
+BAAI_bge-large-en-v1.5	nfcorpus	8	200	1	0.90	37	2913/3230	matched	36	2903/3230
+BAAI_bge-large-en-v1.5	nfcorpus	8	200	1	0.95	70	307/323	matched	70	307/323
+BAAI_bge-large-en-v1.5	nfcorpus	8	200	1	0.99	200	1601/1615	matched	200	1601/1615
+BAAI_bge-large-en-v1.5	nfcorpus	32	200	1	0.80	10	1314/1615	below reach	10	1314/1615
+BAAI_bge-large-en-v1.5	nfcorpus	32	200	1	0.85	13	2753/3230	matched	13	2753/3230
+BAAI_bge-large-en-v1.5	nfcorpus	32	200	1	0.90	20	2919/3230	matched	19	2899/3230
+BAAI_bge-large-en-v1.5	nfcorpus	32	200	1	0.95	36	3071/3230	matched	36	3071/3230
+BAAI_bge-large-en-v1.5	nfcorpus	32	200	1	0.99	120	641/646	matched	100	1597/1615
+BAAI_bge-large-en-v1.5	nq	16	200	0	0.80	12	6989/8630	matched	11	13711/17260
+BAAI_bge-large-en-v1.5	nq	16	200	0	0.85	16	29529/34520	matched	15	5839/6904
+BAAI_bge-large-en-v1.5	nq	16	200	0	0.90	24	31163/34520	matched	23	31017/34520
+BAAI_bge-large-en-v1.5	nq	16	200	0	0.95	48	32803/34520	matched	48	32803/34520
+BAAI_bge-large-en-v1.5	nq	16	200	0	0.99	300	8553/8630	matched	250	34169/34520
+BAAI_bge-large-en-v1.5	nq	16	200	1	0.80	12	27719/34520	matched	12	27719/34520
+BAAI_bge-large-en-v1.5	nq	16	200	1	0.85	17	7363/8630	matched	17	7363/8630
+BAAI_bge-large-en-v1.5	nq	16	200	1	0.90	28	7799/8630	matched	27	1553/1726
+BAAI_bge-large-en-v1.5	nq	16	200	1	0.95	58	820/863	matched	58	820/863
+BAAI_bge-large-en-v1.5	nq	16	200	1	0.99	500	17109/17260	matched	400	17077/17260
+BAAI_bge-large-en-v1.5	nq	16	200	2	0.80	12	27957/34520	matched	11	27481/34520
+BAAI_bge-large-en-v1.5	nq	16	200	2	0.85	16	29381/34520	matched	16	29381/34520
+BAAI_bge-large-en-v1.5	nq	16	200	2	0.90	25	31129/34520	matched	24	15513/17260
+BAAI_bge-large-en-v1.5	nq	16	200	2	0.95	56	4104/4315	matched	55	32789/34520
+BAAI_bge-large-en-v1.5	nq	16	200	2	0.99	500	34177/34520	matched	500	34177/34520
+BAAI_bge-large-en-v1.5	nq	16	200	3	0.80	11	6923/8630	matched	11	6923/8630
+BAAI_bge-large-en-v1.5	nq	16	200	3	0.85	16	2941/3452	matched	16	2941/3452
+BAAI_bge-large-en-v1.5	nq	16	200	3	0.90	25	31081/34520	matched	25	31081/34520
+BAAI_bge-large-en-v1.5	nq	16	200	3	0.95	56	3281/3452	matched	56	3281/3452
+BAAI_bge-large-en-v1.5	nq	16	200	3	0.99	500	4277/4315	matched	400	17081/17260
+BAAI_bge-large-en-v1.5	nq	16	200	4	0.80	12	28071/34520	overshoot	11	6901/8630
+BAAI_bge-large-en-v1.5	nq	16	200	4	0.85	16	14701/17260	matched	16	14701/17260
+BAAI_bge-large-en-v1.5	nq	16	200	4	0.90	26	3896/4315	matched	25	1551/1726
+BAAI_bge-large-en-v1.5	nq	16	200	4	0.95	52	6559/6904	matched	52	6559/6904
+BAAI_bge-large-en-v1.5	nq	16	200	4	0.99	500	17109/17260	matched	400	8541/8630
+BAAI_bge-large-en-v1.5	quora	16	200	0	0.80	10	94601/100000	below reach	10	94601/100000
+BAAI_bge-large-en-v1.5	quora	16	200	0	0.85	10	94601/100000	below reach	10	94601/100000
+BAAI_bge-large-en-v1.5	quora	16	200	0	0.90	10	94601/100000	below reach	10	94601/100000
+BAAI_bge-large-en-v1.5	quora	16	200	0	0.95	11	47649/50000	matched	11	47649/50000
+BAAI_bge-large-en-v1.5	quora	16	200	0	0.99	38	19801/20000	matched	38	19801/20000
+BAAI_bge-large-en-v1.5	quora	16	200	1	0.80	10	9471/10000	below reach	10	9471/10000
+BAAI_bge-large-en-v1.5	quora	16	200	1	0.85	10	9471/10000	below reach	10	9471/10000
+BAAI_bge-large-en-v1.5	quora	16	200	1	0.90	10	9471/10000	below reach	10	9471/10000
+BAAI_bge-large-en-v1.5	quora	16	200	1	0.95	11	95391/100000	matched	10	9471/10000
+BAAI_bge-large-en-v1.5	quora	16	200	1	0.99	36	19807/20000	matched	35	6187/6250
+BAAI_bge-large-en-v1.5	quora	16	200	2	0.80	10	94771/100000	below reach	10	94771/100000
+BAAI_bge-large-en-v1.5	quora	16	200	2	0.85	10	94771/100000	below reach	10	94771/100000
+BAAI_bge-large-en-v1.5	quora	16	200	2	0.90	10	94771/100000	below reach	10	94771/100000
+BAAI_bge-large-en-v1.5	quora	16	200	2	0.95	11	9543/10000	matched	10	94771/100000
+BAAI_bge-large-en-v1.5	quora	16	200	2	0.99	35	24751/25000	matched	35	24751/25000
+BAAI_bge-large-en-v1.5	quora	16	200	3	0.80	10	94773/100000	below reach	10	94773/100000
+BAAI_bge-large-en-v1.5	quora	16	200	3	0.85	10	94773/100000	below reach	10	94773/100000
+BAAI_bge-large-en-v1.5	quora	16	200	3	0.90	10	94773/100000	below reach	10	94773/100000
+BAAI_bge-large-en-v1.5	quora	16	200	3	0.95	11	477/500	matched	10	94773/100000
+BAAI_bge-large-en-v1.5	quora	16	200	3	0.99	36	24759/25000	matched	35	49499/50000
+BAAI_bge-large-en-v1.5	quora	16	200	4	0.80	10	47391/50000	below reach	10	47391/50000
+BAAI_bge-large-en-v1.5	quora	16	200	4	0.85	10	47391/50000	below reach	10	47391/50000
+BAAI_bge-large-en-v1.5	quora	16	200	4	0.90	10	47391/50000	below reach	10	47391/50000
+BAAI_bge-large-en-v1.5	quora	16	200	4	0.95	11	47693/50000	matched	10	47391/50000
+BAAI_bge-large-en-v1.5	quora	16	200	4	0.99	37	3961/4000	matched	36	49489/50000
+BAAI_bge-large-en-v1.5	quora	8	200	1	0.80	10	8677/10000	below reach	10	8677/10000
+BAAI_bge-large-en-v1.5	quora	8	200	1	0.85	10	8677/10000	below reach	10	8677/10000
+BAAI_bge-large-en-v1.5	quora	8	200	1	0.90	13	18019/20000	matched	13	18019/20000
+BAAI_bge-large-en-v1.5	quora	8	200	1	0.95	24	951/1000	matched	24	951/1000
+BAAI_bge-large-en-v1.5	quora	8	200	1	0.99	200	49559/50000	matched	150	49491/50000
+BAAI_bge-large-en-v1.5	quora	32	200	1	0.80	10	96509/100000	below reach	10	96509/100000
+BAAI_bge-large-en-v1.5	quora	32	200	1	0.85	10	96509/100000	below reach	10	96509/100000
+BAAI_bge-large-en-v1.5	quora	32	200	1	0.90	10	96509/100000	below reach	10	96509/100000
+BAAI_bge-large-en-v1.5	quora	32	200	1	0.95	10	96509/100000	below reach	10	96509/100000
+BAAI_bge-large-en-v1.5	quora	32	200	1	0.99	25	19807/20000	matched	24	24747/25000
+BAAI_bge-large-en-v1.5	scidocs	16	200	0	0.80	10	8731/10000	below reach	10	8731/10000
+BAAI_bge-large-en-v1.5	scidocs	16	200	0	0.85	10	8731/10000	below reach	10	8731/10000
+BAAI_bge-large-en-v1.5	scidocs	16	200	0	0.90	13	9077/10000	matched	12	359/400
+BAAI_bge-large-en-v1.5	scidocs	16	200	0	0.95	21	2377/2500	matched	21	2377/2500
+BAAI_bge-large-en-v1.5	scidocs	16	200	0	0.99	51	99/100	matched	51	99/100
+BAAI_bge-large-en-v1.5	scidocs	16	200	1	0.80	10	8701/10000	below reach	10	8701/10000
+BAAI_bge-large-en-v1.5	scidocs	16	200	1	0.85	10	8701/10000	below reach	10	8701/10000
+BAAI_bge-large-en-v1.5	scidocs	16	200	1	0.90	13	9047/10000	matched	13	9047/10000
+BAAI_bge-large-en-v1.5	scidocs	16	200	1	0.95	21	9519/10000	matched	20	4743/5000
+BAAI_bge-large-en-v1.5	scidocs	16	200	1	0.99	53	9903/10000	matched	52	4949/5000
+BAAI_bge-large-en-v1.5	scidocs	16	200	2	0.80	10	8781/10000	below reach	10	8781/10000
+BAAI_bge-large-en-v1.5	scidocs	16	200	2	0.85	10	8781/10000	below reach	10	8781/10000
+BAAI_bge-large-en-v1.5	scidocs	16	200	2	0.90	12	9029/10000	matched	12	9029/10000
+BAAI_bge-large-en-v1.5	scidocs	16	200	2	0.95	21	19/20	matched	21	19/20
+BAAI_bge-large-en-v1.5	scidocs	16	200	2	0.99	53	9903/10000	matched	52	4949/5000
+BAAI_bge-large-en-v1.5	scidocs	16	200	3	0.80	10	2177/2500	below reach	10	2177/2500
+BAAI_bge-large-en-v1.5	scidocs	16	200	3	0.85	10	2177/2500	below reach	10	2177/2500
+BAAI_bge-large-en-v1.5	scidocs	16	200	3	0.90	13	1813/2000	matched	12	1793/2000
+BAAI_bge-large-en-v1.5	scidocs	16	200	3	0.95	21	9507/10000	matched	21	9507/10000
+BAAI_bge-large-en-v1.5	scidocs	16	200	3	0.99	50	9901/10000	matched	50	9901/10000
+BAAI_bge-large-en-v1.5	scidocs	16	200	4	0.80	10	8743/10000	below reach	10	8743/10000
+BAAI_bge-large-en-v1.5	scidocs	16	200	4	0.85	10	8743/10000	below reach	10	8743/10000
+BAAI_bge-large-en-v1.5	scidocs	16	200	4	0.90	13	1817/2000	matched	12	897/1000
+BAAI_bge-large-en-v1.5	scidocs	16	200	4	0.95	21	4763/5000	matched	20	4739/5000
+BAAI_bge-large-en-v1.5	scidocs	16	200	4	0.99	54	9901/10000	matched	54	9901/10000
+BAAI_bge-large-en-v1.5	scidocs	8	200	1	0.80	10	4001/5000	matched	10	4001/5000
+BAAI_bge-large-en-v1.5	scidocs	8	200	1	0.85	15	8587/10000	matched	14	106/125
+BAAI_bge-large-en-v1.5	scidocs	8	200	1	0.90	21	451/500	matched	20	449/500
+BAAI_bge-large-en-v1.5	scidocs	8	200	1	0.95	35	9501/10000	matched	35	9501/10000
+BAAI_bge-large-en-v1.5	scidocs	8	200	1	0.99	120	2483/2500	matched	100	9891/10000
+BAAI_bge-large-en-v1.5	scidocs	32	200	1	0.80	10	901/1000	below reach	10	901/1000
+BAAI_bge-large-en-v1.5	scidocs	32	200	1	0.85	10	901/1000	below reach	10	901/1000
+BAAI_bge-large-en-v1.5	scidocs	32	200	1	0.90	10	901/1000	matched	10	901/1000
+BAAI_bge-large-en-v1.5	scidocs	32	200	1	0.95	17	9527/10000	matched	16	4737/5000
+BAAI_bge-large-en-v1.5	scidocs	32	200	1	0.99	41	4951/5000	matched	41	4951/5000
+BAAI_bge-large-en-v1.5	scifact	16	200	0	0.80	10	2653/3000	below reach	10	2653/3000
+BAAI_bge-large-en-v1.5	scifact	16	200	0	0.85	10	2653/3000	below reach	10	2653/3000
+BAAI_bge-large-en-v1.5	scifact	16	200	0	0.90	12	1363/1500	matched	11	899/1000
+BAAI_bge-large-en-v1.5	scifact	16	200	0	0.95	19	953/1000	matched	18	2849/3000
+BAAI_bge-large-en-v1.5	scifact	16	200	0	0.99	44	743/750	matched	39	2969/3000
+BAAI_bge-large-en-v1.5	scifact	16	200	1	0.80	10	2681/3000	below reach	10	2681/3000
+BAAI_bge-large-en-v1.5	scifact	16	200	1	0.85	10	2681/3000	below reach	10	2681/3000
+BAAI_bge-large-en-v1.5	scifact	16	200	1	0.90	11	453/500	matched	11	453/500
+BAAI_bge-large-en-v1.5	scifact	16	200	1	0.95	18	1429/1500	matched	17	237/250
+BAAI_bge-large-en-v1.5	scifact	16	200	1	0.99	46	99/100	matched	46	99/100
+BAAI_bge-large-en-v1.5	scifact	16	200	2	0.80	10	1343/1500	below reach	10	1343/1500
+BAAI_bge-large-en-v1.5	scifact	16	200	2	0.85	10	1343/1500	below reach	10	1343/1500
+BAAI_bge-large-en-v1.5	scifact	16	200	2	0.90	11	2711/3000	matched	11	2711/3000
+BAAI_bge-large-en-v1.5	scifact	16	200	2	0.95	19	571/600	matched	19	571/600
+BAAI_bge-large-en-v1.5	scifact	16	200	2	0.99	43	2971/3000	matched	43	2971/3000
+BAAI_bge-large-en-v1.5	scifact	16	200	3	0.80	10	2671/3000	below reach	10	2671/3000
+BAAI_bge-large-en-v1.5	scifact	16	200	3	0.85	10	2671/3000	below reach	10	2671/3000
+BAAI_bge-large-en-v1.5	scifact	16	200	3	0.90	11	338/375	matched	11	338/375
+BAAI_bge-large-en-v1.5	scifact	16	200	3	0.95	19	2867/3000	matched	18	2849/3000
+BAAI_bge-large-en-v1.5	scifact	16	200	3	0.99	45	2971/3000	matched	45	2971/3000
+BAAI_bge-large-en-v1.5	scifact	16	200	4	0.80	10	441/500	below reach	10	441/500
+BAAI_bge-large-en-v1.5	scifact	16	200	4	0.85	10	441/500	below reach	10	441/500
+BAAI_bge-large-en-v1.5	scifact	16	200	4	0.90	12	2711/3000	matched	11	449/500
+BAAI_bge-large-en-v1.5	scifact	16	200	4	0.95	20	713/750	matched	20	713/750
+BAAI_bge-large-en-v1.5	scifact	16	200	4	0.99	53	99/100	matched	53	99/100
+BAAI_bge-large-en-v1.5	scifact	8	200	1	0.80	10	813/1000	below reach	10	813/1000
+BAAI_bge-large-en-v1.5	scifact	8	200	1	0.85	13	213/250	matched	13	213/250
+BAAI_bge-large-en-v1.5	scifact	8	200	1	0.90	19	227/250	matched	18	899/1000
+BAAI_bge-large-en-v1.5	scifact	8	200	1	0.95	30	713/750	matched	30	713/750
+BAAI_bge-large-en-v1.5	scifact	8	200	1	0.99	100	1489/1500	matched	90	2969/3000
+BAAI_bge-large-en-v1.5	scifact	32	200	1	0.80	10	23/25	below reach	10	23/25
+BAAI_bge-large-en-v1.5	scifact	32	200	1	0.85	10	23/25	below reach	10	23/25
+BAAI_bge-large-en-v1.5	scifact	32	200	1	0.90	10	23/25	below reach	10	23/25
+BAAI_bge-large-en-v1.5	scifact	32	200	1	0.95	14	19/20	matched	14	19/20
+BAAI_bge-large-en-v1.5	scifact	32	200	1	0.99	30	99/100	matched	30	99/100
+BAAI_bge-large-en-v1.5	trec-covid	16	200	0	0.80	10	109/125	below reach	10	109/125
+BAAI_bge-large-en-v1.5	trec-covid	16	200	0	0.85	10	109/125	below reach	10	109/125
+BAAI_bge-large-en-v1.5	trec-covid	16	200	0	0.90	13	451/500	matched	13	451/500
+BAAI_bge-large-en-v1.5	trec-covid	16	200	0	0.95	28	19/20	matched	28	19/20
+BAAI_bge-large-en-v1.5	trec-covid	16	200	0	0.99	56	99/100	matched	56	99/100
+BAAI_bge-large-en-v1.5	trec-covid	16	200	1	0.80	10	103/125	below reach	10	103/125
+BAAI_bge-large-en-v1.5	trec-covid	16	200	1	0.85	12	431/500	overshoot	11	423/500
+BAAI_bge-large-en-v1.5	trec-covid	16	200	1	0.90	19	9/10	matched	19	9/10
+BAAI_bge-large-en-v1.5	trec-covid	16	200	1	0.95	34	481/500	overshoot	33	471/500
+BAAI_bge-large-en-v1.5	trec-covid	16	200	1	0.99	100	99/100	matched	100	99/100
+BAAI_bge-large-en-v1.5	trec-covid	16	200	2	0.80	10	41/50	below reach	10	41/50
+BAAI_bge-large-en-v1.5	trec-covid	16	200	2	0.85	12	429/500	matched	11	211/250
+BAAI_bge-large-en-v1.5	trec-covid	16	200	2	0.90	15	451/500	matched	14	449/500
+BAAI_bge-large-en-v1.5	trec-covid	16	200	2	0.95	32	19/20	matched	32	19/20
+BAAI_bge-large-en-v1.5	trec-covid	16	200	2	0.99	70	99/100	matched	70	99/100
+BAAI_bge-large-en-v1.5	trec-covid	16	200	3	0.80	10	103/125	below reach	10	103/125
+BAAI_bge-large-en-v1.5	trec-covid	16	200	3	0.85	12	108/125	overshoot	11	21/25
+BAAI_bge-large-en-v1.5	trec-covid	16	200	3	0.90	16	91/100	matched	14	112/125
+BAAI_bge-large-en-v1.5	trec-covid	16	200	3	0.95	30	119/125	matched	30	119/125
+BAAI_bge-large-en-v1.5	trec-covid	16	200	3	0.99	80	99/100	matched	80	99/100
+BAAI_bge-large-en-v1.5	trec-covid	16	200	4	0.80	10	419/500	below reach	10	419/500
+BAAI_bge-large-en-v1.5	trec-covid	16	200	4	0.85	12	43/50	matched	11	211/250
+BAAI_bge-large-en-v1.5	trec-covid	16	200	4	0.90	15	453/500	matched	15	453/500
+BAAI_bge-large-en-v1.5	trec-covid	16	200	4	0.95	30	119/125	matched	29	237/250
+BAAI_bge-large-en-v1.5	trec-covid	16	200	4	0.99	70	99/100	matched	70	99/100
+BAAI_bge-large-en-v1.5	trec-covid	8	200	1	0.80	17	401/500	matched	17	401/500
+BAAI_bge-large-en-v1.5	trec-covid	8	200	1	0.85	23	17/20	matched	23	17/20
+BAAI_bge-large-en-v1.5	trec-covid	8	200	1	0.90	33	451/500	matched	32	449/500
+BAAI_bge-large-en-v1.5	trec-covid	8	200	1	0.95	90	479/500	matched	80	237/250
+BAAI_bge-large-en-v1.5	trec-covid	8	200	1	0.99	250	124/125	matched	200	247/250
+BAAI_bge-large-en-v1.5	trec-covid	32	200	1	0.80	10	437/500	below reach	10	437/500
+BAAI_bge-large-en-v1.5	trec-covid	32	200	1	0.85	10	437/500	below reach	10	437/500
+BAAI_bge-large-en-v1.5	trec-covid	32	200	1	0.90	14	451/500	matched	14	451/500
+BAAI_bge-large-en-v1.5	trec-covid	32	200	1	0.95	26	19/20	matched	26	19/20
+BAAI_bge-large-en-v1.5	trec-covid	32	200	1	0.99	45	99/100	matched	45	99/100
+BAAI_bge-small-en-v1.5	arguana	16	200	0	0.80	10	13717/14060	below reach	10	13717/14060
+BAAI_bge-small-en-v1.5	arguana	16	200	0	0.85	10	13717/14060	below reach	10	13717/14060
+BAAI_bge-small-en-v1.5	arguana	16	200	0	0.90	10	13717/14060	below reach	10	13717/14060
+BAAI_bge-small-en-v1.5	arguana	16	200	0	0.95	10	13717/14060	below reach	10	13717/14060
+BAAI_bge-small-en-v1.5	arguana	16	200	0	0.99	17	6969/7030	matched	16	3479/3515
+BAAI_bge-small-en-v1.5	arguana	16	200	1	0.80	10	13809/14060	below reach	10	13809/14060
+BAAI_bge-small-en-v1.5	arguana	16	200	1	0.85	10	13809/14060	below reach	10	13809/14060
+BAAI_bge-small-en-v1.5	arguana	16	200	1	0.90	10	13809/14060	below reach	10	13809/14060
+BAAI_bge-small-en-v1.5	arguana	16	200	1	0.95	10	13809/14060	below reach	10	13809/14060
+BAAI_bge-small-en-v1.5	arguana	16	200	1	0.99	16	3482/3515	matched	16	3482/3515
+BAAI_bge-small-en-v1.5	arguana	16	200	2	0.80	10	13731/14060	below reach	10	13731/14060
+BAAI_bge-small-en-v1.5	arguana	16	200	2	0.85	10	13731/14060	below reach	10	13731/14060
+BAAI_bge-small-en-v1.5	arguana	16	200	2	0.90	10	13731/14060	below reach	10	13731/14060
+BAAI_bge-small-en-v1.5	arguana	16	200	2	0.95	10	13731/14060	below reach	10	13731/14060
+BAAI_bge-small-en-v1.5	arguana	16	200	2	0.99	16	6961/7030	matched	16	6961/7030
+BAAI_bge-small-en-v1.5	arguana	16	200	3	0.80	10	6893/7030	below reach	10	6893/7030
+BAAI_bge-small-en-v1.5	arguana	16	200	3	0.85	10	6893/7030	below reach	10	6893/7030
+BAAI_bge-small-en-v1.5	arguana	16	200	3	0.90	10	6893/7030	below reach	10	6893/7030
+BAAI_bge-small-en-v1.5	arguana	16	200	3	0.95	10	6893/7030	below reach	10	6893/7030
+BAAI_bge-small-en-v1.5	arguana	16	200	3	0.99	15	13931/14060	matched	14	13909/14060
+BAAI_bge-small-en-v1.5	arguana	16	200	4	0.80	10	13767/14060	below reach	10	13767/14060
+BAAI_bge-small-en-v1.5	arguana	16	200	4	0.85	10	13767/14060	below reach	10	13767/14060
+BAAI_bge-small-en-v1.5	arguana	16	200	4	0.90	10	13767/14060	below reach	10	13767/14060
+BAAI_bge-small-en-v1.5	arguana	16	200	4	0.95	10	13767/14060	below reach	10	13767/14060
+BAAI_bge-small-en-v1.5	arguana	16	200	4	0.99	15	13921/14060	matched	15	13921/14060
+BAAI_bge-small-en-v1.5	arguana	8	200	1	0.80	10	6723/7030	below reach	10	6723/7030
+BAAI_bge-small-en-v1.5	arguana	8	200	1	0.85	10	6723/7030	below reach	10	6723/7030
+BAAI_bge-small-en-v1.5	arguana	8	200	1	0.90	10	6723/7030	below reach	10	6723/7030
+BAAI_bge-small-en-v1.5	arguana	8	200	1	0.95	10	6723/7030	matched	10	6723/7030
+BAAI_bge-small-en-v1.5	arguana	8	200	1	0.99	27	3482/3515	matched	26	2783/2812
+BAAI_bge-small-en-v1.5	arguana	32	200	1	0.80	10	6947/7030	below reach	10	6947/7030
+BAAI_bge-small-en-v1.5	arguana	32	200	1	0.85	10	6947/7030	below reach	10	6947/7030
+BAAI_bge-small-en-v1.5	arguana	32	200	1	0.90	10	6947/7030	below reach	10	6947/7030
+BAAI_bge-small-en-v1.5	arguana	32	200	1	0.95	10	6947/7030	below reach	10	6947/7030
+BAAI_bge-small-en-v1.5	arguana	32	200	1	0.99	11	13921/14060	matched	11	13921/14060
+BAAI_bge-small-en-v1.5	fiqa	16	200	0	0.80	13	131/162	matched	12	322/405
+BAAI_bge-small-en-v1.5	fiqa	16	200	0	0.85	18	41/48	matched	17	611/720
+BAAI_bge-small-en-v1.5	fiqa	16	200	0	0.90	27	5833/6480	matched	27	5833/6480
+BAAI_bge-small-en-v1.5	fiqa	16	200	0	0.95	49	6157/6480	matched	49	6157/6480
+BAAI_bge-small-en-v1.5	fiqa	16	200	0	0.99	200	643/648	matched	150	1067/1080
+BAAI_bge-small-en-v1.5	fiqa	16	200	1	0.80	13	1753/2160	overshoot	12	2591/3240
+BAAI_bge-small-en-v1.5	fiqa	16	200	1	0.85	17	5533/6480	matched	17	5533/6480
+BAAI_bge-small-en-v1.5	fiqa	16	200	1	0.90	26	1949/2160	matched	25	5821/6480
+BAAI_bge-small-en-v1.5	fiqa	16	200	1	0.95	49	3079/3240	matched	49	3079/3240
+BAAI_bge-small-en-v1.5	fiqa	16	200	1	0.99	200	6439/6480	matched	150	1069/1080
+BAAI_bge-small-en-v1.5	fiqa	16	200	2	0.80	13	5201/6480	matched	13	5201/6480
+BAAI_bge-small-en-v1.5	fiqa	16	200	2	0.85	18	923/1080	matched	17	137/162
+BAAI_bge-small-en-v1.5	fiqa	16	200	2	0.90	27	73/81	matched	27	73/81
+BAAI_bge-small-en-v1.5	fiqa	16	200	2	0.95	49	3079/3240	matched	49	3079/3240
+BAAI_bge-small-en-v1.5	fiqa	16	200	2	0.99	200	2147/2160	matched	150	1283/1296
+BAAI_bge-small-en-v1.5	fiqa	16	200	3	0.80	12	97/120	matched	12	97/120
+BAAI_bge-small-en-v1.5	fiqa	16	200	3	0.85	16	5533/6480	matched	16	5533/6480
+BAAI_bge-small-en-v1.5	fiqa	16	200	3	0.90	25	73/81	matched	25	73/81
+BAAI_bge-small-en-v1.5	fiqa	16	200	3	0.95	46	1027/1080	matched	46	1027/1080
+BAAI_bge-small-en-v1.5	fiqa	16	200	3	0.99	150	3211/3240	matched	150	3211/3240
+BAAI_bge-small-en-v1.5	fiqa	16	200	4	0.80	13	881/1080	overshoot	12	259/324
+BAAI_bge-small-en-v1.5	fiqa	16	200	4	0.85	17	1109/1296	matched	16	365/432
+BAAI_bge-small-en-v1.5	fiqa	16	200	4	0.90	26	5849/6480	matched	25	5821/6480
+BAAI_bge-small-en-v1.5	fiqa	16	200	4	0.95	46	6167/6480	matched	45	1231/1296
+BAAI_bge-small-en-v1.5	fiqa	16	200	4	0.99	150	3209/3240	matched	150	3209/3240
+BAAI_bge-small-en-v1.5	fiqa	8	200	1	0.80	25	2609/3240	matched	24	517/648
+BAAI_bge-small-en-v1.5	fiqa	8	200	1	0.85	34	17/20	matched	34	17/20
+BAAI_bge-small-en-v1.5	fiqa	8	200	1	0.90	52	1459/1620	matched	51	1457/1620
+BAAI_bge-small-en-v1.5	fiqa	8	200	1	0.95	120	6209/6480	matched	100	3071/3240
+BAAI_bge-small-en-v1.5	fiqa	8	200	1	0.99	500	2141/2160	matched	500	2141/2160
+BAAI_bge-small-en-v1.5	fiqa	32	200	1	0.80	10	349/432	matched	10	349/432
+BAAI_bge-small-en-v1.5	fiqa	32	200	1	0.85	13	5527/6480	matched	13	5527/6480
+BAAI_bge-small-en-v1.5	fiqa	32	200	1	0.90	19	1951/2160	matched	18	727/810
+BAAI_bge-small-en-v1.5	fiqa	32	200	1	0.95	37	3083/3240	matched	36	1231/1296
+BAAI_bge-small-en-v1.5	fiqa	32	200	1	0.99	120	6421/6480	matched	120	6421/6480
+BAAI_bge-small-en-v1.5	nfcorpus	16	200	0	0.80	13	2613/3230	matched	12	1289/1615
+BAAI_bge-small-en-v1.5	nfcorpus	16	200	0	0.85	18	1386/1615	matched	17	161/190
+BAAI_bge-small-en-v1.5	nfcorpus	16	200	0	0.90	27	2911/3230	matched	26	1452/1615
+BAAI_bge-small-en-v1.5	nfcorpus	16	200	0	0.95	47	307/323	matched	46	1534/1615
+BAAI_bge-small-en-v1.5	nfcorpus	16	200	0	0.99	150	1604/1615	matched	120	1597/1615
+BAAI_bge-small-en-v1.5	nfcorpus	16	200	1	0.80	12	517/646	matched	12	517/646
+BAAI_bge-small-en-v1.5	nfcorpus	16	200	1	0.85	17	1378/1615	matched	17	1378/1615
+BAAI_bge-small-en-v1.5	nfcorpus	16	200	1	0.90	27	2913/3230	matched	26	2901/3230
+BAAI_bge-small-en-v1.5	nfcorpus	16	200	1	0.95	47	3071/3230	matched	46	1534/1615
+BAAI_bge-small-en-v1.5	nfcorpus	16	200	1	0.99	150	1602/1615	matched	150	1602/1615
+BAAI_bge-small-en-v1.5	nfcorpus	16	200	2	0.80	12	2607/3230	matched	12	2607/3230
+BAAI_bge-small-en-v1.5	nfcorpus	16	200	2	0.85	17	1382/1615	matched	16	2731/3230
+BAAI_bge-small-en-v1.5	nfcorpus	16	200	2	0.90	26	2919/3230	matched	26	2919/3230
+BAAI_bge-small-en-v1.5	nfcorpus	16	200	2	0.95	49	1537/1615	matched	48	613/646
+BAAI_bge-small-en-v1.5	nfcorpus	16	200	2	0.99	150	1603/1615	matched	150	1603/1615
+BAAI_bge-small-en-v1.5	nfcorpus	16	200	3	0.80	12	260/323	matched	12	260/323
+BAAI_bge-small-en-v1.5	nfcorpus	16	200	3	0.85	17	2757/3230	matched	16	161/190
+BAAI_bge-small-en-v1.5	nfcorpus	16	200	3	0.90	25	2909/3230	matched	25	2909/3230
+BAAI_bge-small-en-v1.5	nfcorpus	16	200	3	0.95	50	307/323	matched	49	3067/3230
+BAAI_bge-small-en-v1.5	nfcorpus	16	200	3	0.99	200	641/646	matched	150	3197/3230
+BAAI_bge-small-en-v1.5	nfcorpus	16	200	4	0.80	13	2591/3230	matched	13	2591/3230
+BAAI_bge-small-en-v1.5	nfcorpus	16	200	4	0.85	19	2757/3230	matched	18	547/646
+BAAI_bge-small-en-v1.5	nfcorpus	16	200	4	0.90	28	2913/3230	matched	27	1452/1615
+BAAI_bge-small-en-v1.5	nfcorpus	16	200	4	0.95	48	3069/3230	matched	48	3069/3230
+BAAI_bge-small-en-v1.5	nfcorpus	16	200	4	0.99	120	3201/3230	matched	120	3201/3230
+BAAI_bge-small-en-v1.5	nfcorpus	8	200	1	0.80	19	2593/3230	matched	19	2593/3230
+BAAI_bge-small-en-v1.5	nfcorpus	8	200	1	0.85	27	1382/1615	matched	26	1371/1615
+BAAI_bge-small-en-v1.5	nfcorpus	8	200	1	0.90	39	2913/3230	matched	39	2913/3230
+BAAI_bge-small-en-v1.5	nfcorpus	8	200	1	0.95	80	1544/1615	matched	70	611/646
+BAAI_bge-small-en-v1.5	nfcorpus	8	200	1	0.99	250	641/646	matched	200	3191/3230
+BAAI_bge-small-en-v1.5	nfcorpus	32	200	1	0.80	11	1294/1615	matched	11	1294/1615
+BAAI_bge-small-en-v1.5	nfcorpus	32	200	1	0.85	15	2747/3230	matched	15	2747/3230
+BAAI_bge-small-en-v1.5	nfcorpus	32	200	1	0.90	24	1456/1615	matched	23	2903/3230
+BAAI_bge-small-en-v1.5	nfcorpus	32	200	1	0.95	45	307/323	matched	45	307/323
+BAAI_bge-small-en-v1.5	nfcorpus	32	200	1	0.99	150	321/323	matched	120	3197/3230
+BAAI_bge-small-en-v1.5	nq	16	200	0	0.80	13	13911/17260	matched	13	13911/17260
+BAAI_bge-small-en-v1.5	nq	16	200	0	0.85	18	2939/3452	matched	18	2939/3452
+BAAI_bge-small-en-v1.5	nq	16	200	0	0.90	27	3113/3452	matched	27	3113/3452
+BAAI_bge-small-en-v1.5	nq	16	200	0	0.95	56	8201/8630	matched	56	8201/8630
+BAAI_bge-small-en-v1.5	nq	16	200	0	0.99	250	6835/6904	matched	250	6835/6904
+BAAI_bge-small-en-v1.5	nq	16	200	1	0.80	14	27937/34520	matched	13	2757/3452
+BAAI_bge-small-en-v1.5	nq	16	200	1	0.85	19	5885/6904	matched	19	5885/6904
+BAAI_bge-small-en-v1.5	nq	16	200	1	0.90	30	6225/6904	matched	29	15513/17260
+BAAI_bge-small-en-v1.5	nq	16	200	1	0.95	80	32967/34520	matched	70	16381/17260
+BAAI_bge-small-en-v1.5	nq	16	200	1	0.99	600	34177/34520	matched	600	34177/34520
+BAAI_bge-small-en-v1.5	nq	16	200	2	0.80	13	3466/4315	matched	13	3466/4315
+BAAI_bge-small-en-v1.5	nq	16	200	2	0.85	19	29503/34520	matched	18	3659/4315
+BAAI_bge-small-en-v1.5	nq	16	200	2	0.90	30	31141/34520	matched	29	6211/6904
+BAAI_bge-small-en-v1.5	nq	16	200	2	0.95	70	32967/34520	matched	60	32743/34520
+BAAI_bge-small-en-v1.5	nq	16	200	2	0.99	600	17101/17260	matched	500	3417/3452
+BAAI_bge-small-en-v1.5	nq	16	200	3	0.80	13	1389/1726	matched	13	1389/1726
+BAAI_bge-small-en-v1.5	nq	16	200	3	0.85	18	2937/3452	matched	18	2937/3452
+BAAI_bge-small-en-v1.5	nq	16	200	3	0.90	30	15559/17260	matched	30	15559/17260
+BAAI_bge-small-en-v1.5	nq	16	200	3	0.95	70	8209/8630	matched	70	8209/8630
+BAAI_bge-small-en-v1.5	nq	16	200	3	0.99	500	8551/8630	matched	400	34163/34520
+BAAI_bge-small-en-v1.5	nq	16	200	4	0.80	14	3492/4315	matched	13	3447/4315
+BAAI_bge-small-en-v1.5	nq	16	200	4	0.85	19	14681/17260	matched	19	14681/17260
+BAAI_bge-small-en-v1.5	nq	16	200	4	0.90	31	31121/34520	matched	30	31027/34520
+BAAI_bge-small-en-v1.5	nq	16	200	4	0.95	70	4117/4315	matched	60	817/863
+BAAI_bge-small-en-v1.5	nq	16	200	4	0.99	500	6837/6904	matched	500	6837/6904
+BAAI_bge-small-en-v1.5	quora	16	200	0	0.80	10	47113/50000	below reach	10	47113/50000
+BAAI_bge-small-en-v1.5	quora	16	200	0	0.85	10	47113/50000	below reach	10	47113/50000
+BAAI_bge-small-en-v1.5	quora	16	200	0	0.90	10	47113/50000	below reach	10	47113/50000
+BAAI_bge-small-en-v1.5	quora	16	200	0	0.95	12	47761/50000	matched	11	18989/20000
+BAAI_bge-small-en-v1.5	quora	16	200	0	0.99	40	9903/10000	matched	39	24749/25000
+BAAI_bge-small-en-v1.5	quora	16	200	1	0.80	10	2359/2500	below reach	10	2359/2500
+BAAI_bge-small-en-v1.5	quora	16	200	1	0.85	10	2359/2500	below reach	10	2359/2500
+BAAI_bge-small-en-v1.5	quora	16	200	1	0.90	10	2359/2500	below reach	10	2359/2500
+BAAI_bge-small-en-v1.5	quora	16	200	1	0.95	11	1901/2000	matched	11	1901/2000
+BAAI_bge-small-en-v1.5	quora	16	200	1	0.99	41	99023/100000	matched	40	12373/12500
+BAAI_bge-small-en-v1.5	quora	16	200	2	0.80	10	94297/100000	below reach	10	94297/100000
+BAAI_bge-small-en-v1.5	quora	16	200	2	0.85	10	94297/100000	below reach	10	94297/100000
+BAAI_bge-small-en-v1.5	quora	16	200	2	0.90	10	94297/100000	below reach	10	94297/100000
+BAAI_bge-small-en-v1.5	quora	16	200	2	0.95	12	95553/100000	matched	11	94977/100000
+BAAI_bge-small-en-v1.5	quora	16	200	2	0.99	41	6189/6250	matched	40	24747/25000
+BAAI_bge-small-en-v1.5	quora	16	200	3	0.80	10	1177/1250	below reach	10	1177/1250
+BAAI_bge-small-en-v1.5	quora	16	200	3	0.85	10	1177/1250	below reach	10	1177/1250
+BAAI_bge-small-en-v1.5	quora	16	200	3	0.90	10	1177/1250	below reach	10	1177/1250
+BAAI_bge-small-en-v1.5	quora	16	200	3	0.95	12	11927/12500	matched	11	11851/12500
+BAAI_bge-small-en-v1.5	quora	16	200	3	0.99	42	49507/50000	matched	42	49507/50000
+BAAI_bge-small-en-v1.5	quora	16	200	4	0.80	10	5883/6250	below reach	10	5883/6250
+BAAI_bge-small-en-v1.5	quora	16	200	4	0.85	10	5883/6250	below reach	10	5883/6250
+BAAI_bge-small-en-v1.5	quora	16	200	4	0.90	10	5883/6250	below reach	10	5883/6250
+BAAI_bge-small-en-v1.5	quora	16	200	4	0.95	12	95477/100000	matched	11	94831/100000
+BAAI_bge-small-en-v1.5	quora	16	200	4	0.99	41	9901/10000	matched	41	9901/10000
+BAAI_bge-small-en-v1.5	quora	8	200	1	0.80	10	85609/100000	below reach	10	85609/100000
+BAAI_bge-small-en-v1.5	quora	8	200	1	0.85	10	85609/100000	matched	10	85609/100000
+BAAI_bge-small-en-v1.5	quora	8	200	1	0.90	14	90111/100000	matched	14	90111/100000
+BAAI_bge-small-en-v1.5	quora	8	200	1	0.95	28	95131/100000	matched	27	47477/50000
+BAAI_bge-small-en-v1.5	quora	8	200	1	0.99	200	99097/100000	matched	150	49463/50000
+BAAI_bge-small-en-v1.5	quora	32	200	1	0.80	10	96267/100000	below reach	10	96267/100000
+BAAI_bge-small-en-v1.5	quora	32	200	1	0.85	10	96267/100000	below reach	10	96267/100000
+BAAI_bge-small-en-v1.5	quora	32	200	1	0.90	10	96267/100000	below reach	10	96267/100000
+BAAI_bge-small-en-v1.5	quora	32	200	1	0.95	10	96267/100000	below reach	10	96267/100000
+BAAI_bge-small-en-v1.5	quora	32	200	1	0.99	25	99007/100000	matched	25	99007/100000
+BAAI_bge-small-en-v1.5	scidocs	16	200	0	0.80	10	552/625	below reach	10	552/625
+BAAI_bge-small-en-v1.5	scidocs	16	200	0	0.85	10	552/625	below reach	10	552/625
+BAAI_bge-small-en-v1.5	scidocs	16	200	0	0.90	12	181/200	matched	12	181/200
+BAAI_bge-small-en-v1.5	scidocs	16	200	0	0.95	19	9517/10000	matched	19	9517/10000
+BAAI_bge-small-en-v1.5	scidocs	16	200	0	0.99	50	9903/10000	matched	49	4949/5000
+BAAI_bge-small-en-v1.5	scidocs	16	200	1	0.80	10	879/1000	below reach	10	879/1000
+BAAI_bge-small-en-v1.5	scidocs	16	200	1	0.85	10	879/1000	below reach	10	879/1000
+BAAI_bge-small-en-v1.5	scidocs	16	200	1	0.90	12	9039/10000	matched	12	9039/10000
+BAAI_bge-small-en-v1.5	scidocs	16	200	1	0.95	20	4751/5000	matched	20	4751/5000
+BAAI_bge-small-en-v1.5	scidocs	16	200	1	0.99	49	99/100	matched	49	99/100
+BAAI_bge-small-en-v1.5	scidocs	16	200	2	0.80	10	2191/2500	below reach	10	2191/2500
+BAAI_bge-small-en-v1.5	scidocs	16	200	2	0.85	10	2191/2500	below reach	10	2191/2500
+BAAI_bge-small-en-v1.5	scidocs	16	200	2	0.90	13	9081/10000	matched	12	4491/5000
+BAAI_bge-small-en-v1.5	scidocs	16	200	2	0.95	20	9517/10000	matched	20	9517/10000
+BAAI_bge-small-en-v1.5	scidocs	16	200	2	0.99	57	619/625	matched	56	9899/10000
+BAAI_bge-small-en-v1.5	scidocs	16	200	3	0.80	10	877/1000	below reach	10	877/1000
+BAAI_bge-small-en-v1.5	scidocs	16	200	3	0.85	10	877/1000	below reach	10	877/1000
+BAAI_bge-small-en-v1.5	scidocs	16	200	3	0.90	12	2251/2500	matched	12	2251/2500
+BAAI_bge-small-en-v1.5	scidocs	16	200	3	0.95	20	9517/10000	matched	19	593/625
+BAAI_bge-small-en-v1.5	scidocs	16	200	3	0.99	51	99/100	matched	51	99/100
+BAAI_bge-small-en-v1.5	scidocs	16	200	4	0.80	10	4407/5000	below reach	10	4407/5000
+BAAI_bge-small-en-v1.5	scidocs	16	200	4	0.85	10	4407/5000	below reach	10	4407/5000
+BAAI_bge-small-en-v1.5	scidocs	16	200	4	0.90	12	4517/5000	matched	12	4517/5000
+BAAI_bge-small-en-v1.5	scidocs	16	200	4	0.95	20	4753/5000	matched	20	4753/5000
+BAAI_bge-small-en-v1.5	scidocs	16	200	4	0.99	58	619/625	matched	57	9899/10000
+BAAI_bge-small-en-v1.5	scidocs	8	200	1	0.80	10	4051/5000	below reach	10	4051/5000
+BAAI_bge-small-en-v1.5	scidocs	8	200	1	0.85	13	8517/10000	matched	13	8517/10000
+BAAI_bge-small-en-v1.5	scidocs	8	200	1	0.90	19	4501/5000	matched	19	4501/5000
+BAAI_bge-small-en-v1.5	scidocs	8	200	1	0.95	37	2381/2500	matched	36	4747/5000
+BAAI_bge-small-en-v1.5	scidocs	8	200	1	0.99	120	1239/1250	matched	100	618/625
+BAAI_bge-small-en-v1.5	scidocs	32	200	1	0.80	10	9051/10000	below reach	10	9051/10000
+BAAI_bge-small-en-v1.5	scidocs	32	200	1	0.85	10	9051/10000	below reach	10	9051/10000
+BAAI_bge-small-en-v1.5	scidocs	32	200	1	0.90	10	9051/10000	matched	10	9051/10000
+BAAI_bge-small-en-v1.5	scidocs	32	200	1	0.95	16	4759/5000	matched	16	4759/5000
+BAAI_bge-small-en-v1.5	scidocs	32	200	1	0.99	38	9901/10000	matched	37	9899/10000
+BAAI_bge-small-en-v1.5	scifact	16	200	0	0.80	10	2621/3000	below reach	10	2621/3000
+BAAI_bge-small-en-v1.5	scifact	16	200	0	0.85	10	2621/3000	below reach	10	2621/3000
+BAAI_bge-small-en-v1.5	scifact	16	200	0	0.90	13	907/1000	matched	12	67/75
+BAAI_bge-small-en-v1.5	scifact	16	200	0	0.95	22	1427/1500	matched	22	1427/1500
+BAAI_bge-small-en-v1.5	scifact	16	200	0	0.99	54	2971/3000	matched	51	2969/3000
+BAAI_bge-small-en-v1.5	scifact	16	200	1	0.80	10	131/150	below reach	10	131/150
+BAAI_bge-small-en-v1.5	scifact	16	200	1	0.85	10	131/150	below reach	10	131/150
+BAAI_bge-small-en-v1.5	scifact	16	200	1	0.90	13	453/500	matched	12	2687/3000
+BAAI_bge-small-en-v1.5	scifact	16	200	1	0.95	21	19/20	matched	21	19/20
+BAAI_bge-small-en-v1.5	scifact	16	200	1	0.99	56	99/100	matched	56	99/100
+BAAI_bge-small-en-v1.5	scifact	16	200	2	0.80	10	1301/1500	below reach	10	1301/1500
+BAAI_bge-small-en-v1.5	scifact	16	200	2	0.85	10	1301/1500	below reach	10	1301/1500
+BAAI_bge-small-en-v1.5	scifact	16	200	2	0.90	13	1361/1500	matched	12	449/500
+BAAI_bge-small-en-v1.5	scifact	16	200	2	0.95	21	143/150	matched	20	356/375
+BAAI_bge-small-en-v1.5	scifact	16	200	2	0.99	70	993/1000	matched	59	2969/3000
+BAAI_bge-small-en-v1.5	scifact	16	200	3	0.80	10	867/1000	below reach	10	867/1000
+BAAI_bge-small-en-v1.5	scifact	16	200	3	0.85	10	867/1000	below reach	10	867/1000
+BAAI_bge-small-en-v1.5	scifact	16	200	3	0.90	13	907/1000	matched	12	671/750
+BAAI_bge-small-en-v1.5	scifact	16	200	3	0.95	21	119/125	matched	20	1423/1500
+BAAI_bge-small-en-v1.5	scifact	16	200	3	0.99	56	743/750	matched	54	2969/3000
+BAAI_bge-small-en-v1.5	scifact	16	200	4	0.80	10	131/150	below reach	10	131/150
+BAAI_bge-small-en-v1.5	scifact	16	200	4	0.85	10	131/150	below reach	10	131/150
+BAAI_bge-small-en-v1.5	scifact	16	200	4	0.90	13	2713/3000	matched	12	2693/3000
+BAAI_bge-small-en-v1.5	scifact	16	200	4	0.95	22	571/600	matched	22	571/600
+BAAI_bge-small-en-v1.5	scifact	16	200	4	0.99	70	124/125	matched	59	989/1000
+BAAI_bge-small-en-v1.5	scifact	8	200	1	0.80	11	607/750	matched	10	119/150
+BAAI_bge-small-en-v1.5	scifact	8	200	1	0.85	15	17/20	matched	15	17/20
+BAAI_bge-small-en-v1.5	scifact	8	200	1	0.90	21	2711/3000	matched	21	2711/3000
+BAAI_bge-small-en-v1.5	scifact	8	200	1	0.95	37	19/20	matched	37	19/20
+BAAI_bge-small-en-v1.5	scifact	8	200	1	0.99	90	743/750	matched	90	743/750
+BAAI_bge-small-en-v1.5	scifact	32	200	1	0.80	10	9/10	below reach	10	9/10
+BAAI_bge-small-en-v1.5	scifact	32	200	1	0.85	10	9/10	below reach	10	9/10
+BAAI_bge-small-en-v1.5	scifact	32	200	1	0.90	10	9/10	matched	10	9/10
+BAAI_bge-small-en-v1.5	scifact	32	200	1	0.95	17	119/125	matched	16	569/600
+BAAI_bge-small-en-v1.5	scifact	32	200	1	0.99	45	99/100	matched	45	99/100
+BAAI_bge-small-en-v1.5	trec-covid	16	200	0	0.80	10	211/250	below reach	10	211/250
+BAAI_bge-small-en-v1.5	trec-covid	16	200	0	0.85	11	427/500	matched	11	427/500
+BAAI_bge-small-en-v1.5	trec-covid	16	200	0	0.90	15	113/125	matched	15	113/125
+BAAI_bge-small-en-v1.5	trec-covid	16	200	0	0.95	24	19/20	matched	24	19/20
+BAAI_bge-small-en-v1.5	trec-covid	16	200	0	0.99	57	99/100	matched	57	99/100
+BAAI_bge-small-en-v1.5	trec-covid	16	200	1	0.80	10	209/250	below reach	10	209/250
+BAAI_bge-small-en-v1.5	trec-covid	16	200	1	0.85	11	17/20	matched	11	17/20
+BAAI_bge-small-en-v1.5	trec-covid	16	200	1	0.90	17	9/10	matched	17	9/10
+BAAI_bge-small-en-v1.5	trec-covid	16	200	1	0.95	35	19/20	matched	35	19/20
+BAAI_bge-small-en-v1.5	trec-covid	16	200	1	0.99	120	124/125	matched	120	124/125
+BAAI_bge-small-en-v1.5	trec-covid	16	200	2	0.80	10	429/500	below reach	10	429/500
+BAAI_bge-small-en-v1.5	trec-covid	16	200	2	0.85	10	429/500	matched	10	429/500
+BAAI_bge-small-en-v1.5	trec-covid	16	200	2	0.90	14	114/125	overshoot	13	449/500
+BAAI_bge-small-en-v1.5	trec-covid	16	200	2	0.95	21	119/125	matched	20	237/250
+BAAI_bge-small-en-v1.5	trec-covid	16	200	2	0.99	80	99/100	matched	80	99/100
+BAAI_bge-small-en-v1.5	trec-covid	16	200	3	0.80	10	103/125	below reach	10	103/125
+BAAI_bge-small-en-v1.5	trec-covid	16	200	3	0.85	11	107/125	matched	11	107/125
+BAAI_bge-small-en-v1.5	trec-covid	16	200	3	0.90	18	114/125	overshoot	17	447/500
+BAAI_bge-small-en-v1.5	trec-covid	16	200	3	0.95	28	477/500	matched	27	473/500
+BAAI_bge-small-en-v1.5	trec-covid	16	200	3	0.99	120	124/125	matched	120	124/125
+BAAI_bge-small-en-v1.5	trec-covid	16	200	4	0.80	10	403/500	matched	10	403/500
+BAAI_bge-small-en-v1.5	trec-covid	16	200	4	0.85	12	429/500	matched	12	429/500
+BAAI_bge-small-en-v1.5	trec-covid	16	200	4	0.90	16	9/10	matched	16	9/10
+BAAI_bge-small-en-v1.5	trec-covid	16	200	4	0.95	31	19/20	matched	31	19/20
+BAAI_bge-small-en-v1.5	trec-covid	16	200	4	0.99	90	99/100	matched	90	99/100
+BAAI_bge-small-en-v1.5	trec-covid	8	200	1	0.80	19	403/500	matched	19	403/500
+BAAI_bge-small-en-v1.5	trec-covid	8	200	1	0.85	23	431/500	overshoot	23	431/500
+BAAI_bge-small-en-v1.5	trec-covid	8	200	1	0.90	32	114/125	overshoot	32	114/125
+BAAI_bge-small-en-v1.5	trec-covid	8	200	1	0.95	57	19/20	matched	57	19/20
+BAAI_bge-small-en-v1.5	trec-covid	8	200	1	0.99	200	99/100	matched	200	99/100
+BAAI_bge-small-en-v1.5	trec-covid	32	200	1	0.80	10	219/250	below reach	10	219/250
+BAAI_bge-small-en-v1.5	trec-covid	32	200	1	0.85	10	219/250	below reach	10	219/250
+BAAI_bge-small-en-v1.5	trec-covid	32	200	1	0.90	13	9/10	matched	13	9/10
+BAAI_bge-small-en-v1.5	trec-covid	32	200	1	0.95	19	19/20	matched	19	19/20
+BAAI_bge-small-en-v1.5	trec-covid	32	200	1	0.99	70	99/100	matched	70	99/100
+Snowflake_snowflake-arctic-embed-m-v1.5	arguana	16	200	0	0.80	10	3384/3515	below reach	10	3384/3515
+Snowflake_snowflake-arctic-embed-m-v1.5	arguana	16	200	0	0.85	10	3384/3515	below reach	10	3384/3515
+Snowflake_snowflake-arctic-embed-m-v1.5	arguana	16	200	0	0.90	10	3384/3515	below reach	10	3384/3515
+Snowflake_snowflake-arctic-embed-m-v1.5	arguana	16	200	0	0.95	10	3384/3515	below reach	10	3384/3515
+Snowflake_snowflake-arctic-embed-m-v1.5	arguana	16	200	0	0.99	20	13921/14060	matched	20	13921/14060
+Snowflake_snowflake-arctic-embed-m-v1.5	arguana	16	200	1	0.80	10	1357/1406	below reach	10	1357/1406
+Snowflake_snowflake-arctic-embed-m-v1.5	arguana	16	200	1	0.85	10	1357/1406	below reach	10	1357/1406
+Snowflake_snowflake-arctic-embed-m-v1.5	arguana	16	200	1	0.90	10	1357/1406	below reach	10	1357/1406
+Snowflake_snowflake-arctic-embed-m-v1.5	arguana	16	200	1	0.95	10	1357/1406	below reach	10	1357/1406
+Snowflake_snowflake-arctic-embed-m-v1.5	arguana	16	200	1	0.99	20	6963/7030	matched	20	6963/7030
+Snowflake_snowflake-arctic-embed-m-v1.5	arguana	16	200	2	0.80	10	6787/7030	below reach	10	6787/7030
+Snowflake_snowflake-arctic-embed-m-v1.5	arguana	16	200	2	0.85	10	6787/7030	below reach	10	6787/7030
+Snowflake_snowflake-arctic-embed-m-v1.5	arguana	16	200	2	0.90	10	6787/7030	below reach	10	6787/7030
+Snowflake_snowflake-arctic-embed-m-v1.5	arguana	16	200	2	0.95	10	6787/7030	below reach	10	6787/7030
+Snowflake_snowflake-arctic-embed-m-v1.5	arguana	16	200	2	0.99	22	3482/3515	matched	21	2783/2812
+Snowflake_snowflake-arctic-embed-m-v1.5	arguana	16	200	3	0.80	10	2721/2812	below reach	10	2721/2812
+Snowflake_snowflake-arctic-embed-m-v1.5	arguana	16	200	3	0.85	10	2721/2812	below reach	10	2721/2812
+Snowflake_snowflake-arctic-embed-m-v1.5	arguana	16	200	3	0.90	10	2721/2812	below reach	10	2721/2812
+Snowflake_snowflake-arctic-embed-m-v1.5	arguana	16	200	3	0.95	10	2721/2812	below reach	10	2721/2812
+Snowflake_snowflake-arctic-embed-m-v1.5	arguana	16	200	3	0.99	20	696/703	matched	20	696/703
+Snowflake_snowflake-arctic-embed-m-v1.5	arguana	16	200	4	0.80	10	3389/3515	below reach	10	3389/3515
+Snowflake_snowflake-arctic-embed-m-v1.5	arguana	16	200	4	0.85	10	3389/3515	below reach	10	3389/3515
+Snowflake_snowflake-arctic-embed-m-v1.5	arguana	16	200	4	0.90	10	3389/3515	below reach	10	3389/3515
+Snowflake_snowflake-arctic-embed-m-v1.5	arguana	16	200	4	0.95	10	3389/3515	below reach	10	3389/3515
+Snowflake_snowflake-arctic-embed-m-v1.5	arguana	16	200	4	0.99	21	13923/14060	matched	21	13923/14060
+Snowflake_snowflake-arctic-embed-m-v1.5	arguana	8	200	1	0.80	10	6567/7030	below reach	10	6567/7030
+Snowflake_snowflake-arctic-embed-m-v1.5	arguana	8	200	1	0.85	10	6567/7030	below reach	10	6567/7030
+Snowflake_snowflake-arctic-embed-m-v1.5	arguana	8	200	1	0.90	10	6567/7030	below reach	10	6567/7030
+Snowflake_snowflake-arctic-embed-m-v1.5	arguana	8	200	1	0.95	13	672/703	matched	12	13321/14060
+Snowflake_snowflake-arctic-embed-m-v1.5	arguana	8	200	1	0.99	37	6961/7030	matched	36	13919/14060
+Snowflake_snowflake-arctic-embed-m-v1.5	arguana	32	200	1	0.80	10	2737/2812	below reach	10	2737/2812
+Snowflake_snowflake-arctic-embed-m-v1.5	arguana	32	200	1	0.85	10	2737/2812	below reach	10	2737/2812
+Snowflake_snowflake-arctic-embed-m-v1.5	arguana	32	200	1	0.90	10	2737/2812	below reach	10	2737/2812
+Snowflake_snowflake-arctic-embed-m-v1.5	arguana	32	200	1	0.95	10	2737/2812	below reach	10	2737/2812
+Snowflake_snowflake-arctic-embed-m-v1.5	arguana	32	200	1	0.99	17	13931/14060	matched	16	13917/14060
+Snowflake_snowflake-arctic-embed-m-v1.5	fiqa	16	200	0	0.80	14	5227/6480	matched	13	2573/3240
+Snowflake_snowflake-arctic-embed-m-v1.5	fiqa	16	200	0	0.85	20	23/27	matched	20	23/27
+Snowflake_snowflake-arctic-embed-m-v1.5	fiqa	16	200	0	0.90	31	5849/6480	matched	30	2909/3240
+Snowflake_snowflake-arctic-embed-m-v1.5	fiqa	16	200	0	0.95	70	6193/6480	matched	60	6133/6480
+Snowflake_snowflake-arctic-embed-m-v1.5	fiqa	16	200	0	0.99	400	6427/6480	matched	300	6413/6480
+Snowflake_snowflake-arctic-embed-m-v1.5	fiqa	16	200	1	0.80	15	1753/2160	overshoot	14	5173/6480
+Snowflake_snowflake-arctic-embed-m-v1.5	fiqa	16	200	1	0.85	20	5527/6480	matched	20	5527/6480
+Snowflake_snowflake-arctic-embed-m-v1.5	fiqa	16	200	1	0.90	32	1459/1620	matched	32	1459/1620
+Snowflake_snowflake-arctic-embed-m-v1.5	fiqa	16	200	1	0.95	80	413/432	matched	70	1537/1620
+Snowflake_snowflake-arctic-embed-m-v1.5	fiqa	16	200	1	0.99	400	643/648	matched	300	1069/1080
+Snowflake_snowflake-arctic-embed-m-v1.5	fiqa	16	200	2	0.80	14	2593/3240	matched	14	2593/3240
+Snowflake_snowflake-arctic-embed-m-v1.5	fiqa	16	200	2	0.85	21	1847/2160	matched	20	5497/6480
+Snowflake_snowflake-arctic-embed-m-v1.5	fiqa	16	200	2	0.90	32	2921/3240	matched	31	1943/2160
+Snowflake_snowflake-arctic-embed-m-v1.5	fiqa	16	200	2	0.95	70	229/240	matched	70	229/240
+Snowflake_snowflake-arctic-embed-m-v1.5	fiqa	16	200	2	0.99	500	643/648	matched	400	1283/1296
+Snowflake_snowflake-arctic-embed-m-v1.5	fiqa	16	200	3	0.80	15	5207/6480	matched	15	5207/6480
+Snowflake_snowflake-arctic-embed-m-v1.5	fiqa	16	200	3	0.85	21	346/405	matched	20	5503/6480
+Snowflake_snowflake-arctic-embed-m-v1.5	fiqa	16	200	3	0.90	31	2921/3240	matched	31	2921/3240
+Snowflake_snowflake-arctic-embed-m-v1.5	fiqa	16	200	3	0.95	70	6199/6480	matched	60	3077/3240
+Snowflake_snowflake-arctic-embed-m-v1.5	fiqa	16	200	3	0.99	400	6419/6480	matched	400	6419/6480
+Snowflake_snowflake-arctic-embed-m-v1.5	fiqa	16	200	4	0.80	18	5197/6480	matched	18	5197/6480
+Snowflake_snowflake-arctic-embed-m-v1.5	fiqa	16	200	4	0.85	27	553/648	matched	26	5503/6480
+Snowflake_snowflake-arctic-embed-m-v1.5	fiqa	16	200	4	0.90	40	5861/6480	matched	39	5803/6480
+Snowflake_snowflake-arctic-embed-m-v1.5	fiqa	16	200	4	0.95	70	343/360	matched	60	6139/6480
+Snowflake_snowflake-arctic-embed-m-v1.5	fiqa	16	200	4	0.99	400	803/810	matched	300	89/90
+Snowflake_snowflake-arctic-embed-m-v1.5	fiqa	8	200	1	0.80	27	4/5	matched	27	4/5
+Snowflake_snowflake-arctic-embed-m-v1.5	fiqa	8	200	1	0.85	40	5519/6480	matched	39	5501/6480
+Snowflake_snowflake-arctic-embed-m-v1.5	fiqa	8	200	1	0.90	70	73/81	matched	70	73/81
+Snowflake_snowflake-arctic-embed-m-v1.5	fiqa	8	200	1	0.95	150	2053/2160	matched	150	2053/2160
+Snowflake_snowflake-arctic-embed-m-v1.5	fiqa	8	200	1	0.99	1000	2137/2160	unreached	1000	2137/2160
+Snowflake_snowflake-arctic-embed-m-v1.5	fiqa	32	200	1	0.80	11	5231/6480	matched	10	5143/6480
+Snowflake_snowflake-arctic-embed-m-v1.5	fiqa	32	200	1	0.85	15	1103/1296	matched	15	1103/1296
+Snowflake_snowflake-arctic-embed-m-v1.5	fiqa	32	200	1	0.90	24	973/1080	matched	24	973/1080
+Snowflake_snowflake-arctic-embed-m-v1.5	fiqa	32	200	1	0.95	51	137/144	matched	50	1231/1296
+Snowflake_snowflake-arctic-embed-m-v1.5	fiqa	32	200	1	0.99	250	2141/2160	matched	200	6413/6480
+Snowflake_snowflake-arctic-embed-m-v1.5	nfcorpus	16	200	0	0.80	15	1301/1615	matched	15	1301/1615
+Snowflake_snowflake-arctic-embed-m-v1.5	nfcorpus	16	200	0	0.85	21	275/323	matched	21	275/323
+Snowflake_snowflake-arctic-embed-m-v1.5	nfcorpus	16	200	0	0.90	33	2917/3230	matched	32	581/646
+Snowflake_snowflake-arctic-embed-m-v1.5	nfcorpus	16	200	0	0.95	70	1553/1615	overshoot	60	1533/1615
+Snowflake_snowflake-arctic-embed-m-v1.5	nfcorpus	16	200	0	0.99	200	3207/3230	matched	150	3197/3230
+Snowflake_snowflake-arctic-embed-m-v1.5	nfcorpus	16	200	1	0.80	15	1304/1615	matched	14	258/323
+Snowflake_snowflake-arctic-embed-m-v1.5	nfcorpus	16	200	1	0.85	21	1374/1615	matched	21	1374/1615
+Snowflake_snowflake-arctic-embed-m-v1.5	nfcorpus	16	200	1	0.90	32	1456/1615	matched	31	2903/3230
+Snowflake_snowflake-arctic-embed-m-v1.5	nfcorpus	16	200	1	0.95	55	3069/3230	matched	55	3069/3230
+Snowflake_snowflake-arctic-embed-m-v1.5	nfcorpus	16	200	1	0.99	200	1604/1615	matched	150	3193/3230
+Snowflake_snowflake-arctic-embed-m-v1.5	nfcorpus	16	200	2	0.80	14	259/323	matched	14	259/323
+Snowflake_snowflake-arctic-embed-m-v1.5	nfcorpus	16	200	2	0.85	21	2761/3230	matched	20	1367/1615
+Snowflake_snowflake-arctic-embed-m-v1.5	nfcorpus	16	200	2	0.90	33	585/646	matched	32	1452/1615
+Snowflake_snowflake-arctic-embed-m-v1.5	nfcorpus	16	200	2	0.95	60	1536/1615	matched	60	1536/1615
+Snowflake_snowflake-arctic-embed-m-v1.5	nfcorpus	16	200	2	0.99	200	321/323	matched	150	319/323
+Snowflake_snowflake-arctic-embed-m-v1.5	nfcorpus	16	200	3	0.80	14	1293/1615	matched	14	1293/1615
+Snowflake_snowflake-arctic-embed-m-v1.5	nfcorpus	16	200	3	0.85	20	2749/3230	matched	20	2749/3230
+Snowflake_snowflake-arctic-embed-m-v1.5	nfcorpus	16	200	3	0.90	32	2913/3230	matched	31	581/646
+Snowflake_snowflake-arctic-embed-m-v1.5	nfcorpus	16	200	3	0.95	59	1537/1615	matched	58	3067/3230
+Snowflake_snowflake-arctic-embed-m-v1.5	nfcorpus	16	200	3	0.99	200	169/170	matched	150	3193/3230
+Snowflake_snowflake-arctic-embed-m-v1.5	nfcorpus	16	200	4	0.80	14	1301/1615	matched	14	1301/1615
+Snowflake_snowflake-arctic-embed-m-v1.5	nfcorpus	16	200	4	0.85	21	553/646	matched	20	2739/3230
+Snowflake_snowflake-arctic-embed-m-v1.5	nfcorpus	16	200	4	0.90	32	291/323	matched	32	291/323
+Snowflake_snowflake-arctic-embed-m-v1.5	nfcorpus	16	200	4	0.95	60	3073/3230	matched	59	1533/1615
+Snowflake_snowflake-arctic-embed-m-v1.5	nfcorpus	16	200	4	0.99	200	3207/3230	matched	150	319/323
+Snowflake_snowflake-arctic-embed-m-v1.5	nfcorpus	8	200	1	0.80	26	2597/3230	matched	25	2579/3230
+Snowflake_snowflake-arctic-embed-m-v1.5	nfcorpus	8	200	1	0.85	37	1383/1615	matched	36	1372/1615
+Snowflake_snowflake-arctic-embed-m-v1.5	nfcorpus	8	200	1	0.90	59	2913/3230	matched	58	581/646
+Snowflake_snowflake-arctic-embed-m-v1.5	nfcorpus	8	200	1	0.95	120	1549/1615	matched	100	1533/1615
+Snowflake_snowflake-arctic-embed-m-v1.5	nfcorpus	8	200	1	0.99	300	3207/3230	matched	250	3191/3230
+Snowflake_snowflake-arctic-embed-m-v1.5	nfcorpus	32	200	1	0.80	13	525/646	overshoot	12	2583/3230
+Snowflake_snowflake-arctic-embed-m-v1.5	nfcorpus	32	200	1	0.85	18	1383/1615	matched	17	274/323
+Snowflake_snowflake-arctic-embed-m-v1.5	nfcorpus	32	200	1	0.90	28	583/646	matched	28	583/646
+Snowflake_snowflake-arctic-embed-m-v1.5	nfcorpus	32	200	1	0.95	52	307/323	matched	51	3067/3230
+Snowflake_snowflake-arctic-embed-m-v1.5	nfcorpus	32	200	1	0.99	150	1601/1615	matched	150	1601/1615
+Snowflake_snowflake-arctic-embed-m-v1.5	nq	16	200	0	0.80	20	27773/34520	matched	19	3438/4315
+Snowflake_snowflake-arctic-embed-m-v1.5	nq	16	200	0	0.85	28	3687/4315	matched	27	7321/8630
+Snowflake_snowflake-arctic-embed-m-v1.5	nq	16	200	0	0.90	43	3887/4315	matched	42	776/863
+Snowflake_snowflake-arctic-embed-m-v1.5	nq	16	200	0	0.95	120	32937/34520	matched	100	3271/3452
+Snowflake_snowflake-arctic-embed-m-v1.5	nq	16	200	0	0.99	1000	34181/34520	matched	1000	34181/34520
+Snowflake_snowflake-arctic-embed-m-v1.5	nq	16	200	1	0.80	22	13823/17260	matched	22	13823/17260
+Snowflake_snowflake-arctic-embed-m-v1.5	nq	16	200	1	0.85	32	29431/34520	matched	31	14647/17260
+Snowflake_snowflake-arctic-embed-m-v1.5	nq	16	200	1	0.90	52	6219/6904	matched	52	6219/6904
+Snowflake_snowflake-arctic-embed-m-v1.5	nq	16	200	1	0.95	150	16443/17260	matched	150	16443/17260
+Snowflake_snowflake-arctic-embed-m-v1.5	nq	16	200	1	0.99	1000	33967/34520	unreached	1000	33967/34520
+Snowflake_snowflake-arctic-embed-m-v1.5	nq	16	200	2	0.80	22	5557/6904	matched	21	27579/34520
+Snowflake_snowflake-arctic-embed-m-v1.5	nq	16	200	2	0.85	32	7337/8630	matched	32	7337/8630
+Snowflake_snowflake-arctic-embed-m-v1.5	nq	16	200	2	0.90	57	15541/17260	matched	57	15541/17260
+Snowflake_snowflake-arctic-embed-m-v1.5	nq	16	200	2	0.95	150	32821/34520	matched	150	32821/34520
+Snowflake_snowflake-arctic-embed-m-v1.5	nq	16	200	2	0.99	1000	33947/34520	unreached	1000	33947/34520
+Snowflake_snowflake-arctic-embed-m-v1.5	nq	16	200	3	0.80	22	27803/34520	matched	21	27597/34520
+Snowflake_snowflake-arctic-embed-m-v1.5	nq	16	200	3	0.85	32	29347/34520	matched	32	29347/34520
+Snowflake_snowflake-arctic-embed-m-v1.5	nq	16	200	3	0.90	59	31103/34520	matched	58	31049/34520
+Snowflake_snowflake-arctic-embed-m-v1.5	nq	16	200	3	0.95	200	6619/6904	matched	150	1637/1726
+Snowflake_snowflake-arctic-embed-m-v1.5	nq	16	200	3	0.99	1000	33961/34520	unreached	1000	33961/34520
+Snowflake_snowflake-arctic-embed-m-v1.5	nq	16	200	4	0.80	22	5533/6904	matched	22	5533/6904
+Snowflake_snowflake-arctic-embed-m-v1.5	nq	16	200	4	0.85	32	29427/34520	matched	31	29317/34520
+Snowflake_snowflake-arctic-embed-m-v1.5	nq	16	200	4	0.90	53	31093/34520	matched	52	6211/6904
+Snowflake_snowflake-arctic-embed-m-v1.5	nq	16	200	4	0.95	150	8199/8630	matched	150	8199/8630
+Snowflake_snowflake-arctic-embed-m-v1.5	nq	16	200	4	0.99	1000	3395/3452	unreached	1000	3395/3452
+Snowflake_snowflake-arctic-embed-m-v1.5	quora	16	200	0	0.80	10	82619/100000	below reach	10	82619/100000
+Snowflake_snowflake-arctic-embed-m-v1.5	quora	16	200	0	0.85	12	4259/5000	matched	12	4259/5000
+Snowflake_snowflake-arctic-embed-m-v1.5	quora	16	200	0	0.90	19	90283/100000	matched	18	89867/100000
+Snowflake_snowflake-arctic-embed-m-v1.5	quora	16	200	0	0.95	41	95141/100000	matched	40	9497/10000
+Snowflake_snowflake-arctic-embed-m-v1.5	quora	16	200	0	0.99	600	49531/50000	matched	500	49493/50000
+Snowflake_snowflake-arctic-embed-m-v1.5	quora	16	200	1	0.80	10	20879/25000	below reach	10	20879/25000
+Snowflake_snowflake-arctic-embed-m-v1.5	quora	16	200	1	0.85	12	21517/25000	overshoot	11	5301/6250
+Snowflake_snowflake-arctic-embed-m-v1.5	quora	16	200	1	0.90	18	1811/2000	matched	17	2249/2500
+Snowflake_snowflake-arctic-embed-m-v1.5	quora	16	200	1	0.95	38	47513/50000	matched	38	47513/50000
+Snowflake_snowflake-arctic-embed-m-v1.5	quora	16	200	1	0.99	500	4953/5000	matched	400	12369/12500
+Snowflake_snowflake-arctic-embed-m-v1.5	quora	16	200	2	0.80	10	82637/100000	below reach	10	82637/100000
+Snowflake_snowflake-arctic-embed-m-v1.5	quora	16	200	2	0.85	12	85287/100000	matched	12	85287/100000
+Snowflake_snowflake-arctic-embed-m-v1.5	quora	16	200	2	0.90	19	11291/12500	matched	18	44907/50000
+Snowflake_snowflake-arctic-embed-m-v1.5	quora	16	200	2	0.95	41	19009/20000	matched	40	23739/25000
+Snowflake_snowflake-arctic-embed-m-v1.5	quora	16	200	2	0.99	500	99077/100000	matched	400	49487/50000
+Snowflake_snowflake-arctic-embed-m-v1.5	quora	16	200	3	0.80	10	81987/100000	below reach	10	81987/100000
+Snowflake_snowflake-arctic-embed-m-v1.5	quora	16	200	3	0.85	13	85861/100000	matched	12	21191/25000
+Snowflake_snowflake-arctic-embed-m-v1.5	quora	16	200	3	0.90	19	90033/100000	matched	19	90033/100000
+Snowflake_snowflake-arctic-embed-m-v1.5	quora	16	200	3	0.95	41	47511/50000	matched	41	47511/50000
+Snowflake_snowflake-arctic-embed-m-v1.5	quora	16	200	3	0.99	500	99017/100000	matched	500	99017/100000
+Snowflake_snowflake-arctic-embed-m-v1.5	quora	16	200	4	0.80	10	20647/25000	below reach	10	20647/25000
+Snowflake_snowflake-arctic-embed-m-v1.5	quora	16	200	4	0.85	12	85393/100000	matched	12	85393/100000
+Snowflake_snowflake-arctic-embed-m-v1.5	quora	16	200	4	0.90	19	90191/100000	matched	19	90191/100000
+Snowflake_snowflake-arctic-embed-m-v1.5	quora	16	200	4	0.95	42	19003/20000	matched	42	19003/20000
+Snowflake_snowflake-arctic-embed-m-v1.5	quora	16	200	4	0.99	500	619/625	matched	500	619/625
+Snowflake_snowflake-arctic-embed-m-v1.5	quora	8	200	1	0.80	17	16021/20000	matched	17	16021/20000
+Snowflake_snowflake-arctic-embed-m-v1.5	quora	8	200	1	0.85	24	42501/50000	matched	24	42501/50000
+Snowflake_snowflake-arctic-embed-m-v1.5	quora	8	200	1	0.90	41	90177/100000	matched	40	89959/100000
+Snowflake_snowflake-arctic-embed-m-v1.5	quora	8	200	1	0.95	100	2978/3125	matched	90	47413/50000
+Snowflake_snowflake-arctic-embed-m-v1.5	quora	8	200	1	0.99	1000	3082/3125	unreached	1000	3082/3125
+Snowflake_snowflake-arctic-embed-m-v1.5	quora	32	200	1	0.80	10	10811/12500	below reach	10	10811/12500
+Snowflake_snowflake-arctic-embed-m-v1.5	quora	32	200	1	0.85	10	10811/12500	below reach	10	10811/12500
+Snowflake_snowflake-arctic-embed-m-v1.5	quora	32	200	1	0.90	14	90229/100000	matched	14	90229/100000
+Snowflake_snowflake-arctic-embed-m-v1.5	quora	32	200	1	0.95	29	11897/12500	matched	28	11869/12500
+Snowflake_snowflake-arctic-embed-m-v1.5	quora	32	200	1	0.99	300	12381/12500	matched	250	49477/50000
+Snowflake_snowflake-arctic-embed-m-v1.5	scidocs	16	200	0	0.80	13	8031/10000	matched	13	8031/10000
+Snowflake_snowflake-arctic-embed-m-v1.5	scidocs	16	200	0	0.85	18	8553/10000	matched	17	4239/5000
+Snowflake_snowflake-arctic-embed-m-v1.5	scidocs	16	200	0	0.90	27	2257/2500	matched	26	4489/5000
+Snowflake_snowflake-arctic-embed-m-v1.5	scidocs	16	200	0	0.95	48	1189/1250	matched	47	1187/1250
+Snowflake_snowflake-arctic-embed-m-v1.5	scidocs	16	200	0	0.99	150	9903/10000	matched	150	9903/10000
+Snowflake_snowflake-arctic-embed-m-v1.5	scidocs	16	200	1	0.80	12	1001/1250	matched	12	1001/1250
+Snowflake_snowflake-arctic-embed-m-v1.5	scidocs	16	200	1	0.85	17	8561/10000	matched	16	8469/10000
+Snowflake_snowflake-arctic-embed-m-v1.5	scidocs	16	200	1	0.90	25	9019/10000	matched	24	1123/1250
+Snowflake_snowflake-arctic-embed-m-v1.5	scidocs	16	200	1	0.95	48	9517/10000	matched	47	9497/10000
+Snowflake_snowflake-arctic-embed-m-v1.5	scidocs	16	200	1	0.99	200	9927/10000	matched	150	1237/1250
+Snowflake_snowflake-arctic-embed-m-v1.5	scidocs	16	200	2	0.80	12	2017/2500	matched	12	2017/2500
+Snowflake_snowflake-arctic-embed-m-v1.5	scidocs	16	200	2	0.85	17	1711/2000	matched	16	4241/5000
+Snowflake_snowflake-arctic-embed-m-v1.5	scidocs	16	200	2	0.90	27	9031/10000	matched	26	8993/10000
+Snowflake_snowflake-arctic-embed-m-v1.5	scidocs	16	200	2	0.95	48	19/20	matched	48	19/20
+Snowflake_snowflake-arctic-embed-m-v1.5	scidocs	16	200	2	0.99	200	397/400	matched	150	9897/10000
+Snowflake_snowflake-arctic-embed-m-v1.5	scidocs	16	200	3	0.80	12	321/400	matched	12	321/400
+Snowflake_snowflake-arctic-embed-m-v1.5	scidocs	16	200	3	0.85	17	534/625	matched	17	534/625
+Snowflake_snowflake-arctic-embed-m-v1.5	scidocs	16	200	3	0.90	25	9013/10000	matched	25	9013/10000
+Snowflake_snowflake-arctic-embed-m-v1.5	scidocs	16	200	3	0.95	47	951/1000	matched	46	4749/5000
+Snowflake_snowflake-arctic-embed-m-v1.5	scidocs	16	200	3	0.99	150	619/625	matched	150	619/625
+Snowflake_snowflake-arctic-embed-m-v1.5	scidocs	16	200	4	0.80	12	4037/5000	matched	12	4037/5000
+Snowflake_snowflake-arctic-embed-m-v1.5	scidocs	16	200	4	0.85	17	1073/1250	matched	16	8471/10000
+Snowflake_snowflake-arctic-embed-m-v1.5	scidocs	16	200	4	0.90	24	9/10	matched	24	9/10
+Snowflake_snowflake-arctic-embed-m-v1.5	scidocs	16	200	4	0.95	47	4751/5000	matched	47	4751/5000
+Snowflake_snowflake-arctic-embed-m-v1.5	scidocs	16	200	4	0.99	150	9911/10000	matched	150	9911/10000
+Snowflake_snowflake-arctic-embed-m-v1.5	scidocs	8	200	1	0.80	22	8053/10000	matched	21	3989/5000
+Snowflake_snowflake-arctic-embed-m-v1.5	scidocs	8	200	1	0.85	31	4251/5000	matched	31	4251/5000
+Snowflake_snowflake-arctic-embed-m-v1.5	scidocs	8	200	1	0.90	48	9007/10000	matched	48	9007/10000
+Snowflake_snowflake-arctic-embed-m-v1.5	scidocs	8	200	1	0.95	100	119/125	matched	100	119/125
+Snowflake_snowflake-arctic-embed-m-v1.5	scidocs	8	200	1	0.99	400	2477/2500	matched	400	2477/2500
+Snowflake_snowflake-arctic-embed-m-v1.5	scidocs	32	200	1	0.80	10	4073/5000	below reach	10	4073/5000
+Snowflake_snowflake-arctic-embed-m-v1.5	scidocs	32	200	1	0.85	13	8551/10000	matched	13	8551/10000
+Snowflake_snowflake-arctic-embed-m-v1.5	scidocs	32	200	1	0.90	20	9059/10000	matched	19	8997/10000
+Snowflake_snowflake-arctic-embed-m-v1.5	scidocs	32	200	1	0.95	35	594/625	matched	35	594/625
+Snowflake_snowflake-arctic-embed-m-v1.5	scidocs	32	200	1	0.99	120	9903/10000	matched	120	9903/10000
+Snowflake_snowflake-arctic-embed-m-v1.5	scifact	16	200	0	0.80	10	809/1000	matched	10	809/1000
+Snowflake_snowflake-arctic-embed-m-v1.5	scifact	16	200	0	0.85	14	861/1000	overshoot	13	637/750
+Snowflake_snowflake-arctic-embed-m-v1.5	scifact	16	200	0	0.90	20	901/1000	matched	20	901/1000
+Snowflake_snowflake-arctic-embed-m-v1.5	scifact	16	200	0	0.95	36	953/1000	matched	35	2849/3000
+Snowflake_snowflake-arctic-embed-m-v1.5	scifact	16	200	0	0.99	90	2971/3000	matched	90	2971/3000
+Snowflake_snowflake-arctic-embed-m-v1.5	scifact	16	200	1	0.80	11	1201/1500	matched	11	1201/1500
+Snowflake_snowflake-arctic-embed-m-v1.5	scifact	16	200	1	0.85	15	2551/3000	matched	15	2551/3000
+Snowflake_snowflake-arctic-embed-m-v1.5	scifact	16	200	1	0.90	23	338/375	matched	23	338/375
+Snowflake_snowflake-arctic-embed-m-v1.5	scifact	16	200	1	0.95	41	19/20	matched	41	19/20
+Snowflake_snowflake-arctic-embed-m-v1.5	scifact	16	200	1	0.99	100	2977/3000	matched	90	1483/1500
+Snowflake_snowflake-arctic-embed-m-v1.5	scifact	16	200	2	0.80	10	302/375	matched	10	302/375
+Snowflake_snowflake-arctic-embed-m-v1.5	scifact	16	200	2	0.85	14	64/75	matched	14	64/75
+Snowflake_snowflake-arctic-embed-m-v1.5	scifact	16	200	2	0.90	21	271/300	matched	20	897/1000
+Snowflake_snowflake-arctic-embed-m-v1.5	scifact	16	200	2	0.95	36	713/750	matched	35	2849/3000
+Snowflake_snowflake-arctic-embed-m-v1.5	scifact	16	200	2	0.99	100	743/750	matched	100	743/750
+Snowflake_snowflake-arctic-embed-m-v1.5	scifact	16	200	3	0.80	10	813/1000	below reach	10	813/1000
+Snowflake_snowflake-arctic-embed-m-v1.5	scifact	16	200	3	0.85	14	107/125	matched	13	423/500
+Snowflake_snowflake-arctic-embed-m-v1.5	scifact	16	200	3	0.90	20	677/750	matched	20	677/750
+Snowflake_snowflake-arctic-embed-m-v1.5	scifact	16	200	3	0.95	37	571/600	matched	37	571/600
+Snowflake_snowflake-arctic-embed-m-v1.5	scifact	16	200	3	0.99	90	1487/1500	matched	90	1487/1500
+Snowflake_snowflake-arctic-embed-m-v1.5	scifact	16	200	4	0.80	10	803/1000	matched	10	803/1000
+Snowflake_snowflake-arctic-embed-m-v1.5	scifact	16	200	4	0.85	14	2581/3000	overshoot	13	2533/3000
+Snowflake_snowflake-arctic-embed-m-v1.5	scifact	16	200	4	0.90	21	2719/3000	matched	20	337/375
+Snowflake_snowflake-arctic-embed-m-v1.5	scifact	16	200	4	0.95	32	1427/1500	matched	31	1423/1500
+Snowflake_snowflake-arctic-embed-m-v1.5	scifact	16	200	4	0.99	80	99/100	matched	80	99/100
+Snowflake_snowflake-arctic-embed-m-v1.5	scifact	8	200	1	0.80	19	807/1000	matched	18	599/750
+Snowflake_snowflake-arctic-embed-m-v1.5	scifact	8	200	1	0.85	25	2557/3000	matched	25	2557/3000
+Snowflake_snowflake-arctic-embed-m-v1.5	scifact	8	200	1	0.90	39	2701/3000	matched	39	2701/3000
+Snowflake_snowflake-arctic-embed-m-v1.5	scifact	8	200	1	0.95	80	239/250	matched	70	1423/1500
+Snowflake_snowflake-arctic-embed-m-v1.5	scifact	8	200	1	0.99	200	1487/1500	matched	200	1487/1500
+Snowflake_snowflake-arctic-embed-m-v1.5	scifact	32	200	1	0.80	10	511/600	below reach	10	511/600
+Snowflake_snowflake-arctic-embed-m-v1.5	scifact	32	200	1	0.85	10	511/600	matched	10	511/600
+Snowflake_snowflake-arctic-embed-m-v1.5	scifact	32	200	1	0.90	17	679/750	matched	16	1349/1500
+Snowflake_snowflake-arctic-embed-m-v1.5	scifact	32	200	1	0.95	26	713/750	matched	26	713/750
+Snowflake_snowflake-arctic-embed-m-v1.5	scifact	32	200	1	0.99	80	149/150	matched	70	2969/3000
+Snowflake_snowflake-arctic-embed-m-v1.5	trec-covid	16	200	0	0.80	14	201/250	matched	13	199/250
+Snowflake_snowflake-arctic-embed-m-v1.5	trec-covid	16	200	0	0.85	21	427/500	matched	20	106/125
+Snowflake_snowflake-arctic-embed-m-v1.5	trec-covid	16	200	0	0.90	50	451/500	matched	50	451/500
+Snowflake_snowflake-arctic-embed-m-v1.5	trec-covid	16	200	0	0.95	100	477/500	matched	80	237/250
+Snowflake_snowflake-arctic-embed-m-v1.5	trec-covid	16	200	0	0.99	400	249/250	matched	250	247/250
+Snowflake_snowflake-arctic-embed-m-v1.5	trec-covid	16	200	1	0.80	15	101/125	matched	15	101/125
+Snowflake_snowflake-arctic-embed-m-v1.5	trec-covid	16	200	1	0.85	18	213/250	matched	18	213/250
+Snowflake_snowflake-arctic-embed-m-v1.5	trec-covid	16	200	1	0.90	30	114/125	overshoot	28	89/100
+Snowflake_snowflake-arctic-embed-m-v1.5	trec-covid	16	200	1	0.95	49	19/20	matched	49	19/20
+Snowflake_snowflake-arctic-embed-m-v1.5	trec-covid	16	200	1	0.99	120	99/100	matched	120	99/100
+Snowflake_snowflake-arctic-embed-m-v1.5	trec-covid	16	200	2	0.80	17	407/500	overshoot	16	79/100
+Snowflake_snowflake-arctic-embed-m-v1.5	trec-covid	16	200	2	0.85	20	17/20	matched	20	17/20
+Snowflake_snowflake-arctic-embed-m-v1.5	trec-covid	16	200	2	0.90	35	451/500	matched	33	449/500
+Snowflake_snowflake-arctic-embed-m-v1.5	trec-covid	16	200	2	0.95	59	19/20	matched	59	19/20
+Snowflake_snowflake-arctic-embed-m-v1.5	trec-covid	16	200	2	0.99	150	497/500	matched	150	497/500
+Snowflake_snowflake-arctic-embed-m-v1.5	trec-covid	16	200	3	0.80	13	403/500	matched	12	399/500
+Snowflake_snowflake-arctic-embed-m-v1.5	trec-covid	16	200	3	0.85	19	107/125	matched	18	106/125
+Snowflake_snowflake-arctic-embed-m-v1.5	trec-covid	16	200	3	0.90	24	227/250	matched	23	112/125
+Snowflake_snowflake-arctic-embed-m-v1.5	trec-covid	16	200	3	0.95	44	119/125	matched	44	119/125
+Snowflake_snowflake-arctic-embed-m-v1.5	trec-covid	16	200	3	0.99	90	99/100	matched	90	99/100
+Snowflake_snowflake-arctic-embed-m-v1.5	trec-covid	16	200	4	0.80	11	81/100	matched	11	81/100
+Snowflake_snowflake-arctic-embed-m-v1.5	trec-covid	16	200	4	0.85	14	433/500	overshoot	13	21/25
+Snowflake_snowflake-arctic-embed-m-v1.5	trec-covid	16	200	4	0.90	18	451/500	matched	18	451/500
+Snowflake_snowflake-arctic-embed-m-v1.5	trec-covid	16	200	4	0.95	33	19/20	matched	33	19/20
+Snowflake_snowflake-arctic-embed-m-v1.5	trec-covid	16	200	4	0.99	200	99/100	matched	200	99/100
+Snowflake_snowflake-arctic-embed-m-v1.5	trec-covid	8	200	1	0.80	18	401/500	matched	18	401/500
+Snowflake_snowflake-arctic-embed-m-v1.5	trec-covid	8	200	1	0.85	29	108/125	overshoot	28	423/500
+Snowflake_snowflake-arctic-embed-m-v1.5	trec-covid	8	200	1	0.90	42	227/250	matched	42	227/250
+Snowflake_snowflake-arctic-embed-m-v1.5	trec-covid	8	200	1	0.95	100	241/250	overshoot	90	118/125
+Snowflake_snowflake-arctic-embed-m-v1.5	trec-covid	8	200	1	0.99	800	249/250	matched	500	247/250
+Snowflake_snowflake-arctic-embed-m-v1.5	trec-covid	32	200	1	0.80	12	201/250	matched	11	399/500
+Snowflake_snowflake-arctic-embed-m-v1.5	trec-covid	32	200	1	0.85	18	87/100	overshoot	17	106/125
+Snowflake_snowflake-arctic-embed-m-v1.5	trec-covid	32	200	1	0.90	28	227/250	matched	27	112/125
+Snowflake_snowflake-arctic-embed-m-v1.5	trec-covid	32	200	1	0.95	44	19/20	matched	44	19/20
+Snowflake_snowflake-arctic-embed-m-v1.5	trec-covid	32	200	1	0.99	120	124/125	matched	120	124/125
+intfloat_e5-base-v2	arguana	16	200	0	0.80	10	3158/3515	below reach	10	3158/3515
+intfloat_e5-base-v2	arguana	16	200	0	0.85	10	3158/3515	below reach	10	3158/3515
+intfloat_e5-base-v2	arguana	16	200	0	0.90	11	3197/3515	matched	10	3158/3515
+intfloat_e5-base-v2	arguana	16	200	0	0.95	17	13377/14060	matched	17	13377/14060
+intfloat_e5-base-v2	arguana	16	200	0	0.99	40	6961/7030	matched	40	6961/7030
+intfloat_e5-base-v2	arguana	16	200	1	0.80	10	12631/14060	below reach	10	12631/14060
+intfloat_e5-base-v2	arguana	16	200	1	0.85	10	12631/14060	below reach	10	12631/14060
+intfloat_e5-base-v2	arguana	16	200	1	0.90	11	12767/14060	matched	10	12631/14060
+intfloat_e5-base-v2	arguana	16	200	1	0.95	17	669/703	matched	17	669/703
+intfloat_e5-base-v2	arguana	16	200	1	0.99	38	6961/7030	matched	38	6961/7030
+intfloat_e5-base-v2	arguana	16	200	2	0.80	10	632/703	below reach	10	632/703
+intfloat_e5-base-v2	arguana	16	200	2	0.85	10	632/703	below reach	10	632/703
+intfloat_e5-base-v2	arguana	16	200	2	0.90	11	12803/14060	overshoot	10	632/703
+intfloat_e5-base-v2	arguana	16	200	2	0.95	17	13401/14060	matched	16	13337/14060
+intfloat_e5-base-v2	arguana	16	200	2	0.99	42	6963/7030	matched	41	6957/7030
+intfloat_e5-base-v2	arguana	16	200	3	0.80	10	3174/3515	below reach	10	3174/3515
+intfloat_e5-base-v2	arguana	16	200	3	0.85	10	3174/3515	below reach	10	3174/3515
+intfloat_e5-base-v2	arguana	16	200	3	0.90	10	3174/3515	matched	10	3174/3515
+intfloat_e5-base-v2	arguana	16	200	3	0.95	17	181/190	matched	16	6667/7030
+intfloat_e5-base-v2	arguana	16	200	3	0.99	39	13933/14060	matched	38	2783/2812
+intfloat_e5-base-v2	arguana	16	200	4	0.80	10	2541/2812	below reach	10	2541/2812
+intfloat_e5-base-v2	arguana	16	200	4	0.85	10	2541/2812	below reach	10	2541/2812
+intfloat_e5-base-v2	arguana	16	200	4	0.90	10	2541/2812	matched	10	2541/2812
+intfloat_e5-base-v2	arguana	16	200	4	0.95	16	2673/2812	matched	16	2673/2812
+intfloat_e5-base-v2	arguana	16	200	4	0.99	38	1393/1406	matched	37	13919/14060
+intfloat_e5-base-v2	arguana	8	200	1	0.80	10	5797/7030	below reach	10	5797/7030
+intfloat_e5-base-v2	arguana	8	200	1	0.85	12	6007/7030	matched	12	6007/7030
+intfloat_e5-base-v2	arguana	8	200	1	0.90	17	6339/7030	matched	17	6339/7030
+intfloat_e5-base-v2	arguana	8	200	1	0.95	28	6681/7030	matched	28	6681/7030
+intfloat_e5-base-v2	arguana	8	200	1	0.99	80	6961/7030	matched	80	6961/7030
+intfloat_e5-base-v2	arguana	32	200	1	0.80	10	13111/14060	below reach	10	13111/14060
+intfloat_e5-base-v2	arguana	32	200	1	0.85	10	13111/14060	below reach	10	13111/14060
+intfloat_e5-base-v2	arguana	32	200	1	0.90	10	13111/14060	below reach	10	13111/14060
+intfloat_e5-base-v2	arguana	32	200	1	0.95	13	13391/14060	matched	13	13391/14060
+intfloat_e5-base-v2	arguana	32	200	1	0.99	31	3481/3515	matched	30	6959/7030
+intfloat_e5-base-v2	fiqa	16	200	0	0.80	14	326/405	matched	13	2581/3240
+intfloat_e5-base-v2	fiqa	16	200	0	0.85	19	17/20	matched	19	17/20
+intfloat_e5-base-v2	fiqa	16	200	0	0.90	28	731/810	matched	28	731/810
+intfloat_e5-base-v2	fiqa	16	200	0	0.95	49	137/144	matched	48	769/810
+intfloat_e5-base-v2	fiqa	16	200	0	0.99	150	119/120	matched	150	119/120
+intfloat_e5-base-v2	fiqa	16	200	1	0.80	15	5257/6480	overshoot	14	1727/2160
+intfloat_e5-base-v2	fiqa	16	200	1	0.85	19	1105/1296	matched	19	1105/1296
+intfloat_e5-base-v2	fiqa	16	200	1	0.90	29	391/432	matched	28	1165/1296
+intfloat_e5-base-v2	fiqa	16	200	1	0.95	48	6163/6480	matched	47	205/216
+intfloat_e5-base-v2	fiqa	16	200	1	0.99	200	1073/1080	matched	150	2137/2160
+intfloat_e5-base-v2	fiqa	16	200	2	0.80	14	1037/1296	matched	14	1037/1296
+intfloat_e5-base-v2	fiqa	16	200	2	0.85	20	2773/3240	matched	19	5497/6480
+intfloat_e5-base-v2	fiqa	16	200	2	0.90	29	1951/2160	matched	28	5831/6480
+intfloat_e5-base-v2	fiqa	16	200	2	0.95	50	2053/2160	matched	50	2053/2160
+intfloat_e5-base-v2	fiqa	16	200	2	0.99	150	107/108	matched	150	107/108
+intfloat_e5-base-v2	fiqa	16	200	3	0.80	15	5257/6480	overshoot	14	2587/3240
+intfloat_e5-base-v2	fiqa	16	200	3	0.85	19	5527/6480	matched	19	5527/6480
+intfloat_e5-base-v2	fiqa	16	200	3	0.90	29	5867/6480	matched	28	5831/6480
+intfloat_e5-base-v2	fiqa	16	200	3	0.95	50	1541/1620	matched	49	6151/6480
+intfloat_e5-base-v2	fiqa	16	200	3	0.99	150	2141/2160	matched	150	2141/2160
+intfloat_e5-base-v2	fiqa	16	200	4	0.80	14	1039/1296	matched	14	1039/1296
+intfloat_e5-base-v2	fiqa	16	200	4	0.85	20	5531/6480	matched	20	5531/6480
+intfloat_e5-base-v2	fiqa	16	200	4	0.90	29	2927/3240	matched	28	364/405
+intfloat_e5-base-v2	fiqa	16	200	4	0.95	50	6167/6480	matched	49	3077/3240
+intfloat_e5-base-v2	fiqa	16	200	4	0.99	150	2143/2160	matched	120	641/648
+intfloat_e5-base-v2	fiqa	8	200	1	0.80	27	193/240	matched	26	1033/1296
+intfloat_e5-base-v2	fiqa	8	200	1	0.85	39	691/810	matched	38	917/1080
+intfloat_e5-base-v2	fiqa	8	200	1	0.90	59	9/10	matched	59	9/10
+intfloat_e5-base-v2	fiqa	8	200	1	0.95	120	3083/3240	matched	120	3083/3240
+intfloat_e5-base-v2	fiqa	8	200	1	0.99	500	1607/1620	matched	400	89/90
+intfloat_e5-base-v2	fiqa	32	200	1	0.80	10	349/432	matched	10	349/432
+intfloat_e5-base-v2	fiqa	32	200	1	0.85	13	461/540	matched	13	461/540
+intfloat_e5-base-v2	fiqa	32	200	1	0.90	19	1459/1620	matched	19	1459/1620
+intfloat_e5-base-v2	fiqa	32	200	1	0.95	34	3083/3240	matched	33	6149/6480
+intfloat_e5-base-v2	fiqa	32	200	1	0.99	90	401/405	matched	90	401/405
+intfloat_e5-base-v2	nfcorpus	16	200	0	0.80	12	1307/1615	matched	11	1282/1615
+intfloat_e5-base-v2	nfcorpus	16	200	0	0.85	16	2751/3230	matched	16	2751/3230
+intfloat_e5-base-v2	nfcorpus	16	200	0	0.90	26	1459/1615	matched	25	1448/1615
+intfloat_e5-base-v2	nfcorpus	16	200	0	0.95	46	615/646	matched	45	1534/1615
+intfloat_e5-base-v2	nfcorpus	16	200	0	0.99	120	320/323	matched	120	320/323
+intfloat_e5-base-v2	nfcorpus	16	200	1	0.80	12	1297/1615	matched	12	1297/1615
+intfloat_e5-base-v2	nfcorpus	16	200	1	0.85	17	1374/1615	matched	17	1374/1615
+intfloat_e5-base-v2	nfcorpus	16	200	1	0.90	29	2913/3230	matched	28	1451/1615
+intfloat_e5-base-v2	nfcorpus	16	200	1	0.95	51	307/323	matched	51	307/323
+intfloat_e5-base-v2	nfcorpus	16	200	1	0.99	150	320/323	matched	150	320/323
+intfloat_e5-base-v2	nfcorpus	16	200	2	0.80	12	1294/1615	matched	12	1294/1615
+intfloat_e5-base-v2	nfcorpus	16	200	2	0.85	18	276/323	matched	17	1369/1615
+intfloat_e5-base-v2	nfcorpus	16	200	2	0.90	27	1458/1615	matched	26	1453/1615
+intfloat_e5-base-v2	nfcorpus	16	200	2	0.95	51	3069/3230	matched	51	3069/3230
+intfloat_e5-base-v2	nfcorpus	16	200	2	0.99	120	1599/1615	matched	120	1599/1615
+intfloat_e5-base-v2	nfcorpus	16	200	3	0.80	13	69/85	overshoot	12	1289/1615
+intfloat_e5-base-v2	nfcorpus	16	200	3	0.85	17	1376/1615	matched	17	1376/1615
+intfloat_e5-base-v2	nfcorpus	16	200	3	0.90	26	583/646	matched	25	1451/1615
+intfloat_e5-base-v2	nfcorpus	16	200	3	0.95	49	3069/3230	matched	49	3069/3230
+intfloat_e5-base-v2	nfcorpus	16	200	3	0.99	150	3201/3230	matched	150	3201/3230
+intfloat_e5-base-v2	nfcorpus	16	200	4	0.80	12	2593/3230	matched	12	2593/3230
+intfloat_e5-base-v2	nfcorpus	16	200	4	0.85	17	1374/1615	matched	17	1374/1615
+intfloat_e5-base-v2	nfcorpus	16	200	4	0.90	27	2909/3230	matched	27	2909/3230
+intfloat_e5-base-v2	nfcorpus	16	200	4	0.95	49	3069/3230	matched	49	3069/3230
+intfloat_e5-base-v2	nfcorpus	16	200	4	0.99	150	1604/1615	matched	120	639/646
+intfloat_e5-base-v2	nfcorpus	8	200	1	0.80	22	1299/1615	matched	21	257/323
+intfloat_e5-base-v2	nfcorpus	8	200	1	0.85	32	81/95	matched	31	2743/3230
+intfloat_e5-base-v2	nfcorpus	8	200	1	0.90	54	2909/3230	matched	54	2909/3230
+intfloat_e5-base-v2	nfcorpus	8	200	1	0.95	100	91/95	matched	90	613/646
+intfloat_e5-base-v2	nfcorpus	8	200	1	0.99	250	320/323	matched	250	320/323
+intfloat_e5-base-v2	nfcorpus	32	200	1	0.80	10	2629/3230	below reach	10	2629/3230
+intfloat_e5-base-v2	nfcorpus	32	200	1	0.85	14	276/323	matched	14	276/323
+intfloat_e5-base-v2	nfcorpus	32	200	1	0.90	21	1454/1615	matched	21	1454/1615
+intfloat_e5-base-v2	nfcorpus	32	200	1	0.95	42	3069/3230	matched	42	3069/3230
+intfloat_e5-base-v2	nfcorpus	32	200	1	0.99	120	1601/1615	matched	120	1601/1615
+intfloat_e5-base-v2	nq	16	200	0	0.80	11	28051/34520	overshoot	10	13761/17260
+intfloat_e5-base-v2	nq	16	200	0	0.85	15	29623/34520	matched	14	1463/1726
+intfloat_e5-base-v2	nq	16	200	0	0.90	21	778/863	matched	21	778/863
+intfloat_e5-base-v2	nq	16	200	0	0.95	43	32831/34520	matched	42	32793/34520
+intfloat_e5-base-v2	nq	16	200	0	0.99	300	6839/6904	matched	300	6839/6904
+intfloat_e5-base-v2	nq	16	200	1	0.80	12	28097/34520	overshoot	11	13799/17260
+intfloat_e5-base-v2	nq	16	200	1	0.85	16	3686/4315	matched	15	14609/17260
+intfloat_e5-base-v2	nq	16	200	1	0.90	26	31151/34520	matched	25	31061/34520
+intfloat_e5-base-v2	nq	16	200	1	0.95	60	32811/34520	matched	59	32791/34520
+intfloat_e5-base-v2	nq	16	200	1	0.99	800	4274/4315	matched	800	4274/4315
+intfloat_e5-base-v2	nq	16	200	2	0.80	12	3508/4315	overshoot	11	27563/34520
+intfloat_e5-base-v2	nq	16	200	2	0.85	16	5879/6904	matched	16	5879/6904
+intfloat_e5-base-v2	nq	16	200	2	0.90	25	7779/8630	matched	25	7779/8630
+intfloat_e5-base-v2	nq	16	200	2	0.95	54	6563/6904	matched	53	16393/17260
+intfloat_e5-base-v2	nq	16	200	2	0.99	600	34177/34520	matched	600	34177/34520
+intfloat_e5-base-v2	nq	16	200	3	0.80	12	13997/17260	overshoot	11	27497/34520
+intfloat_e5-base-v2	nq	16	200	3	0.85	16	29467/34520	matched	16	29467/34520
+intfloat_e5-base-v2	nq	16	200	3	0.90	26	6227/6904	matched	25	31047/34520
+intfloat_e5-base-v2	nq	16	200	3	0.95	60	16401/17260	matched	59	8197/8630
+intfloat_e5-base-v2	nq	16	200	3	0.99	800	34247/34520	matched	600	34173/34520
+intfloat_e5-base-v2	nq	16	200	4	0.80	12	27939/34520	matched	11	13769/17260
+intfloat_e5-base-v2	nq	16	200	4	0.85	17	29583/34520	matched	16	29277/34520
+intfloat_e5-base-v2	nq	16	200	4	0.90	26	3107/3452	matched	26	3107/3452
+intfloat_e5-base-v2	nq	16	200	4	0.95	70	16447/17260	matched	60	8181/8630
+intfloat_e5-base-v2	nq	16	200	4	0.99	1000	34133/34520	unreached	1000	34133/34520
+intfloat_e5-base-v2	quora	16	200	0	0.80	10	44813/50000	below reach	10	44813/50000
+intfloat_e5-base-v2	quora	16	200	0	0.85	10	44813/50000	below reach	10	44813/50000
+intfloat_e5-base-v2	quora	16	200	0	0.90	11	90637/100000	matched	10	44813/50000
+intfloat_e5-base-v2	quora	16	200	0	0.95	20	95307/100000	matched	19	47493/50000
+intfloat_e5-base-v2	quora	16	200	0	0.99	90	24757/25000	matched	90	24757/25000
+intfloat_e5-base-v2	quora	16	200	1	0.80	10	45307/50000	below reach	10	45307/50000
+intfloat_e5-base-v2	quora	16	200	1	0.85	10	45307/50000	below reach	10	45307/50000
+intfloat_e5-base-v2	quora	16	200	1	0.90	10	45307/50000	matched	10	45307/50000
+intfloat_e5-base-v2	quora	16	200	1	0.95	18	95187/100000	matched	17	23711/25000
+intfloat_e5-base-v2	quora	16	200	1	0.99	90	4953/5000	matched	80	98941/100000
+intfloat_e5-base-v2	quora	16	200	2	0.80	10	45271/50000	below reach	10	45271/50000
+intfloat_e5-base-v2	quora	16	200	2	0.85	10	45271/50000	below reach	10	45271/50000
+intfloat_e5-base-v2	quora	16	200	2	0.90	10	45271/50000	matched	10	45271/50000
+intfloat_e5-base-v2	quora	16	200	2	0.95	18	19019/20000	matched	18	19019/20000
+intfloat_e5-base-v2	quora	16	200	2	0.99	90	99067/100000	matched	80	49481/50000
+intfloat_e5-base-v2	quora	16	200	3	0.80	10	17983/20000	below reach	10	17983/20000
+intfloat_e5-base-v2	quora	16	200	3	0.85	10	17983/20000	below reach	10	17983/20000
+intfloat_e5-base-v2	quora	16	200	3	0.90	11	91007/100000	overshoot	10	17983/20000
+intfloat_e5-base-v2	quora	16	200	3	0.95	19	95181/100000	matched	18	23733/25000
+intfloat_e5-base-v2	quora	16	200	3	0.99	100	99091/100000	matched	90	98979/100000
+intfloat_e5-base-v2	quora	16	200	4	0.80	10	45237/50000	below reach	10	45237/50000
+intfloat_e5-base-v2	quora	16	200	4	0.85	10	45237/50000	below reach	10	45237/50000
+intfloat_e5-base-v2	quora	16	200	4	0.90	10	45237/50000	matched	10	45237/50000
+intfloat_e5-base-v2	quora	16	200	4	0.95	18	47549/50000	matched	18	47549/50000
+intfloat_e5-base-v2	quora	16	200	4	0.99	100	3096/3125	matched	90	19797/20000
+intfloat_e5-base-v2	quora	8	200	1	0.80	11	81231/100000	overshoot	10	7963/10000
+intfloat_e5-base-v2	quora	8	200	1	0.85	14	4257/5000	matched	14	4257/5000
+intfloat_e5-base-v2	quora	8	200	1	0.90	21	45061/50000	matched	21	45061/50000
+intfloat_e5-base-v2	quora	8	200	1	0.95	45	95049/100000	matched	44	94959/100000
+intfloat_e5-base-v2	quora	8	200	1	0.99	400	99117/100000	matched	300	6181/6250
+intfloat_e5-base-v2	quora	32	200	1	0.80	10	93029/100000	below reach	10	93029/100000
+intfloat_e5-base-v2	quora	32	200	1	0.85	10	93029/100000	below reach	10	93029/100000
+intfloat_e5-base-v2	quora	32	200	1	0.90	10	93029/100000	below reach	10	93029/100000
+intfloat_e5-base-v2	quora	32	200	1	0.95	14	95247/100000	matched	13	94789/100000
+intfloat_e5-base-v2	quora	32	200	1	0.99	54	19801/20000	matched	54	19801/20000
+intfloat_e5-base-v2	scidocs	16	200	0	0.80	11	8117/10000	overshoot	10	7961/10000
+intfloat_e5-base-v2	scidocs	16	200	0	0.85	15	8583/10000	matched	14	8497/10000
+intfloat_e5-base-v2	scidocs	16	200	0	0.90	23	9017/10000	matched	23	9017/10000
+intfloat_e5-base-v2	scidocs	16	200	0	0.95	44	9511/10000	matched	43	9491/10000
+intfloat_e5-base-v2	scidocs	16	200	0	0.99	120	9903/10000	matched	120	9903/10000
+intfloat_e5-base-v2	scidocs	16	200	1	0.80	11	4059/5000	overshoot	10	7943/10000
+intfloat_e5-base-v2	scidocs	16	200	1	0.85	15	4273/5000	matched	14	8463/10000
+intfloat_e5-base-v2	scidocs	16	200	1	0.90	23	9043/10000	matched	22	2249/2500
+intfloat_e5-base-v2	scidocs	16	200	1	0.95	41	4763/5000	matched	40	1899/2000
+intfloat_e5-base-v2	scidocs	16	200	1	0.99	120	4953/5000	matched	120	4953/5000
+intfloat_e5-base-v2	scidocs	16	200	2	0.80	11	4037/5000	matched	10	1589/2000
+intfloat_e5-base-v2	scidocs	16	200	2	0.85	15	4263/5000	matched	15	4263/5000
+intfloat_e5-base-v2	scidocs	16	200	2	0.90	23	1801/2000	matched	23	1801/2000
+intfloat_e5-base-v2	scidocs	16	200	2	0.95	41	2377/2500	matched	41	2377/2500
+intfloat_e5-base-v2	scidocs	16	200	2	0.99	120	619/625	matched	120	619/625
+intfloat_e5-base-v2	scidocs	16	200	3	0.80	11	81/100	matched	10	793/1000
+intfloat_e5-base-v2	scidocs	16	200	3	0.85	15	4279/5000	matched	14	2119/2500
+intfloat_e5-base-v2	scidocs	16	200	3	0.90	23	361/400	matched	22	8979/10000
+intfloat_e5-base-v2	scidocs	16	200	3	0.95	41	1189/1250	matched	40	4747/5000
+intfloat_e5-base-v2	scidocs	16	200	3	0.99	150	9927/10000	matched	120	9893/10000
+intfloat_e5-base-v2	scidocs	16	200	4	0.80	10	1601/2000	matched	10	1601/2000
+intfloat_e5-base-v2	scidocs	16	200	4	0.85	15	8561/10000	matched	14	8473/10000
+intfloat_e5-base-v2	scidocs	16	200	4	0.90	23	9029/10000	matched	22	8987/10000
+intfloat_e5-base-v2	scidocs	16	200	4	0.95	43	4753/5000	matched	42	4749/5000
+intfloat_e5-base-v2	scidocs	16	200	4	0.99	150	4967/5000	matched	120	4949/5000
+intfloat_e5-base-v2	scidocs	8	200	1	0.80	19	2017/2500	matched	18	1999/2500
+intfloat_e5-base-v2	scidocs	8	200	1	0.85	27	8531/10000	matched	26	106/125
+intfloat_e5-base-v2	scidocs	8	200	1	0.90	41	2251/2500	matched	41	2251/2500
+intfloat_e5-base-v2	scidocs	8	200	1	0.95	80	9511/10000	matched	80	9511/10000
+intfloat_e5-base-v2	scidocs	8	200	1	0.99	300	1983/2000	matched	250	618/625
+intfloat_e5-base-v2	scidocs	32	200	1	0.80	10	8511/10000	below reach	10	8511/10000
+intfloat_e5-base-v2	scidocs	32	200	1	0.85	10	8511/10000	matched	10	8511/10000
+intfloat_e5-base-v2	scidocs	32	200	1	0.90	16	9051/10000	matched	15	2247/2500
+intfloat_e5-base-v2	scidocs	32	200	1	0.95	29	1189/1250	matched	28	9493/10000
+intfloat_e5-base-v2	scidocs	32	200	1	0.99	90	1983/2000	matched	80	2473/2500
+intfloat_e5-base-v2	scifact	16	200	0	0.80	10	171/200	below reach	10	171/200
+intfloat_e5-base-v2	scifact	16	200	0	0.85	10	171/200	matched	10	171/200
+intfloat_e5-base-v2	scifact	16	200	0	0.90	15	109/120	matched	14	2699/3000
+intfloat_e5-base-v2	scifact	16	200	0	0.95	25	2861/3000	matched	24	2849/3000
+intfloat_e5-base-v2	scifact	16	200	0	0.99	70	124/125	matched	60	371/375
+intfloat_e5-base-v2	scifact	16	200	1	0.80	10	2569/3000	below reach	10	2569/3000
+intfloat_e5-base-v2	scifact	16	200	1	0.85	10	2569/3000	matched	10	2569/3000
+intfloat_e5-base-v2	scifact	16	200	1	0.90	15	2731/3000	overshoot	14	449/500
+intfloat_e5-base-v2	scifact	16	200	1	0.95	23	713/750	matched	23	713/750
+intfloat_e5-base-v2	scifact	16	200	1	0.99	70	1489/1500	matched	60	2969/3000
+intfloat_e5-base-v2	scifact	16	200	2	0.80	10	1273/1500	below reach	10	1273/1500
+intfloat_e5-base-v2	scifact	16	200	2	0.85	11	1289/1500	matched	10	1273/1500
+intfloat_e5-base-v2	scifact	16	200	2	0.90	16	1361/1500	matched	15	2699/3000
+intfloat_e5-base-v2	scifact	16	200	2	0.95	25	19/20	matched	25	19/20
+intfloat_e5-base-v2	scifact	16	200	2	0.99	70	99/100	matched	70	99/100
+intfloat_e5-base-v2	scifact	16	200	3	0.80	10	2537/3000	below reach	10	2537/3000
+intfloat_e5-base-v2	scifact	16	200	3	0.85	11	2591/3000	overshoot	10	2537/3000
+intfloat_e5-base-v2	scifact	16	200	3	0.90	15	541/600	matched	15	541/600
+intfloat_e5-base-v2	scifact	16	200	3	0.95	26	1429/1500	matched	25	569/600
+intfloat_e5-base-v2	scifact	16	200	3	0.99	58	99/100	matched	58	99/100
+intfloat_e5-base-v2	scifact	16	200	4	0.80	10	2533/3000	below reach	10	2533/3000
+intfloat_e5-base-v2	scifact	16	200	4	0.85	11	108/125	overshoot	10	2533/3000
+intfloat_e5-base-v2	scifact	16	200	4	0.90	15	2723/3000	matched	14	539/600
+intfloat_e5-base-v2	scifact	16	200	4	0.95	25	571/600	matched	25	571/600
+intfloat_e5-base-v2	scifact	16	200	4	0.99	80	2977/3000	matched	70	2969/3000
+intfloat_e5-base-v2	scifact	8	200	1	0.80	13	811/1000	overshoot	12	2399/3000
+intfloat_e5-base-v2	scifact	8	200	1	0.85	17	103/120	matched	16	127/150
+intfloat_e5-base-v2	scifact	8	200	1	0.90	25	901/1000	matched	24	2699/3000
+intfloat_e5-base-v2	scifact	8	200	1	0.95	48	1427/1500	matched	47	356/375
+intfloat_e5-base-v2	scifact	8	200	1	0.99	150	2977/3000	matched	120	2969/3000
+intfloat_e5-base-v2	scifact	32	200	1	0.80	10	443/500	below reach	10	443/500
+intfloat_e5-base-v2	scifact	32	200	1	0.85	10	443/500	below reach	10	443/500
+intfloat_e5-base-v2	scifact	32	200	1	0.90	12	2729/3000	matched	11	447/500
+intfloat_e5-base-v2	scifact	32	200	1	0.95	18	2857/3000	matched	18	2857/3000
+intfloat_e5-base-v2	scifact	32	200	1	0.99	41	743/750	matched	40	2969/3000
+intfloat_e5-base-v2	trec-covid	16	200	0	0.80	15	401/500	matched	15	401/500
+intfloat_e5-base-v2	trec-covid	16	200	0	0.85	24	109/125	overshoot	23	21/25
+intfloat_e5-base-v2	trec-covid	16	200	0	0.90	34	9/10	matched	34	9/10
+intfloat_e5-base-v2	trec-covid	16	200	0	0.95	59	19/20	matched	59	19/20
+intfloat_e5-base-v2	trec-covid	16	200	0	0.99	250	99/100	matched	250	99/100
+intfloat_e5-base-v2	trec-covid	16	200	1	0.80	17	81/100	matched	17	81/100
+intfloat_e5-base-v2	trec-covid	16	200	1	0.85	23	107/125	matched	23	107/125
+intfloat_e5-base-v2	trec-covid	16	200	1	0.90	31	113/125	matched	31	113/125
+intfloat_e5-base-v2	trec-covid	16	200	1	0.95	70	24/25	matched	58	118/125
+intfloat_e5-base-v2	trec-covid	16	200	1	0.99	150	99/100	matched	150	99/100
+intfloat_e5-base-v2	trec-covid	16	200	2	0.80	17	403/500	matched	17	403/500
+intfloat_e5-base-v2	trec-covid	16	200	2	0.85	26	427/500	matched	25	106/125
+intfloat_e5-base-v2	trec-covid	16	200	2	0.90	35	91/100	matched	35	91/100
+intfloat_e5-base-v2	trec-covid	16	200	2	0.95	46	19/20	matched	46	19/20
+intfloat_e5-base-v2	trec-covid	16	200	2	0.99	100	99/100	matched	100	99/100
+intfloat_e5-base-v2	trec-covid	16	200	3	0.80	14	403/500	matched	14	403/500
+intfloat_e5-base-v2	trec-covid	16	200	3	0.85	19	17/20	matched	19	17/20
+intfloat_e5-base-v2	trec-covid	16	200	3	0.90	25	9/10	matched	25	9/10
+intfloat_e5-base-v2	trec-covid	16	200	3	0.95	44	477/500	matched	40	473/500
+intfloat_e5-base-v2	trec-covid	16	200	3	0.99	120	124/125	matched	120	124/125
+intfloat_e5-base-v2	trec-covid	16	200	4	0.80	15	103/125	overshoot	14	79/100
+intfloat_e5-base-v2	trec-covid	16	200	4	0.85	19	17/20	matched	19	17/20
+intfloat_e5-base-v2	trec-covid	16	200	4	0.90	25	113/125	matched	24	449/500
+intfloat_e5-base-v2	trec-covid	16	200	4	0.95	45	19/20	matched	45	19/20
+intfloat_e5-base-v2	trec-covid	16	200	4	0.99	120	99/100	matched	120	99/100
+intfloat_e5-base-v2	trec-covid	8	200	1	0.80	28	203/250	overshoot	27	397/500
+intfloat_e5-base-v2	trec-covid	8	200	1	0.85	35	17/20	matched	35	17/20
+intfloat_e5-base-v2	trec-covid	8	200	1	0.90	52	113/125	matched	51	112/125
+intfloat_e5-base-v2	trec-covid	8	200	1	0.95	90	477/500	matched	90	477/500
+intfloat_e5-base-v2	trec-covid	8	200	1	0.99	600	249/250	matched	500	247/250
+intfloat_e5-base-v2	trec-covid	32	200	1	0.80	15	81/100	matched	14	397/500
+intfloat_e5-base-v2	trec-covid	32	200	1	0.85	21	107/125	matched	20	106/125
+intfloat_e5-base-v2	trec-covid	32	200	1	0.90	28	453/500	matched	27	449/500
+intfloat_e5-base-v2	trec-covid	32	200	1	0.95	45	19/20	matched	45	19/20
+intfloat_e5-base-v2	trec-covid	32	200	1	0.99	120	124/125	matched	120	124/125
+mixedbread-ai_mxbai-embed-large-v1	arguana	16	200	0	0.80	10	13843/14060	below reach	10	13843/14060
+mixedbread-ai_mxbai-embed-large-v1	arguana	16	200	0	0.85	10	13843/14060	below reach	10	13843/14060
+mixedbread-ai_mxbai-embed-large-v1	arguana	16	200	0	0.90	10	13843/14060	below reach	10	13843/14060
+mixedbread-ai_mxbai-embed-large-v1	arguana	16	200	0	0.95	10	13843/14060	below reach	10	13843/14060
+mixedbread-ai_mxbai-embed-large-v1	arguana	16	200	0	0.99	13	13943/14060	matched	12	3479/3515
+mixedbread-ai_mxbai-embed-large-v1	arguana	16	200	1	0.80	10	13839/14060	below reach	10	13839/14060
+mixedbread-ai_mxbai-embed-large-v1	arguana	16	200	1	0.85	10	13839/14060	below reach	10	13839/14060
+mixedbread-ai_mxbai-embed-large-v1	arguana	16	200	1	0.90	10	13839/14060	below reach	10	13839/14060
+mixedbread-ai_mxbai-embed-large-v1	arguana	16	200	1	0.95	10	13839/14060	below reach	10	13839/14060
+mixedbread-ai_mxbai-embed-large-v1	arguana	16	200	1	0.99	13	13929/14060	matched	12	1391/1406
+mixedbread-ai_mxbai-embed-large-v1	arguana	16	200	2	0.80	10	3466/3515	below reach	10	3466/3515
+mixedbread-ai_mxbai-embed-large-v1	arguana	16	200	2	0.85	10	3466/3515	below reach	10	3466/3515
+mixedbread-ai_mxbai-embed-large-v1	arguana	16	200	2	0.90	10	3466/3515	below reach	10	3466/3515
+mixedbread-ai_mxbai-embed-large-v1	arguana	16	200	2	0.95	10	3466/3515	below reach	10	3466/3515
+mixedbread-ai_mxbai-embed-large-v1	arguana	16	200	2	0.99	12	2787/2812	matched	11	3476/3515
+mixedbread-ai_mxbai-embed-large-v1	arguana	16	200	3	0.80	10	13849/14060	below reach	10	13849/14060
+mixedbread-ai_mxbai-embed-large-v1	arguana	16	200	3	0.85	10	13849/14060	below reach	10	13849/14060
+mixedbread-ai_mxbai-embed-large-v1	arguana	16	200	3	0.90	10	13849/14060	below reach	10	13849/14060
+mixedbread-ai_mxbai-embed-large-v1	arguana	16	200	3	0.95	10	13849/14060	below reach	10	13849/14060
+mixedbread-ai_mxbai-embed-large-v1	arguana	16	200	3	0.99	12	6963/7030	matched	12	6963/7030
+mixedbread-ai_mxbai-embed-large-v1	arguana	16	200	4	0.80	10	13839/14060	below reach	10	13839/14060
+mixedbread-ai_mxbai-embed-large-v1	arguana	16	200	4	0.85	10	13839/14060	below reach	10	13839/14060
+mixedbread-ai_mxbai-embed-large-v1	arguana	16	200	4	0.90	10	13839/14060	below reach	10	13839/14060
+mixedbread-ai_mxbai-embed-large-v1	arguana	16	200	4	0.95	10	13839/14060	below reach	10	13839/14060
+mixedbread-ai_mxbai-embed-large-v1	arguana	16	200	4	0.99	13	13933/14060	matched	13	13933/14060
+mixedbread-ai_mxbai-embed-large-v1	arguana	8	200	1	0.80	10	6819/7030	below reach	10	6819/7030
+mixedbread-ai_mxbai-embed-large-v1	arguana	8	200	1	0.85	10	6819/7030	below reach	10	6819/7030
+mixedbread-ai_mxbai-embed-large-v1	arguana	8	200	1	0.90	10	6819/7030	below reach	10	6819/7030
+mixedbread-ai_mxbai-embed-large-v1	arguana	8	200	1	0.95	10	6819/7030	below reach	10	6819/7030
+mixedbread-ai_mxbai-embed-large-v1	arguana	8	200	1	0.99	19	6963/7030	matched	19	6963/7030
+mixedbread-ai_mxbai-embed-large-v1	arguana	32	200	1	0.80	10	13933/14060	below reach	10	13933/14060
+mixedbread-ai_mxbai-embed-large-v1	arguana	32	200	1	0.85	10	13933/14060	below reach	10	13933/14060
+mixedbread-ai_mxbai-embed-large-v1	arguana	32	200	1	0.90	10	13933/14060	below reach	10	13933/14060
+mixedbread-ai_mxbai-embed-large-v1	arguana	32	200	1	0.95	10	13933/14060	below reach	10	13933/14060
+mixedbread-ai_mxbai-embed-large-v1	arguana	32	200	1	0.99	10	13933/14060	matched	10	13933/14060
+mixedbread-ai_mxbai-embed-large-v1	fiqa	16	200	0	0.80	10	353/432	below reach	10	353/432
+mixedbread-ai_mxbai-embed-large-v1	fiqa	16	200	0	0.85	13	347/405	matched	13	347/405
+mixedbread-ai_mxbai-embed-large-v1	fiqa	16	200	0	0.90	18	5833/6480	matched	18	5833/6480
+mixedbread-ai_mxbai-embed-large-v1	fiqa	16	200	0	0.95	32	617/648	matched	31	128/135
+mixedbread-ai_mxbai-embed-large-v1	fiqa	16	200	0	0.99	90	803/810	matched	80	89/90
+mixedbread-ai_mxbai-embed-large-v1	fiqa	16	200	1	0.80	10	1333/1620	below reach	10	1333/1620
+mixedbread-ai_mxbai-embed-large-v1	fiqa	16	200	1	0.85	13	1859/2160	overshoot	12	5497/6480
+mixedbread-ai_mxbai-embed-large-v1	fiqa	16	200	1	0.90	18	1169/1296	matched	18	1169/1296
+mixedbread-ai_mxbai-embed-large-v1	fiqa	16	200	1	0.95	31	617/648	matched	30	6151/6480
+mixedbread-ai_mxbai-embed-large-v1	fiqa	16	200	1	0.99	90	6427/6480	matched	80	6413/6480
+mixedbread-ai_mxbai-embed-large-v1	fiqa	16	200	2	0.80	10	5291/6480	below reach	10	5291/6480
+mixedbread-ai_mxbai-embed-large-v1	fiqa	16	200	2	0.85	13	2771/3240	matched	12	5477/6480
+mixedbread-ai_mxbai-embed-large-v1	fiqa	16	200	2	0.90	20	2927/3240	matched	19	971/1080
+mixedbread-ai_mxbai-embed-large-v1	fiqa	16	200	2	0.95	33	3079/3240	matched	33	3079/3240
+mixedbread-ai_mxbai-embed-large-v1	fiqa	16	200	2	0.99	100	107/108	matched	100	107/108
+mixedbread-ai_mxbai-embed-large-v1	fiqa	16	200	3	0.80	10	5321/6480	below reach	10	5321/6480
+mixedbread-ai_mxbai-embed-large-v1	fiqa	16	200	3	0.85	13	2783/3240	matched	12	1831/2160
+mixedbread-ai_mxbai-embed-large-v1	fiqa	16	200	3	0.90	19	1463/1620	matched	19	1463/1620
+mixedbread-ai_mxbai-embed-large-v1	fiqa	16	200	3	0.95	32	6163/6480	matched	32	6163/6480
+mixedbread-ai_mxbai-embed-large-v1	fiqa	16	200	3	0.99	100	3211/3240	matched	90	1069/1080
+mixedbread-ai_mxbai-embed-large-v1	fiqa	16	200	4	0.80	10	2651/3240	below reach	10	2651/3240
+mixedbread-ai_mxbai-embed-large-v1	fiqa	16	200	4	0.85	13	1849/2160	matched	12	1829/2160
+mixedbread-ai_mxbai-embed-large-v1	fiqa	16	200	4	0.90	19	217/240	matched	18	2911/3240
+mixedbread-ai_mxbai-embed-large-v1	fiqa	16	200	4	0.95	30	1543/1620	matched	29	3077/3240
+mixedbread-ai_mxbai-embed-large-v1	fiqa	16	200	4	0.99	80	6427/6480	matched	70	427/432
+mixedbread-ai_mxbai-embed-large-v1	fiqa	8	200	1	0.80	16	5213/6480	matched	15	1721/2160
+mixedbread-ai_mxbai-embed-large-v1	fiqa	8	200	1	0.85	23	1843/2160	matched	22	5507/6480
+mixedbread-ai_mxbai-embed-large-v1	fiqa	8	200	1	0.90	33	65/72	matched	32	1163/1296
+mixedbread-ai_mxbai-embed-large-v1	fiqa	8	200	1	0.95	70	1033/1080	matched	60	683/720
+mixedbread-ai_mxbai-embed-large-v1	fiqa	8	200	1	0.99	200	3209/3240	matched	200	3209/3240
+mixedbread-ai_mxbai-embed-large-v1	fiqa	32	200	1	0.80	10	1111/1296	below reach	10	1111/1296
+mixedbread-ai_mxbai-embed-large-v1	fiqa	32	200	1	0.85	10	1111/1296	matched	10	1111/1296
+mixedbread-ai_mxbai-embed-large-v1	fiqa	32	200	1	0.90	14	2923/3240	matched	14	2923/3240
+mixedbread-ai_mxbai-embed-large-v1	fiqa	32	200	1	0.95	24	3083/3240	matched	23	6149/6480
+mixedbread-ai_mxbai-embed-large-v1	fiqa	32	200	1	0.99	58	713/720	matched	58	713/720
+mixedbread-ai_mxbai-embed-large-v1	nfcorpus	16	200	0	0.80	10	519/646	matched	10	519/646
+mixedbread-ai_mxbai-embed-large-v1	nfcorpus	16	200	0	0.85	13	2747/3230	matched	13	2747/3230
+mixedbread-ai_mxbai-embed-large-v1	nfcorpus	16	200	0	0.90	20	292/323	matched	19	1451/1615
+mixedbread-ai_mxbai-embed-large-v1	nfcorpus	16	200	0	0.95	35	1537/1615	matched	35	1537/1615
+mixedbread-ai_mxbai-embed-large-v1	nfcorpus	16	200	0	0.99	100	1601/1615	matched	90	639/646
+mixedbread-ai_mxbai-embed-large-v1	nfcorpus	16	200	1	0.80	10	1341/1615	below reach	10	1341/1615
+mixedbread-ai_mxbai-embed-large-v1	nfcorpus	16	200	1	0.85	12	2761/3230	matched	12	2761/3230
+mixedbread-ai_mxbai-embed-large-v1	nfcorpus	16	200	1	0.90	19	77/85	matched	18	2899/3230
+mixedbread-ai_mxbai-embed-large-v1	nfcorpus	16	200	1	0.95	37	3071/3230	matched	37	3071/3230
+mixedbread-ai_mxbai-embed-large-v1	nfcorpus	16	200	1	0.99	120	1599/1615	matched	120	1599/1615
+mixedbread-ai_mxbai-embed-large-v1	nfcorpus	16	200	2	0.80	10	1339/1615	below reach	10	1339/1615
+mixedbread-ai_mxbai-embed-large-v1	nfcorpus	16	200	2	0.85	12	29/34	matched	12	29/34
+mixedbread-ai_mxbai-embed-large-v1	nfcorpus	16	200	2	0.90	17	1459/1615	matched	17	1459/1615
+mixedbread-ai_mxbai-embed-large-v1	nfcorpus	16	200	2	0.95	32	1536/1615	matched	31	1534/1615
+mixedbread-ai_mxbai-embed-large-v1	nfcorpus	16	200	2	0.99	100	320/323	matched	100	320/323
+mixedbread-ai_mxbai-embed-large-v1	nfcorpus	16	200	3	0.80	10	1344/1615	below reach	10	1344/1615
+mixedbread-ai_mxbai-embed-large-v1	nfcorpus	16	200	3	0.85	12	555/646	matched	11	2729/3230
+mixedbread-ai_mxbai-embed-large-v1	nfcorpus	16	200	3	0.90	17	2909/3230	matched	17	2909/3230
+mixedbread-ai_mxbai-embed-large-v1	nfcorpus	16	200	3	0.95	33	81/85	matched	32	3067/3230
+mixedbread-ai_mxbai-embed-large-v1	nfcorpus	16	200	3	0.99	100	320/323	matched	100	320/323
+mixedbread-ai_mxbai-embed-large-v1	nfcorpus	16	200	4	0.80	10	79/95	below reach	10	79/95
+mixedbread-ai_mxbai-embed-large-v1	nfcorpus	16	200	4	0.85	12	2779/3230	overshoot	11	161/190
+mixedbread-ai_mxbai-embed-large-v1	nfcorpus	16	200	4	0.90	18	2927/3230	matched	17	1446/1615
+mixedbread-ai_mxbai-embed-large-v1	nfcorpus	16	200	4	0.95	32	307/323	matched	32	307/323
+mixedbread-ai_mxbai-embed-large-v1	nfcorpus	16	200	4	0.99	100	1601/1615	matched	90	639/646
+mixedbread-ai_mxbai-embed-large-v1	nfcorpus	8	200	1	0.80	13	523/646	matched	12	1286/1615
+mixedbread-ai_mxbai-embed-large-v1	nfcorpus	8	200	1	0.85	18	1374/1615	matched	18	1374/1615
+mixedbread-ai_mxbai-embed-large-v1	nfcorpus	8	200	1	0.90	29	2917/3230	matched	28	1451/1615
+mixedbread-ai_mxbai-embed-large-v1	nfcorpus	8	200	1	0.95	58	3069/3230	matched	57	1534/1615
+mixedbread-ai_mxbai-embed-large-v1	nfcorpus	8	200	1	0.99	200	169/170	matched	150	3197/3230
+mixedbread-ai_mxbai-embed-large-v1	nfcorpus	32	200	1	0.80	10	1371/1615	below reach	10	1371/1615
+mixedbread-ai_mxbai-embed-large-v1	nfcorpus	32	200	1	0.85	11	279/323	overshoot	10	1371/1615
+mixedbread-ai_mxbai-embed-large-v1	nfcorpus	32	200	1	0.90	16	1464/1615	matched	15	1453/1615
+mixedbread-ai_mxbai-embed-large-v1	nfcorpus	32	200	1	0.95	30	1536/1615	matched	29	1534/1615
+mixedbread-ai_mxbai-embed-large-v1	nfcorpus	32	200	1	0.99	90	320/323	matched	90	320/323
+mixedbread-ai_mxbai-embed-large-v1	nq	16	200	0	0.80	10	14679/17260	below reach	10	14679/17260
+mixedbread-ai_mxbai-embed-large-v1	nq	16	200	0	0.85	10	14679/17260	matched	10	14679/17260
+mixedbread-ai_mxbai-embed-large-v1	nq	16	200	0	0.90	15	31079/34520	matched	15	31079/34520
+mixedbread-ai_mxbai-embed-large-v1	nq	16	200	0	0.95	29	32833/34520	matched	28	16393/17260
+mixedbread-ai_mxbai-embed-large-v1	nq	16	200	0	0.99	120	4279/4315	matched	100	8537/8630
+mixedbread-ai_mxbai-embed-large-v1	nq	16	200	1	0.80	10	29357/34520	below reach	10	29357/34520
+mixedbread-ai_mxbai-embed-large-v1	nq	16	200	1	0.85	10	29357/34520	matched	10	29357/34520
+mixedbread-ai_mxbai-embed-large-v1	nq	16	200	1	0.90	15	31081/34520	matched	15	31081/34520
+mixedbread-ai_mxbai-embed-large-v1	nq	16	200	1	0.95	32	32841/34520	matched	31	3279/3452
+mixedbread-ai_mxbai-embed-large-v1	nq	16	200	1	0.99	200	34239/34520	matched	150	17069/17260
+mixedbread-ai_mxbai-embed-large-v1	nq	16	200	2	0.80	10	29347/34520	below reach	10	29347/34520
+mixedbread-ai_mxbai-embed-large-v1	nq	16	200	2	0.85	10	29347/34520	matched	10	29347/34520
+mixedbread-ai_mxbai-embed-large-v1	nq	16	200	2	0.90	16	7793/8630	matched	16	7793/8630
+mixedbread-ai_mxbai-embed-large-v1	nq	16	200	2	0.95	31	8207/8630	matched	30	16381/17260
+mixedbread-ai_mxbai-embed-large-v1	nq	16	200	2	0.99	150	34193/34520	matched	150	34193/34520
+mixedbread-ai_mxbai-embed-large-v1	nq	16	200	3	0.80	10	14571/17260	below reach	10	14571/17260
+mixedbread-ai_mxbai-embed-large-v1	nq	16	200	3	0.85	11	2961/3452	matched	10	14571/17260
+mixedbread-ai_mxbai-embed-large-v1	nq	16	200	3	0.90	16	31187/34520	matched	15	6197/6904
+mixedbread-ai_mxbai-embed-large-v1	nq	16	200	3	0.95	30	8213/8630	matched	29	32783/34520
+mixedbread-ai_mxbai-embed-large-v1	nq	16	200	3	0.99	200	34229/34520	matched	150	17087/17260
+mixedbread-ai_mxbai-embed-large-v1	nq	16	200	4	0.80	10	3677/4315	below reach	10	3677/4315
+mixedbread-ai_mxbai-embed-large-v1	nq	16	200	4	0.85	10	3677/4315	matched	10	3677/4315
+mixedbread-ai_mxbai-embed-large-v1	nq	16	200	4	0.90	16	15633/17260	matched	15	31017/34520
+mixedbread-ai_mxbai-embed-large-v1	nq	16	200	4	0.95	30	4104/4315	matched	29	32767/34520
+mixedbread-ai_mxbai-embed-large-v1	nq	16	200	4	0.99	200	34253/34520	matched	150	4271/4315
+mixedbread-ai_mxbai-embed-large-v1	quora	16	200	0	0.80	10	47681/50000	below reach	10	47681/50000
+mixedbread-ai_mxbai-embed-large-v1	quora	16	200	0	0.85	10	47681/50000	below reach	10	47681/50000
+mixedbread-ai_mxbai-embed-large-v1	quora	16	200	0	0.90	10	47681/50000	below reach	10	47681/50000
+mixedbread-ai_mxbai-embed-large-v1	quora	16	200	0	0.95	10	47681/50000	matched	10	47681/50000
+mixedbread-ai_mxbai-embed-large-v1	quora	16	200	0	0.99	32	99003/100000	matched	32	99003/100000
+mixedbread-ai_mxbai-embed-large-v1	quora	16	200	1	0.80	10	95419/100000	below reach	10	95419/100000
+mixedbread-ai_mxbai-embed-large-v1	quora	16	200	1	0.85	10	95419/100000	below reach	10	95419/100000
+mixedbread-ai_mxbai-embed-large-v1	quora	16	200	1	0.90	10	95419/100000	below reach	10	95419/100000
+mixedbread-ai_mxbai-embed-large-v1	quora	16	200	1	0.95	10	95419/100000	matched	10	95419/100000
+mixedbread-ai_mxbai-embed-large-v1	quora	16	200	1	0.99	31	99/100	matched	31	99/100
+mixedbread-ai_mxbai-embed-large-v1	quora	16	200	2	0.80	10	95697/100000	below reach	10	95697/100000
+mixedbread-ai_mxbai-embed-large-v1	quora	16	200	2	0.85	10	95697/100000	below reach	10	95697/100000
+mixedbread-ai_mxbai-embed-large-v1	quora	16	200	2	0.90	10	95697/100000	below reach	10	95697/100000
+mixedbread-ai_mxbai-embed-large-v1	quora	16	200	2	0.95	10	95697/100000	matched	10	95697/100000
+mixedbread-ai_mxbai-embed-large-v1	quora	16	200	2	0.99	30	99009/100000	matched	30	99009/100000
+mixedbread-ai_mxbai-embed-large-v1	quora	16	200	3	0.80	10	95493/100000	below reach	10	95493/100000
+mixedbread-ai_mxbai-embed-large-v1	quora	16	200	3	0.85	10	95493/100000	below reach	10	95493/100000
+mixedbread-ai_mxbai-embed-large-v1	quora	16	200	3	0.90	10	95493/100000	below reach	10	95493/100000
+mixedbread-ai_mxbai-embed-large-v1	quora	16	200	3	0.95	10	95493/100000	matched	10	95493/100000
+mixedbread-ai_mxbai-embed-large-v1	quora	16	200	3	0.99	31	24761/25000	matched	30	98997/100000
+mixedbread-ai_mxbai-embed-large-v1	quora	16	200	4	0.80	10	95591/100000	below reach	10	95591/100000
+mixedbread-ai_mxbai-embed-large-v1	quora	16	200	4	0.85	10	95591/100000	below reach	10	95591/100000
+mixedbread-ai_mxbai-embed-large-v1	quora	16	200	4	0.90	10	95591/100000	below reach	10	95591/100000
+mixedbread-ai_mxbai-embed-large-v1	quora	16	200	4	0.95	10	95591/100000	matched	10	95591/100000
+mixedbread-ai_mxbai-embed-large-v1	quora	16	200	4	0.99	32	99027/100000	matched	31	9899/10000
+mixedbread-ai_mxbai-embed-large-v1	quora	8	200	1	0.80	10	89151/100000	below reach	10	89151/100000
+mixedbread-ai_mxbai-embed-large-v1	quora	8	200	1	0.85	10	89151/100000	below reach	10	89151/100000
+mixedbread-ai_mxbai-embed-large-v1	quora	8	200	1	0.90	11	45143/50000	matched	11	45143/50000
+mixedbread-ai_mxbai-embed-large-v1	quora	8	200	1	0.95	20	95071/100000	matched	20	95071/100000
+mixedbread-ai_mxbai-embed-large-v1	quora	8	200	1	0.99	150	2477/2500	matched	120	98943/100000
+mixedbread-ai_mxbai-embed-large-v1	quora	32	200	1	0.80	10	48543/50000	below reach	10	48543/50000
+mixedbread-ai_mxbai-embed-large-v1	quora	32	200	1	0.85	10	48543/50000	below reach	10	48543/50000
+mixedbread-ai_mxbai-embed-large-v1	quora	32	200	1	0.90	10	48543/50000	below reach	10	48543/50000
+mixedbread-ai_mxbai-embed-large-v1	quora	32	200	1	0.95	10	48543/50000	below reach	10	48543/50000
+mixedbread-ai_mxbai-embed-large-v1	quora	32	200	1	0.99	21	99031/100000	matched	21	99031/100000
+mixedbread-ai_mxbai-embed-large-v1	scidocs	16	200	0	0.80	10	9117/10000	below reach	10	9117/10000
+mixedbread-ai_mxbai-embed-large-v1	scidocs	16	200	0	0.85	10	9117/10000	below reach	10	9117/10000
+mixedbread-ai_mxbai-embed-large-v1	scidocs	16	200	0	0.90	10	9117/10000	below reach	10	9117/10000
+mixedbread-ai_mxbai-embed-large-v1	scidocs	16	200	0	0.95	16	4771/5000	matched	15	9491/10000
+mixedbread-ai_mxbai-embed-large-v1	scidocs	16	200	0	0.99	37	4953/5000	matched	36	4949/5000
+mixedbread-ai_mxbai-embed-large-v1	scidocs	16	200	1	0.80	10	4553/5000	below reach	10	4553/5000
+mixedbread-ai_mxbai-embed-large-v1	scidocs	16	200	1	0.85	10	4553/5000	below reach	10	4553/5000
+mixedbread-ai_mxbai-embed-large-v1	scidocs	16	200	1	0.90	10	4553/5000	below reach	10	4553/5000
+mixedbread-ai_mxbai-embed-large-v1	scidocs	16	200	1	0.95	16	1909/2000	matched	15	4747/5000
+mixedbread-ai_mxbai-embed-large-v1	scidocs	16	200	1	0.99	37	4953/5000	matched	36	4949/5000
+mixedbread-ai_mxbai-embed-large-v1	scidocs	16	200	2	0.80	10	91/100	below reach	10	91/100
+mixedbread-ai_mxbai-embed-large-v1	scidocs	16	200	2	0.85	10	91/100	below reach	10	91/100
+mixedbread-ai_mxbai-embed-large-v1	scidocs	16	200	2	0.90	10	91/100	matched	10	91/100
+mixedbread-ai_mxbai-embed-large-v1	scidocs	16	200	2	0.95	16	119/125	matched	16	119/125
+mixedbread-ai_mxbai-embed-large-v1	scidocs	16	200	2	0.99	37	4951/5000	matched	36	4949/5000
+mixedbread-ai_mxbai-embed-large-v1	scidocs	16	200	3	0.80	10	1829/2000	below reach	10	1829/2000
+mixedbread-ai_mxbai-embed-large-v1	scidocs	16	200	3	0.85	10	1829/2000	below reach	10	1829/2000
+mixedbread-ai_mxbai-embed-large-v1	scidocs	16	200	3	0.90	10	1829/2000	below reach	10	1829/2000
+mixedbread-ai_mxbai-embed-large-v1	scidocs	16	200	3	0.95	15	9519/10000	matched	15	9519/10000
+mixedbread-ai_mxbai-embed-large-v1	scidocs	16	200	3	0.99	35	9901/10000	matched	35	9901/10000
+mixedbread-ai_mxbai-embed-large-v1	scidocs	16	200	4	0.80	10	1821/2000	below reach	10	1821/2000
+mixedbread-ai_mxbai-embed-large-v1	scidocs	16	200	4	0.85	10	1821/2000	below reach	10	1821/2000
+mixedbread-ai_mxbai-embed-large-v1	scidocs	16	200	4	0.90	10	1821/2000	below reach	10	1821/2000
+mixedbread-ai_mxbai-embed-large-v1	scidocs	16	200	4	0.95	16	2383/2500	matched	15	9499/10000
+mixedbread-ai_mxbai-embed-large-v1	scidocs	16	200	4	0.99	36	99/100	matched	36	99/100
+mixedbread-ai_mxbai-embed-large-v1	scidocs	8	200	1	0.80	10	4253/5000	below reach	10	4253/5000
+mixedbread-ai_mxbai-embed-large-v1	scidocs	8	200	1	0.85	10	4253/5000	matched	10	4253/5000
+mixedbread-ai_mxbai-embed-large-v1	scidocs	8	200	1	0.90	15	1131/1250	matched	14	8959/10000
+mixedbread-ai_mxbai-embed-large-v1	scidocs	8	200	1	0.95	26	1901/2000	matched	26	1901/2000
+mixedbread-ai_mxbai-embed-large-v1	scidocs	8	200	1	0.99	70	9901/10000	matched	70	9901/10000
+mixedbread-ai_mxbai-embed-large-v1	scidocs	32	200	1	0.80	10	9333/10000	below reach	10	9333/10000
+mixedbread-ai_mxbai-embed-large-v1	scidocs	32	200	1	0.85	10	9333/10000	below reach	10	9333/10000
+mixedbread-ai_mxbai-embed-large-v1	scidocs	32	200	1	0.90	10	9333/10000	below reach	10	9333/10000
+mixedbread-ai_mxbai-embed-large-v1	scidocs	32	200	1	0.95	13	597/625	matched	12	1897/2000
+mixedbread-ai_mxbai-embed-large-v1	scidocs	32	200	1	0.99	27	4951/5000	matched	27	4951/5000
+mixedbread-ai_mxbai-embed-large-v1	scifact	16	200	0	0.80	10	1387/1500	below reach	10	1387/1500
+mixedbread-ai_mxbai-embed-large-v1	scifact	16	200	0	0.85	10	1387/1500	below reach	10	1387/1500
+mixedbread-ai_mxbai-embed-large-v1	scifact	16	200	0	0.90	10	1387/1500	below reach	10	1387/1500
+mixedbread-ai_mxbai-embed-large-v1	scifact	16	200	0	0.95	13	571/600	matched	13	571/600
+mixedbread-ai_mxbai-embed-large-v1	scifact	16	200	0	0.99	30	2971/3000	matched	29	2969/3000
+mixedbread-ai_mxbai-embed-large-v1	scifact	16	200	1	0.80	10	139/150	below reach	10	139/150
+mixedbread-ai_mxbai-embed-large-v1	scifact	16	200	1	0.85	10	139/150	below reach	10	139/150
+mixedbread-ai_mxbai-embed-large-v1	scifact	16	200	1	0.90	10	139/150	below reach	10	139/150
+mixedbread-ai_mxbai-embed-large-v1	scifact	16	200	1	0.95	13	951/1000	matched	13	951/1000
+mixedbread-ai_mxbai-embed-large-v1	scifact	16	200	1	0.99	30	2971/3000	matched	30	2971/3000
+mixedbread-ai_mxbai-embed-large-v1	scifact	16	200	2	0.80	10	2761/3000	below reach	10	2761/3000
+mixedbread-ai_mxbai-embed-large-v1	scifact	16	200	2	0.85	10	2761/3000	below reach	10	2761/3000
+mixedbread-ai_mxbai-embed-large-v1	scifact	16	200	2	0.90	10	2761/3000	below reach	10	2761/3000
+mixedbread-ai_mxbai-embed-large-v1	scifact	16	200	2	0.95	14	713/750	matched	14	713/750
+mixedbread-ai_mxbai-embed-large-v1	scifact	16	200	2	0.99	27	2971/3000	matched	27	2971/3000
+mixedbread-ai_mxbai-embed-large-v1	scifact	16	200	3	0.80	10	139/150	below reach	10	139/150
+mixedbread-ai_mxbai-embed-large-v1	scifact	16	200	3	0.85	10	139/150	below reach	10	139/150
+mixedbread-ai_mxbai-embed-large-v1	scifact	16	200	3	0.90	10	139/150	below reach	10	139/150
+mixedbread-ai_mxbai-embed-large-v1	scifact	16	200	3	0.95	14	571/600	matched	14	571/600
+mixedbread-ai_mxbai-embed-large-v1	scifact	16	200	3	0.99	37	1487/1500	matched	36	2969/3000
+mixedbread-ai_mxbai-embed-large-v1	scifact	16	200	4	0.80	10	37/40	below reach	10	37/40
+mixedbread-ai_mxbai-embed-large-v1	scifact	16	200	4	0.85	10	37/40	below reach	10	37/40
+mixedbread-ai_mxbai-embed-large-v1	scifact	16	200	4	0.90	10	37/40	below reach	10	37/40
+mixedbread-ai_mxbai-embed-large-v1	scifact	16	200	4	0.95	13	713/750	matched	13	713/750
+mixedbread-ai_mxbai-embed-large-v1	scifact	16	200	4	0.99	29	743/750	matched	28	371/375
+mixedbread-ai_mxbai-embed-large-v1	scifact	8	200	1	0.80	10	257/300	below reach	10	257/300
+mixedbread-ai_mxbai-embed-large-v1	scifact	8	200	1	0.85	10	257/300	matched	10	257/300
+mixedbread-ai_mxbai-embed-large-v1	scifact	8	200	1	0.90	14	451/500	matched	14	451/500
+mixedbread-ai_mxbai-embed-large-v1	scifact	8	200	1	0.95	25	2867/3000	matched	24	356/375
+mixedbread-ai_mxbai-embed-large-v1	scifact	8	200	1	0.99	59	2971/3000	matched	59	2971/3000
+mixedbread-ai_mxbai-embed-large-v1	scifact	32	200	1	0.80	10	2837/3000	below reach	10	2837/3000
+mixedbread-ai_mxbai-embed-large-v1	scifact	32	200	1	0.85	10	2837/3000	below reach	10	2837/3000
+mixedbread-ai_mxbai-embed-large-v1	scifact	32	200	1	0.90	10	2837/3000	below reach	10	2837/3000
+mixedbread-ai_mxbai-embed-large-v1	scifact	32	200	1	0.95	11	953/1000	matched	11	953/1000
+mixedbread-ai_mxbai-embed-large-v1	scifact	32	200	1	0.99	23	2971/3000	matched	23	2971/3000
+mixedbread-ai_mxbai-embed-large-v1	trec-covid	16	200	0	0.80	10	437/500	below reach	10	437/500
+mixedbread-ai_mxbai-embed-large-v1	trec-covid	16	200	0	0.85	10	437/500	below reach	10	437/500
+mixedbread-ai_mxbai-embed-large-v1	trec-covid	16	200	0	0.90	13	91/100	matched	13	91/100
+mixedbread-ai_mxbai-embed-large-v1	trec-covid	16	200	0	0.95	26	119/125	matched	25	237/250
+mixedbread-ai_mxbai-embed-large-v1	trec-covid	16	200	0	0.99	120	249/250	matched	120	249/250
+mixedbread-ai_mxbai-embed-large-v1	trec-covid	16	200	1	0.80	10	437/500	below reach	10	437/500
+mixedbread-ai_mxbai-embed-large-v1	trec-covid	16	200	1	0.85	10	437/500	below reach	10	437/500
+mixedbread-ai_mxbai-embed-large-v1	trec-covid	16	200	1	0.90	12	451/500	matched	12	451/500
+mixedbread-ai_mxbai-embed-large-v1	trec-covid	16	200	1	0.95	20	19/20	matched	20	19/20
+mixedbread-ai_mxbai-embed-large-v1	trec-covid	16	200	1	0.99	120	1	matched	90	123/125
+mixedbread-ai_mxbai-embed-large-v1	trec-covid	16	200	2	0.80	10	423/500	below reach	10	423/500
+mixedbread-ai_mxbai-embed-large-v1	trec-covid	16	200	2	0.85	11	107/125	matched	10	423/500
+mixedbread-ai_mxbai-embed-large-v1	trec-covid	16	200	2	0.90	14	91/100	matched	13	447/500
+mixedbread-ai_mxbai-embed-large-v1	trec-covid	16	200	2	0.95	17	119/125	matched	17	119/125
+mixedbread-ai_mxbai-embed-large-v1	trec-covid	16	200	2	0.99	41	99/100	matched	41	99/100
+mixedbread-ai_mxbai-embed-large-v1	trec-covid	16	200	3	0.80	10	83/100	below reach	10	83/100
+mixedbread-ai_mxbai-embed-large-v1	trec-covid	16	200	3	0.85	14	431/500	overshoot	13	106/125
+mixedbread-ai_mxbai-embed-large-v1	trec-covid	16	200	3	0.90	18	9/10	matched	18	9/10
+mixedbread-ai_mxbai-embed-large-v1	trec-covid	16	200	3	0.95	42	119/125	matched	42	119/125
+mixedbread-ai_mxbai-embed-large-v1	trec-covid	16	200	3	0.99	120	497/500	matched	120	497/500
+mixedbread-ai_mxbai-embed-large-v1	trec-covid	16	200	4	0.80	10	423/500	below reach	10	423/500
+mixedbread-ai_mxbai-embed-large-v1	trec-covid	16	200	4	0.85	11	217/250	overshoot	10	423/500
+mixedbread-ai_mxbai-embed-large-v1	trec-covid	16	200	4	0.90	14	9/10	matched	14	9/10
+mixedbread-ai_mxbai-embed-large-v1	trec-covid	16	200	4	0.95	28	19/20	matched	28	19/20
+mixedbread-ai_mxbai-embed-large-v1	trec-covid	16	200	4	0.99	120	1	matched	80	49/50
+mixedbread-ai_mxbai-embed-large-v1	trec-covid	8	200	1	0.80	15	81/100	matched	14	79/100
+mixedbread-ai_mxbai-embed-large-v1	trec-covid	8	200	1	0.85	17	43/50	matched	16	21/25
+mixedbread-ai_mxbai-embed-large-v1	trec-covid	8	200	1	0.90	21	451/500	matched	21	451/500
+mixedbread-ai_mxbai-embed-large-v1	trec-covid	8	200	1	0.95	39	19/20	matched	39	19/20
+mixedbread-ai_mxbai-embed-large-v1	trec-covid	8	200	1	0.99	200	497/500	matched	150	247/250
+mixedbread-ai_mxbai-embed-large-v1	trec-covid	32	200	1	0.80	10	461/500	below reach	10	461/500
+mixedbread-ai_mxbai-embed-large-v1	trec-covid	32	200	1	0.85	10	461/500	below reach	10	461/500
+mixedbread-ai_mxbai-embed-large-v1	trec-covid	32	200	1	0.90	10	461/500	below reach	10	461/500
+mixedbread-ai_mxbai-embed-large-v1	trec-covid	32	200	1	0.95	16	239/250	matched	14	118/125
+mixedbread-ai_mxbai-embed-large-v1	trec-covid	32	200	1	0.99	120	1	matched	100	123/125
+sentence-transformers_all-MiniLM-L6-v2	arguana	16	200	0	0.80	10	6907/7030	below reach	10	6907/7030
+sentence-transformers_all-MiniLM-L6-v2	arguana	16	200	0	0.85	10	6907/7030	below reach	10	6907/7030
+sentence-transformers_all-MiniLM-L6-v2	arguana	16	200	0	0.90	10	6907/7030	below reach	10	6907/7030
+sentence-transformers_all-MiniLM-L6-v2	arguana	16	200	0	0.95	10	6907/7030	below reach	10	6907/7030
+sentence-transformers_all-MiniLM-L6-v2	arguana	16	200	0	0.99	13	6961/7030	matched	13	6961/7030
+sentence-transformers_all-MiniLM-L6-v2	arguana	16	200	1	0.80	10	13867/14060	below reach	10	13867/14060
+sentence-transformers_all-MiniLM-L6-v2	arguana	16	200	1	0.85	10	13867/14060	below reach	10	13867/14060
+sentence-transformers_all-MiniLM-L6-v2	arguana	16	200	1	0.90	10	13867/14060	below reach	10	13867/14060
+sentence-transformers_all-MiniLM-L6-v2	arguana	16	200	1	0.95	10	13867/14060	below reach	10	13867/14060
+sentence-transformers_all-MiniLM-L6-v2	arguana	16	200	1	0.99	12	6963/7030	matched	12	6963/7030
+sentence-transformers_all-MiniLM-L6-v2	arguana	16	200	2	0.80	10	13859/14060	below reach	10	13859/14060
+sentence-transformers_all-MiniLM-L6-v2	arguana	16	200	2	0.85	10	13859/14060	below reach	10	13859/14060
+sentence-transformers_all-MiniLM-L6-v2	arguana	16	200	2	0.90	10	13859/14060	below reach	10	13859/14060
+sentence-transformers_all-MiniLM-L6-v2	arguana	16	200	2	0.95	10	13859/14060	below reach	10	13859/14060
+sentence-transformers_all-MiniLM-L6-v2	arguana	16	200	2	0.99	12	1393/1406	matched	12	1393/1406
+sentence-transformers_all-MiniLM-L6-v2	arguana	16	200	3	0.80	10	13869/14060	below reach	10	13869/14060
+sentence-transformers_all-MiniLM-L6-v2	arguana	16	200	3	0.85	10	13869/14060	below reach	10	13869/14060
+sentence-transformers_all-MiniLM-L6-v2	arguana	16	200	3	0.90	10	13869/14060	below reach	10	13869/14060
+sentence-transformers_all-MiniLM-L6-v2	arguana	16	200	3	0.95	10	13869/14060	below reach	10	13869/14060
+sentence-transformers_all-MiniLM-L6-v2	arguana	16	200	3	0.99	12	13939/14060	matched	11	2783/2812
+sentence-transformers_all-MiniLM-L6-v2	arguana	16	200	4	0.80	10	13849/14060	below reach	10	13849/14060
+sentence-transformers_all-MiniLM-L6-v2	arguana	16	200	4	0.85	10	13849/14060	below reach	10	13849/14060
+sentence-transformers_all-MiniLM-L6-v2	arguana	16	200	4	0.90	10	13849/14060	below reach	10	13849/14060
+sentence-transformers_all-MiniLM-L6-v2	arguana	16	200	4	0.95	10	13849/14060	below reach	10	13849/14060
+sentence-transformers_all-MiniLM-L6-v2	arguana	16	200	4	0.99	12	733/740	matched	12	733/740
+sentence-transformers_all-MiniLM-L6-v2	arguana	8	200	1	0.80	10	6839/7030	below reach	10	6839/7030
+sentence-transformers_all-MiniLM-L6-v2	arguana	8	200	1	0.85	10	6839/7030	below reach	10	6839/7030
+sentence-transformers_all-MiniLM-L6-v2	arguana	8	200	1	0.90	10	6839/7030	below reach	10	6839/7030
+sentence-transformers_all-MiniLM-L6-v2	arguana	8	200	1	0.95	10	6839/7030	below reach	10	6839/7030
+sentence-transformers_all-MiniLM-L6-v2	arguana	8	200	1	0.99	17	3481/3515	matched	16	2783/2812
+sentence-transformers_all-MiniLM-L6-v2	arguana	32	200	1	0.80	10	13943/14060	below reach	10	13943/14060
+sentence-transformers_all-MiniLM-L6-v2	arguana	32	200	1	0.85	10	13943/14060	below reach	10	13943/14060
+sentence-transformers_all-MiniLM-L6-v2	arguana	32	200	1	0.90	10	13943/14060	below reach	10	13943/14060
+sentence-transformers_all-MiniLM-L6-v2	arguana	32	200	1	0.95	10	13943/14060	below reach	10	13943/14060
+sentence-transformers_all-MiniLM-L6-v2	arguana	32	200	1	0.99	10	13943/14060	matched	10	13943/14060
+sentence-transformers_all-MiniLM-L6-v2	fiqa	16	200	0	0.80	10	17/20	below reach	10	17/20
+sentence-transformers_all-MiniLM-L6-v2	fiqa	16	200	0	0.85	10	17/20	matched	10	17/20
+sentence-transformers_all-MiniLM-L6-v2	fiqa	16	200	0	0.90	15	731/810	matched	15	731/810
+sentence-transformers_all-MiniLM-L6-v2	fiqa	16	200	0	0.95	25	6157/6480	matched	25	6157/6480
+sentence-transformers_all-MiniLM-L6-v2	fiqa	16	200	0	0.99	70	401/405	matched	70	401/405
+sentence-transformers_all-MiniLM-L6-v2	fiqa	16	200	1	0.80	10	1811/2160	below reach	10	1811/2160
+sentence-transformers_all-MiniLM-L6-v2	fiqa	16	200	1	0.85	11	77/90	matched	11	77/90
+sentence-transformers_all-MiniLM-L6-v2	fiqa	16	200	1	0.90	16	5869/6480	matched	15	1165/1296
+sentence-transformers_all-MiniLM-L6-v2	fiqa	16	200	1	0.95	27	1541/1620	matched	26	769/810
+sentence-transformers_all-MiniLM-L6-v2	fiqa	16	200	1	0.99	80	6421/6480	matched	80	6421/6480
+sentence-transformers_all-MiniLM-L6-v2	fiqa	16	200	2	0.80	10	5473/6480	below reach	10	5473/6480
+sentence-transformers_all-MiniLM-L6-v2	fiqa	16	200	2	0.85	11	347/405	matched	10	5473/6480
+sentence-transformers_all-MiniLM-L6-v2	fiqa	16	200	2	0.90	15	649/720	matched	15	649/720
+sentence-transformers_all-MiniLM-L6-v2	fiqa	16	200	2	0.95	26	6167/6480	matched	25	3073/3240
+sentence-transformers_all-MiniLM-L6-v2	fiqa	16	200	2	0.99	80	119/120	matched	70	1283/1296
+sentence-transformers_all-MiniLM-L6-v2	fiqa	16	200	3	0.80	10	5473/6480	below reach	10	5473/6480
+sentence-transformers_all-MiniLM-L6-v2	fiqa	16	200	3	0.85	11	103/120	matched	10	5473/6480
+sentence-transformers_all-MiniLM-L6-v2	fiqa	16	200	3	0.90	16	5881/6480	matched	15	5831/6480
+sentence-transformers_all-MiniLM-L6-v2	fiqa	16	200	3	0.95	27	2053/2160	matched	27	2053/2160
+sentence-transformers_all-MiniLM-L6-v2	fiqa	16	200	3	0.99	80	119/120	matched	70	1069/1080
+sentence-transformers_all-MiniLM-L6-v2	fiqa	16	200	4	0.80	10	61/72	below reach	10	61/72
+sentence-transformers_all-MiniLM-L6-v2	fiqa	16	200	4	0.85	11	1859/2160	overshoot	10	61/72
+sentence-transformers_all-MiniLM-L6-v2	fiqa	16	200	4	0.90	16	1175/1296	matched	15	364/405
+sentence-transformers_all-MiniLM-L6-v2	fiqa	16	200	4	0.95	26	3083/3240	matched	26	3083/3240
+sentence-transformers_all-MiniLM-L6-v2	fiqa	16	200	4	0.99	80	2141/2160	matched	70	6409/6480
+sentence-transformers_all-MiniLM-L6-v2	fiqa	8	200	1	0.80	15	5257/6480	overshoot	14	863/1080
+sentence-transformers_all-MiniLM-L6-v2	fiqa	8	200	1	0.85	21	346/405	matched	20	5501/6480
+sentence-transformers_all-MiniLM-L6-v2	fiqa	8	200	1	0.90	32	5857/6480	matched	31	1943/2160
+sentence-transformers_all-MiniLM-L6-v2	fiqa	8	200	1	0.95	54	77/81	matched	54	77/81
+sentence-transformers_all-MiniLM-L6-v2	fiqa	8	200	1	0.99	200	107/108	matched	200	107/108
+sentence-transformers_all-MiniLM-L6-v2	fiqa	32	200	1	0.80	10	5767/6480	below reach	10	5767/6480
+sentence-transformers_all-MiniLM-L6-v2	fiqa	32	200	1	0.85	10	5767/6480	below reach	10	5767/6480
+sentence-transformers_all-MiniLM-L6-v2	fiqa	32	200	1	0.90	11	2921/3240	matched	11	2921/3240
+sentence-transformers_all-MiniLM-L6-v2	fiqa	32	200	1	0.95	18	19/20	matched	18	19/20
+sentence-transformers_all-MiniLM-L6-v2	fiqa	32	200	1	0.99	50	6427/6480	matched	49	1283/1296
+sentence-transformers_all-MiniLM-L6-v2	nfcorpus	16	200	0	0.80	10	137/170	matched	10	137/170
+sentence-transformers_all-MiniLM-L6-v2	nfcorpus	16	200	0	0.85	14	1383/1615	matched	13	2739/3230
+sentence-transformers_all-MiniLM-L6-v2	nfcorpus	16	200	0	0.90	21	1457/1615	matched	21	1457/1615
+sentence-transformers_all-MiniLM-L6-v2	nfcorpus	16	200	0	0.95	38	615/646	matched	37	1533/1615
+sentence-transformers_all-MiniLM-L6-v2	nfcorpus	16	200	0	0.99	100	3203/3230	matched	90	639/646
+sentence-transformers_all-MiniLM-L6-v2	nfcorpus	16	200	1	0.80	10	2607/3230	matched	10	2607/3230
+sentence-transformers_all-MiniLM-L6-v2	nfcorpus	16	200	1	0.85	14	2773/3230	matched	13	1366/1615
+sentence-transformers_all-MiniLM-L6-v2	nfcorpus	16	200	1	0.90	20	2911/3230	matched	20	2911/3230
+sentence-transformers_all-MiniLM-L6-v2	nfcorpus	16	200	1	0.95	37	1536/1615	matched	36	1534/1615
+sentence-transformers_all-MiniLM-L6-v2	nfcorpus	16	200	1	0.99	100	1601/1615	matched	100	1601/1615
+sentence-transformers_all-MiniLM-L6-v2	nfcorpus	16	200	2	0.80	10	1301/1615	matched	10	1301/1615
+sentence-transformers_all-MiniLM-L6-v2	nfcorpus	16	200	2	0.85	14	1378/1615	matched	14	1378/1615
+sentence-transformers_all-MiniLM-L6-v2	nfcorpus	16	200	2	0.90	21	2919/3230	matched	20	2901/3230
+sentence-transformers_all-MiniLM-L6-v2	nfcorpus	16	200	2	0.95	40	1537/1615	matched	39	3067/3230
+sentence-transformers_all-MiniLM-L6-v2	nfcorpus	16	200	2	0.99	120	3207/3230	matched	100	1597/1615
+sentence-transformers_all-MiniLM-L6-v2	nfcorpus	16	200	3	0.80	10	2591/3230	matched	10	2591/3230
+sentence-transformers_all-MiniLM-L6-v2	nfcorpus	16	200	3	0.85	14	163/190	matched	13	2731/3230
+sentence-transformers_all-MiniLM-L6-v2	nfcorpus	16	200	3	0.90	20	1459/1615	matched	19	2897/3230
+sentence-transformers_all-MiniLM-L6-v2	nfcorpus	16	200	3	0.95	36	3069/3230	matched	36	3069/3230
+sentence-transformers_all-MiniLM-L6-v2	nfcorpus	16	200	3	0.99	120	1603/1615	matched	120	1603/1615
+sentence-transformers_all-MiniLM-L6-v2	nfcorpus	16	200	4	0.80	10	1304/1615	matched	10	1304/1615
+sentence-transformers_all-MiniLM-L6-v2	nfcorpus	16	200	4	0.85	15	2779/3230	overshoot	14	1371/1615
+sentence-transformers_all-MiniLM-L6-v2	nfcorpus	16	200	4	0.90	22	1459/1615	matched	21	290/323
+sentence-transformers_all-MiniLM-L6-v2	nfcorpus	16	200	4	0.95	42	3071/3230	matched	41	1533/1615
+sentence-transformers_all-MiniLM-L6-v2	nfcorpus	16	200	4	0.99	150	1603/1615	matched	120	84/85
+sentence-transformers_all-MiniLM-L6-v2	nfcorpus	8	200	1	0.80	16	4/5	matched	16	4/5
+sentence-transformers_all-MiniLM-L6-v2	nfcorpus	8	200	1	0.85	21	2753/3230	matched	21	2753/3230
+sentence-transformers_all-MiniLM-L6-v2	nfcorpus	8	200	1	0.90	35	2913/3230	matched	34	1453/1615
+sentence-transformers_all-MiniLM-L6-v2	nfcorpus	8	200	1	0.95	70	3073/3230	matched	70	3073/3230
+sentence-transformers_all-MiniLM-L6-v2	nfcorpus	8	200	1	0.99	200	189/190	matched	150	1597/1615
+sentence-transformers_all-MiniLM-L6-v2	nfcorpus	32	200	1	0.80	10	2681/3230	below reach	10	2681/3230
+sentence-transformers_all-MiniLM-L6-v2	nfcorpus	32	200	1	0.85	12	557/646	overshoot	11	545/646
+sentence-transformers_all-MiniLM-L6-v2	nfcorpus	32	200	1	0.90	18	1464/1615	matched	17	1452/1615
+sentence-transformers_all-MiniLM-L6-v2	nfcorpus	32	200	1	0.95	34	1536/1615	matched	34	1536/1615
+sentence-transformers_all-MiniLM-L6-v2	nfcorpus	32	200	1	0.99	90	320/323	matched	90	320/323
+sentence-transformers_all-MiniLM-L6-v2	nq	16	200	0	0.80	10	3693/4315	below reach	10	3693/4315
+sentence-transformers_all-MiniLM-L6-v2	nq	16	200	0	0.85	10	3693/4315	matched	10	3693/4315
+sentence-transformers_all-MiniLM-L6-v2	nq	16	200	0	0.90	14	31107/34520	matched	14	31107/34520
+sentence-transformers_all-MiniLM-L6-v2	nq	16	200	0	0.95	26	3281/3452	matched	26	3281/3452
+sentence-transformers_all-MiniLM-L6-v2	nq	16	200	0	0.99	120	3421/3452	matched	100	34141/34520
+sentence-transformers_all-MiniLM-L6-v2	nq	16	200	1	0.80	10	2979/3452	below reach	10	2979/3452
+sentence-transformers_all-MiniLM-L6-v2	nq	16	200	1	0.85	10	2979/3452	below reach	10	2979/3452
+sentence-transformers_all-MiniLM-L6-v2	nq	16	200	1	0.90	14	31217/34520	matched	13	6191/6904
+sentence-transformers_all-MiniLM-L6-v2	nq	16	200	1	0.95	25	8201/8630	matched	25	8201/8630
+sentence-transformers_all-MiniLM-L6-v2	nq	16	200	1	0.99	120	17091/17260	matched	120	17091/17260
+sentence-transformers_all-MiniLM-L6-v2	nq	16	200	2	0.80	10	744/863	below reach	10	744/863
+sentence-transformers_all-MiniLM-L6-v2	nq	16	200	2	0.85	10	744/863	below reach	10	744/863
+sentence-transformers_all-MiniLM-L6-v2	nq	16	200	2	0.90	14	15591/17260	matched	13	6193/6904
+sentence-transformers_all-MiniLM-L6-v2	nq	16	200	2	0.95	26	32867/34520	matched	25	32793/34520
+sentence-transformers_all-MiniLM-L6-v2	nq	16	200	2	0.99	120	17111/17260	matched	100	6829/6904
+sentence-transformers_all-MiniLM-L6-v2	nq	16	200	3	0.80	10	7437/8630	below reach	10	7437/8630
+sentence-transformers_all-MiniLM-L6-v2	nq	16	200	3	0.85	10	7437/8630	below reach	10	7437/8630
+sentence-transformers_all-MiniLM-L6-v2	nq	16	200	3	0.90	14	31227/34520	matched	13	30921/34520
+sentence-transformers_all-MiniLM-L6-v2	nq	16	200	3	0.95	26	32813/34520	matched	26	32813/34520
+sentence-transformers_all-MiniLM-L6-v2	nq	16	200	3	0.99	120	8557/8630	matched	100	34133/34520
+sentence-transformers_all-MiniLM-L6-v2	nq	16	200	4	0.80	10	5967/6904	below reach	10	5967/6904
+sentence-transformers_all-MiniLM-L6-v2	nq	16	200	4	0.85	10	5967/6904	below reach	10	5967/6904
+sentence-transformers_all-MiniLM-L6-v2	nq	16	200	4	0.90	14	31171/34520	matched	14	31171/34520
+sentence-transformers_all-MiniLM-L6-v2	nq	16	200	4	0.95	27	4107/4315	matched	26	6557/6904
+sentence-transformers_all-MiniLM-L6-v2	nq	16	200	4	0.99	150	4279/4315	matched	120	854/863
+sentence-transformers_all-MiniLM-L6-v2	quora	16	200	0	0.80	10	19107/20000	below reach	10	19107/20000
+sentence-transformers_all-MiniLM-L6-v2	quora	16	200	0	0.85	10	19107/20000	below reach	10	19107/20000
+sentence-transformers_all-MiniLM-L6-v2	quora	16	200	0	0.90	10	19107/20000	below reach	10	19107/20000
+sentence-transformers_all-MiniLM-L6-v2	quora	16	200	0	0.95	10	19107/20000	matched	10	19107/20000
+sentence-transformers_all-MiniLM-L6-v2	quora	16	200	0	0.99	28	3094/3125	matched	28	3094/3125
+sentence-transformers_all-MiniLM-L6-v2	quora	16	200	1	0.80	10	191/200	below reach	10	191/200
+sentence-transformers_all-MiniLM-L6-v2	quora	16	200	1	0.85	10	191/200	below reach	10	191/200
+sentence-transformers_all-MiniLM-L6-v2	quora	16	200	1	0.90	10	191/200	below reach	10	191/200
+sentence-transformers_all-MiniLM-L6-v2	quora	16	200	1	0.95	10	191/200	matched	10	191/200
+sentence-transformers_all-MiniLM-L6-v2	quora	16	200	1	0.99	28	24751/25000	matched	28	24751/25000
+sentence-transformers_all-MiniLM-L6-v2	quora	16	200	2	0.80	10	95359/100000	below reach	10	95359/100000
+sentence-transformers_all-MiniLM-L6-v2	quora	16	200	2	0.85	10	95359/100000	below reach	10	95359/100000
+sentence-transformers_all-MiniLM-L6-v2	quora	16	200	2	0.90	10	95359/100000	below reach	10	95359/100000
+sentence-transformers_all-MiniLM-L6-v2	quora	16	200	2	0.95	10	95359/100000	matched	10	95359/100000
+sentence-transformers_all-MiniLM-L6-v2	quora	16	200	2	0.99	29	99021/100000	matched	28	19797/20000
+sentence-transformers_all-MiniLM-L6-v2	quora	16	200	3	0.80	10	47797/50000	below reach	10	47797/50000
+sentence-transformers_all-MiniLM-L6-v2	quora	16	200	3	0.85	10	47797/50000	below reach	10	47797/50000
+sentence-transformers_all-MiniLM-L6-v2	quora	16	200	3	0.90	10	47797/50000	below reach	10	47797/50000
+sentence-transformers_all-MiniLM-L6-v2	quora	16	200	3	0.95	10	47797/50000	matched	10	47797/50000
+sentence-transformers_all-MiniLM-L6-v2	quora	16	200	3	0.99	28	12381/12500	matched	27	49499/50000
+sentence-transformers_all-MiniLM-L6-v2	quora	16	200	4	0.80	10	95523/100000	below reach	10	95523/100000
+sentence-transformers_all-MiniLM-L6-v2	quora	16	200	4	0.85	10	95523/100000	below reach	10	95523/100000
+sentence-transformers_all-MiniLM-L6-v2	quora	16	200	4	0.90	10	95523/100000	below reach	10	95523/100000
+sentence-transformers_all-MiniLM-L6-v2	quora	16	200	4	0.95	10	95523/100000	matched	10	95523/100000
+sentence-transformers_all-MiniLM-L6-v2	quora	16	200	4	0.99	28	99041/100000	matched	27	49497/50000
+sentence-transformers_all-MiniLM-L6-v2	quora	8	200	1	0.80	10	88127/100000	below reach	10	88127/100000
+sentence-transformers_all-MiniLM-L6-v2	quora	8	200	1	0.85	10	88127/100000	below reach	10	88127/100000
+sentence-transformers_all-MiniLM-L6-v2	quora	8	200	1	0.90	12	22573/25000	matched	12	22573/25000
+sentence-transformers_all-MiniLM-L6-v2	quora	8	200	1	0.95	22	95291/100000	matched	21	94989/100000
+sentence-transformers_all-MiniLM-L6-v2	quora	8	200	1	0.99	100	99053/100000	matched	100	99053/100000
+sentence-transformers_all-MiniLM-L6-v2	quora	32	200	1	0.80	10	24267/25000	below reach	10	24267/25000
+sentence-transformers_all-MiniLM-L6-v2	quora	32	200	1	0.85	10	24267/25000	below reach	10	24267/25000
+sentence-transformers_all-MiniLM-L6-v2	quora	32	200	1	0.90	10	24267/25000	below reach	10	24267/25000
+sentence-transformers_all-MiniLM-L6-v2	quora	32	200	1	0.95	10	24267/25000	below reach	10	24267/25000
+sentence-transformers_all-MiniLM-L6-v2	quora	32	200	1	0.99	20	49519/50000	matched	20	49519/50000
+sentence-transformers_all-MiniLM-L6-v2	scidocs	16	200	0	0.80	10	2237/2500	below reach	10	2237/2500
+sentence-transformers_all-MiniLM-L6-v2	scidocs	16	200	0	0.85	10	2237/2500	below reach	10	2237/2500
+sentence-transformers_all-MiniLM-L6-v2	scidocs	16	200	0	0.90	11	9077/10000	matched	10	2237/2500
+sentence-transformers_all-MiniLM-L6-v2	scidocs	16	200	0	0.95	19	9517/10000	matched	19	9517/10000
+sentence-transformers_all-MiniLM-L6-v2	scidocs	16	200	0	0.99	47	4951/5000	matched	46	4949/5000
+sentence-transformers_all-MiniLM-L6-v2	scidocs	16	200	1	0.80	10	9009/10000	below reach	10	9009/10000
+sentence-transformers_all-MiniLM-L6-v2	scidocs	16	200	1	0.85	10	9009/10000	below reach	10	9009/10000
+sentence-transformers_all-MiniLM-L6-v2	scidocs	16	200	1	0.90	10	9009/10000	matched	10	9009/10000
+sentence-transformers_all-MiniLM-L6-v2	scidocs	16	200	1	0.95	17	594/625	matched	17	594/625
+sentence-transformers_all-MiniLM-L6-v2	scidocs	16	200	1	0.99	45	4951/5000	matched	45	4951/5000
+sentence-transformers_all-MiniLM-L6-v2	scidocs	16	200	2	0.80	10	8947/10000	below reach	10	8947/10000
+sentence-transformers_all-MiniLM-L6-v2	scidocs	16	200	2	0.85	10	8947/10000	below reach	10	8947/10000
+sentence-transformers_all-MiniLM-L6-v2	scidocs	16	200	2	0.90	11	181/200	matched	11	181/200
+sentence-transformers_all-MiniLM-L6-v2	scidocs	16	200	2	0.95	18	9537/10000	matched	17	9491/10000
+sentence-transformers_all-MiniLM-L6-v2	scidocs	16	200	2	0.99	43	9907/10000	matched	43	9907/10000
+sentence-transformers_all-MiniLM-L6-v2	scidocs	16	200	3	0.80	10	1797/2000	below reach	10	1797/2000
+sentence-transformers_all-MiniLM-L6-v2	scidocs	16	200	3	0.85	10	1797/2000	below reach	10	1797/2000
+sentence-transformers_all-MiniLM-L6-v2	scidocs	16	200	3	0.90	11	2273/2500	matched	10	1797/2000
+sentence-transformers_all-MiniLM-L6-v2	scidocs	16	200	3	0.95	18	4763/5000	matched	17	9491/10000
+sentence-transformers_all-MiniLM-L6-v2	scidocs	16	200	3	0.99	44	619/625	matched	43	4949/5000
+sentence-transformers_all-MiniLM-L6-v2	scidocs	16	200	4	0.80	10	1799/2000	below reach	10	1799/2000
+sentence-transformers_all-MiniLM-L6-v2	scidocs	16	200	4	0.85	10	1799/2000	below reach	10	1799/2000
+sentence-transformers_all-MiniLM-L6-v2	scidocs	16	200	4	0.90	11	9093/10000	matched	10	1799/2000
+sentence-transformers_all-MiniLM-L6-v2	scidocs	16	200	4	0.95	18	2377/2500	matched	18	2377/2500
+sentence-transformers_all-MiniLM-L6-v2	scidocs	16	200	4	0.99	47	4951/5000	matched	47	4951/5000
+sentence-transformers_all-MiniLM-L6-v2	scidocs	8	200	1	0.80	10	417/500	below reach	10	417/500
+sentence-transformers_all-MiniLM-L6-v2	scidocs	8	200	1	0.85	12	4299/5000	matched	11	8493/10000
+sentence-transformers_all-MiniLM-L6-v2	scidocs	8	200	1	0.90	17	4513/5000	matched	17	4513/5000
+sentence-transformers_all-MiniLM-L6-v2	scidocs	8	200	1	0.95	32	951/1000	matched	31	2373/2500
+sentence-transformers_all-MiniLM-L6-v2	scidocs	8	200	1	0.99	90	9909/10000	matched	90	9909/10000
+sentence-transformers_all-MiniLM-L6-v2	scidocs	32	200	1	0.80	10	4613/5000	below reach	10	4613/5000
+sentence-transformers_all-MiniLM-L6-v2	scidocs	32	200	1	0.85	10	4613/5000	below reach	10	4613/5000
+sentence-transformers_all-MiniLM-L6-v2	scidocs	32	200	1	0.90	10	4613/5000	below reach	10	4613/5000
+sentence-transformers_all-MiniLM-L6-v2	scidocs	32	200	1	0.95	14	1901/2000	matched	14	1901/2000
+sentence-transformers_all-MiniLM-L6-v2	scidocs	32	200	1	0.99	38	9901/10000	matched	38	9901/10000
+sentence-transformers_all-MiniLM-L6-v2	scifact	16	200	0	0.80	10	1327/1500	below reach	10	1327/1500
+sentence-transformers_all-MiniLM-L6-v2	scifact	16	200	0	0.85	10	1327/1500	below reach	10	1327/1500
+sentence-transformers_all-MiniLM-L6-v2	scifact	16	200	0	0.90	12	2719/3000	matched	11	1349/1500
+sentence-transformers_all-MiniLM-L6-v2	scifact	16	200	0	0.95	21	1429/1500	matched	20	949/1000
+sentence-transformers_all-MiniLM-L6-v2	scifact	16	200	0	0.99	55	99/100	matched	55	99/100
+sentence-transformers_all-MiniLM-L6-v2	scifact	16	200	1	0.80	10	1333/1500	below reach	10	1333/1500
+sentence-transformers_all-MiniLM-L6-v2	scifact	16	200	1	0.85	10	1333/1500	below reach	10	1333/1500
+sentence-transformers_all-MiniLM-L6-v2	scifact	16	200	1	0.90	12	341/375	matched	11	2699/3000
+sentence-transformers_all-MiniLM-L6-v2	scifact	16	200	1	0.95	20	713/750	matched	20	713/750
+sentence-transformers_all-MiniLM-L6-v2	scifact	16	200	1	0.99	46	99/100	matched	46	99/100
+sentence-transformers_all-MiniLM-L6-v2	scifact	16	200	2	0.80	10	89/100	below reach	10	89/100
+sentence-transformers_all-MiniLM-L6-v2	scifact	16	200	2	0.85	10	89/100	below reach	10	89/100
+sentence-transformers_all-MiniLM-L6-v2	scifact	16	200	2	0.90	11	451/500	matched	11	451/500
+sentence-transformers_all-MiniLM-L6-v2	scifact	16	200	2	0.95	19	713/750	matched	19	713/750
+sentence-transformers_all-MiniLM-L6-v2	scifact	16	200	2	0.99	44	743/750	matched	42	2969/3000
+sentence-transformers_all-MiniLM-L6-v2	scifact	16	200	3	0.80	10	889/1000	below reach	10	889/1000
+sentence-transformers_all-MiniLM-L6-v2	scifact	16	200	3	0.85	10	889/1000	below reach	10	889/1000
+sentence-transformers_all-MiniLM-L6-v2	scifact	16	200	3	0.90	11	9/10	matched	11	9/10
+sentence-transformers_all-MiniLM-L6-v2	scifact	16	200	3	0.95	20	951/1000	matched	19	356/375
+sentence-transformers_all-MiniLM-L6-v2	scifact	16	200	3	0.99	53	99/100	matched	53	99/100
+sentence-transformers_all-MiniLM-L6-v2	scifact	16	200	4	0.80	10	529/600	below reach	10	529/600
+sentence-transformers_all-MiniLM-L6-v2	scifact	16	200	4	0.85	10	529/600	below reach	10	529/600
+sentence-transformers_all-MiniLM-L6-v2	scifact	16	200	4	0.90	12	2707/3000	matched	12	2707/3000
+sentence-transformers_all-MiniLM-L6-v2	scifact	16	200	4	0.95	21	119/125	matched	21	119/125
+sentence-transformers_all-MiniLM-L6-v2	scifact	16	200	4	0.99	50	99/100	matched	50	99/100
+sentence-transformers_all-MiniLM-L6-v2	scifact	8	200	1	0.80	10	2447/3000	below reach	10	2447/3000
+sentence-transformers_all-MiniLM-L6-v2	scifact	8	200	1	0.85	13	853/1000	matched	13	853/1000
+sentence-transformers_all-MiniLM-L6-v2	scifact	8	200	1	0.90	20	903/1000	matched	19	899/1000
+sentence-transformers_all-MiniLM-L6-v2	scifact	8	200	1	0.95	35	19/20	matched	35	19/20
+sentence-transformers_all-MiniLM-L6-v2	scifact	8	200	1	0.99	120	2977/3000	matched	100	593/600
+sentence-transformers_all-MiniLM-L6-v2	scifact	32	200	1	0.80	10	911/1000	below reach	10	911/1000
+sentence-transformers_all-MiniLM-L6-v2	scifact	32	200	1	0.85	10	911/1000	below reach	10	911/1000
+sentence-transformers_all-MiniLM-L6-v2	scifact	32	200	1	0.90	10	911/1000	below reach	10	911/1000
+sentence-transformers_all-MiniLM-L6-v2	scifact	32	200	1	0.95	17	1427/1500	matched	17	1427/1500
+sentence-transformers_all-MiniLM-L6-v2	scifact	32	200	1	0.99	39	99/100	matched	39	99/100
+sentence-transformers_all-MiniLM-L6-v2	trec-covid	16	200	0	0.80	10	223/250	below reach	10	223/250
+sentence-transformers_all-MiniLM-L6-v2	trec-covid	16	200	0	0.85	10	223/250	below reach	10	223/250
+sentence-transformers_all-MiniLM-L6-v2	trec-covid	16	200	0	0.90	11	459/500	overshoot	10	223/250
+sentence-transformers_all-MiniLM-L6-v2	trec-covid	16	200	0	0.95	15	477/500	matched	15	477/500
+sentence-transformers_all-MiniLM-L6-v2	trec-covid	16	200	0	0.99	80	99/100	matched	80	99/100
+sentence-transformers_all-MiniLM-L6-v2	trec-covid	16	200	1	0.80	10	112/125	below reach	10	112/125
+sentence-transformers_all-MiniLM-L6-v2	trec-covid	16	200	1	0.85	10	112/125	below reach	10	112/125
+sentence-transformers_all-MiniLM-L6-v2	trec-covid	16	200	1	0.90	11	93/100	overshoot	10	112/125
+sentence-transformers_all-MiniLM-L6-v2	trec-covid	16	200	1	0.95	15	19/20	matched	15	19/20
+sentence-transformers_all-MiniLM-L6-v2	trec-covid	16	200	1	0.99	80	497/500	matched	60	493/500
+sentence-transformers_all-MiniLM-L6-v2	trec-covid	16	200	2	0.80	10	443/500	below reach	10	443/500
+sentence-transformers_all-MiniLM-L6-v2	trec-covid	16	200	2	0.85	10	443/500	below reach	10	443/500
+sentence-transformers_all-MiniLM-L6-v2	trec-covid	16	200	2	0.90	12	453/500	matched	11	112/125
+sentence-transformers_all-MiniLM-L6-v2	trec-covid	16	200	2	0.95	20	19/20	matched	20	19/20
+sentence-transformers_all-MiniLM-L6-v2	trec-covid	16	200	2	0.99	80	249/250	matched	48	247/250
+sentence-transformers_all-MiniLM-L6-v2	trec-covid	16	200	3	0.80	10	113/125	below reach	10	113/125
+sentence-transformers_all-MiniLM-L6-v2	trec-covid	16	200	3	0.85	10	113/125	below reach	10	113/125
+sentence-transformers_all-MiniLM-L6-v2	trec-covid	16	200	3	0.90	10	113/125	matched	10	113/125
+sentence-transformers_all-MiniLM-L6-v2	trec-covid	16	200	3	0.95	16	477/500	matched	14	237/250
+sentence-transformers_all-MiniLM-L6-v2	trec-covid	16	200	3	0.99	47	99/100	matched	47	99/100
+sentence-transformers_all-MiniLM-L6-v2	trec-covid	16	200	4	0.80	10	111/125	below reach	10	111/125
+sentence-transformers_all-MiniLM-L6-v2	trec-covid	16	200	4	0.85	10	111/125	below reach	10	111/125
+sentence-transformers_all-MiniLM-L6-v2	trec-covid	16	200	4	0.90	11	91/100	matched	11	91/100
+sentence-transformers_all-MiniLM-L6-v2	trec-covid	16	200	4	0.95	15	119/125	matched	15	119/125
+sentence-transformers_all-MiniLM-L6-v2	trec-covid	16	200	4	0.99	41	99/100	matched	41	99/100
+sentence-transformers_all-MiniLM-L6-v2	trec-covid	8	200	1	0.80	10	41/50	below reach	10	41/50
+sentence-transformers_all-MiniLM-L6-v2	trec-covid	8	200	1	0.85	13	43/50	matched	13	43/50
+sentence-transformers_all-MiniLM-L6-v2	trec-covid	8	200	1	0.90	18	457/500	overshoot	16	223/250
+sentence-transformers_all-MiniLM-L6-v2	trec-covid	8	200	1	0.95	30	19/20	matched	30	19/20
+sentence-transformers_all-MiniLM-L6-v2	trec-covid	8	200	1	0.99	100	124/125	matched	100	124/125
+sentence-transformers_all-MiniLM-L6-v2	trec-covid	32	200	1	0.80	10	463/500	below reach	10	463/500
+sentence-transformers_all-MiniLM-L6-v2	trec-covid	32	200	1	0.85	10	463/500	below reach	10	463/500
+sentence-transformers_all-MiniLM-L6-v2	trec-covid	32	200	1	0.90	10	463/500	below reach	10	463/500
+sentence-transformers_all-MiniLM-L6-v2	trec-covid	32	200	1	0.95	16	19/20	matched	16	19/20
+sentence-transformers_all-MiniLM-L6-v2	trec-covid	32	200	1	0.99	54	124/125	matched	54	124/125
+thenlper_gte-base	arguana	16	200	0	0.80	10	690/703	below reach	10	690/703
+thenlper_gte-base	arguana	16	200	0	0.85	10	690/703	below reach	10	690/703
+thenlper_gte-base	arguana	16	200	0	0.90	10	690/703	below reach	10	690/703
+thenlper_gte-base	arguana	16	200	0	0.95	10	690/703	below reach	10	690/703
+thenlper_gte-base	arguana	16	200	0	0.99	13	3483/3515	matched	13	3483/3515
+thenlper_gte-base	arguana	16	200	1	0.80	10	729/740	below reach	10	729/740
+thenlper_gte-base	arguana	16	200	1	0.85	10	729/740	below reach	10	729/740
+thenlper_gte-base	arguana	16	200	1	0.90	10	729/740	below reach	10	729/740
+thenlper_gte-base	arguana	16	200	1	0.95	10	729/740	below reach	10	729/740
+thenlper_gte-base	arguana	16	200	1	0.99	12	6971/7030	matched	11	6953/7030
+thenlper_gte-base	arguana	16	200	2	0.80	10	729/740	below reach	10	729/740
+thenlper_gte-base	arguana	16	200	2	0.85	10	729/740	below reach	10	729/740
+thenlper_gte-base	arguana	16	200	2	0.90	10	729/740	below reach	10	729/740
+thenlper_gte-base	arguana	16	200	2	0.95	10	729/740	below reach	10	729/740
+thenlper_gte-base	arguana	16	200	2	0.99	12	13923/14060	matched	12	13923/14060
+thenlper_gte-base	arguana	16	200	3	0.80	10	6921/7030	below reach	10	6921/7030
+thenlper_gte-base	arguana	16	200	3	0.85	10	6921/7030	below reach	10	6921/7030
+thenlper_gte-base	arguana	16	200	3	0.90	10	6921/7030	below reach	10	6921/7030
+thenlper_gte-base	arguana	16	200	3	0.95	10	6921/7030	below reach	10	6921/7030
+thenlper_gte-base	arguana	16	200	3	0.99	12	3481/3515	matched	12	3481/3515
+thenlper_gte-base	arguana	16	200	4	0.80	10	3459/3515	below reach	10	3459/3515
+thenlper_gte-base	arguana	16	200	4	0.85	10	3459/3515	below reach	10	3459/3515
+thenlper_gte-base	arguana	16	200	4	0.90	10	3459/3515	below reach	10	3459/3515
+thenlper_gte-base	arguana	16	200	4	0.95	10	3459/3515	below reach	10	3459/3515
+thenlper_gte-base	arguana	16	200	4	0.99	12	13931/14060	matched	12	13931/14060
+thenlper_gte-base	arguana	8	200	1	0.80	10	13667/14060	below reach	10	13667/14060
+thenlper_gte-base	arguana	8	200	1	0.85	10	13667/14060	below reach	10	13667/14060
+thenlper_gte-base	arguana	8	200	1	0.90	10	13667/14060	below reach	10	13667/14060
+thenlper_gte-base	arguana	8	200	1	0.95	10	13667/14060	below reach	10	13667/14060
+thenlper_gte-base	arguana	8	200	1	0.99	17	13929/14060	matched	17	13929/14060
+thenlper_gte-base	arguana	32	200	1	0.80	10	6963/7030	below reach	10	6963/7030
+thenlper_gte-base	arguana	32	200	1	0.85	10	6963/7030	below reach	10	6963/7030
+thenlper_gte-base	arguana	32	200	1	0.90	10	6963/7030	below reach	10	6963/7030
+thenlper_gte-base	arguana	32	200	1	0.95	10	6963/7030	below reach	10	6963/7030
+thenlper_gte-base	arguana	32	200	1	0.99	10	6963/7030	matched	10	6963/7030
+thenlper_gte-base	fiqa	16	200	0	0.80	10	5417/6480	below reach	10	5417/6480
+thenlper_gte-base	fiqa	16	200	0	0.85	12	1393/1620	matched	11	457/540
+thenlper_gte-base	fiqa	16	200	0	0.90	18	5873/6480	matched	17	5827/6480
+thenlper_gte-base	fiqa	16	200	0	0.95	31	2053/2160	matched	30	3077/3240
+thenlper_gte-base	fiqa	16	200	0	0.99	100	6421/6480	matched	90	6413/6480
+thenlper_gte-base	fiqa	16	200	1	0.80	10	5407/6480	below reach	10	5407/6480
+thenlper_gte-base	fiqa	16	200	1	0.85	12	1115/1296	overshoot	11	1829/2160
+thenlper_gte-base	fiqa	16	200	1	0.90	16	1949/2160	matched	16	1949/2160
+thenlper_gte-base	fiqa	16	200	1	0.95	29	2057/2160	matched	28	769/810
+thenlper_gte-base	fiqa	16	200	1	0.99	90	3211/3240	matched	80	641/648
+thenlper_gte-base	fiqa	16	200	2	0.80	10	907/1080	below reach	10	907/1080
+thenlper_gte-base	fiqa	16	200	2	0.85	11	5521/6480	matched	11	5521/6480
+thenlper_gte-base	fiqa	16	200	2	0.90	16	2927/3240	matched	16	2927/3240
+thenlper_gte-base	fiqa	16	200	2	0.95	27	3083/3240	matched	27	3083/3240
+thenlper_gte-base	fiqa	16	200	2	0.99	80	6421/6480	matched	80	6421/6480
+thenlper_gte-base	fiqa	16	200	3	0.80	10	361/432	below reach	10	361/432
+thenlper_gte-base	fiqa	16	200	3	0.85	11	461/540	matched	11	461/540
+thenlper_gte-base	fiqa	16	200	3	0.90	17	5873/6480	matched	16	5827/6480
+thenlper_gte-base	fiqa	16	200	3	0.95	28	1027/1080	matched	27	6151/6480
+thenlper_gte-base	fiqa	16	200	3	0.99	80	6421/6480	matched	80	6421/6480
+thenlper_gte-base	fiqa	16	200	4	0.80	10	1799/2160	below reach	10	1799/2160
+thenlper_gte-base	fiqa	16	200	4	0.85	11	17/20	matched	11	17/20
+thenlper_gte-base	fiqa	16	200	4	0.90	16	5873/6480	matched	15	1457/1620
+thenlper_gte-base	fiqa	16	200	4	0.95	28	257/270	matched	27	769/810
+thenlper_gte-base	fiqa	16	200	4	0.99	80	643/648	matched	70	2137/2160
+thenlper_gte-base	fiqa	8	200	1	0.80	16	2611/3240	matched	15	43/54
+thenlper_gte-base	fiqa	8	200	1	0.85	22	1837/2160	matched	22	1837/2160
+thenlper_gte-base	fiqa	8	200	1	0.90	33	1949/2160	matched	32	1165/1296
+thenlper_gte-base	fiqa	8	200	1	0.95	60	19/20	matched	60	19/20
+thenlper_gte-base	fiqa	8	200	1	0.99	250	3217/3240	matched	200	1067/1080
+thenlper_gte-base	fiqa	32	200	1	0.80	10	119/135	below reach	10	119/135
+thenlper_gte-base	fiqa	32	200	1	0.85	10	119/135	below reach	10	119/135
+thenlper_gte-base	fiqa	32	200	1	0.90	13	41/45	overshoot	12	727/810
+thenlper_gte-base	fiqa	32	200	1	0.95	20	6157/6480	matched	20	6157/6480
+thenlper_gte-base	fiqa	32	200	1	0.99	54	713/720	matched	53	1283/1296
+thenlper_gte-base	nfcorpus	16	200	0	0.80	10	2733/3230	below reach	10	2733/3230
+thenlper_gte-base	nfcorpus	16	200	0	0.85	11	2767/3230	matched	10	2733/3230
+thenlper_gte-base	nfcorpus	16	200	0	0.90	16	1466/1615	matched	15	2897/3230
+thenlper_gte-base	nfcorpus	16	200	0	0.95	28	3073/3230	matched	27	1533/1615
+thenlper_gte-base	nfcorpus	16	200	0	0.99	70	3199/3230	matched	70	3199/3230
+thenlper_gte-base	nfcorpus	16	200	1	0.80	10	277/323	below reach	10	277/323
+thenlper_gte-base	nfcorpus	16	200	1	0.85	10	277/323	matched	10	277/323
+thenlper_gte-base	nfcorpus	16	200	1	0.90	16	2923/3230	matched	15	581/646
+thenlper_gte-base	nfcorpus	16	200	1	0.95	26	3069/3230	matched	26	3069/3230
+thenlper_gte-base	nfcorpus	16	200	1	0.99	70	3203/3230	matched	60	639/646
+thenlper_gte-base	nfcorpus	16	200	2	0.80	10	2787/3230	below reach	10	2787/3230
+thenlper_gte-base	nfcorpus	16	200	2	0.85	10	2787/3230	below reach	10	2787/3230
+thenlper_gte-base	nfcorpus	16	200	2	0.90	14	1456/1615	matched	14	1456/1615
+thenlper_gte-base	nfcorpus	16	200	2	0.95	26	3071/3230	matched	25	1533/1615
+thenlper_gte-base	nfcorpus	16	200	2	0.99	70	1602/1615	matched	59	94/95
+thenlper_gte-base	nfcorpus	16	200	3	0.80	10	557/646	below reach	10	557/646
+thenlper_gte-base	nfcorpus	16	200	3	0.85	10	557/646	below reach	10	557/646
+thenlper_gte-base	nfcorpus	16	200	3	0.90	15	587/646	matched	14	2901/3230
+thenlper_gte-base	nfcorpus	16	200	3	0.95	25	3073/3230	matched	24	1532/1615
+thenlper_gte-base	nfcorpus	16	200	3	0.99	57	1599/1615	matched	57	1599/1615
+thenlper_gte-base	nfcorpus	16	200	4	0.80	10	1372/1615	below reach	10	1372/1615
+thenlper_gte-base	nfcorpus	16	200	4	0.85	11	2779/3230	overshoot	10	1372/1615
+thenlper_gte-base	nfcorpus	16	200	4	0.90	16	1457/1615	matched	16	1457/1615
+thenlper_gte-base	nfcorpus	16	200	4	0.95	29	308/323	matched	28	1534/1615
+thenlper_gte-base	nfcorpus	16	200	4	0.99	80	1603/1615	matched	70	94/95
+thenlper_gte-base	nfcorpus	8	200	1	0.80	12	2609/3230	matched	12	2609/3230
+thenlper_gte-base	nfcorpus	8	200	1	0.85	17	2747/3230	matched	17	2747/3230
+thenlper_gte-base	nfcorpus	8	200	1	0.90	25	9/10	matched	25	9/10
+thenlper_gte-base	nfcorpus	8	200	1	0.95	47	3073/3230	matched	46	613/646
+thenlper_gte-base	nfcorpus	8	200	1	0.99	150	1602/1615	matched	120	3193/3230
+thenlper_gte-base	nfcorpus	32	200	1	0.80	10	2859/3230	below reach	10	2859/3230
+thenlper_gte-base	nfcorpus	32	200	1	0.85	10	2859/3230	below reach	10	2859/3230
+thenlper_gte-base	nfcorpus	32	200	1	0.90	12	294/323	overshoot	11	579/646
+thenlper_gte-base	nfcorpus	32	200	1	0.95	20	3073/3230	matched	19	613/646
+thenlper_gte-base	nfcorpus	32	200	1	0.99	54	3199/3230	matched	53	3197/3230
+thenlper_gte-base	nq	16	200	0	0.80	10	29561/34520	below reach	10	29561/34520
+thenlper_gte-base	nq	16	200	0	0.85	10	29561/34520	matched	10	29561/34520
+thenlper_gte-base	nq	16	200	0	0.90	14	3896/4315	matched	14	3896/4315
+thenlper_gte-base	nq	16	200	0	0.95	26	3283/3452	matched	25	32777/34520
+thenlper_gte-base	nq	16	200	0	0.99	120	34229/34520	matched	100	17083/17260
+thenlper_gte-base	nq	16	200	1	0.80	10	29727/34520	below reach	10	29727/34520
+thenlper_gte-base	nq	16	200	1	0.85	10	29727/34520	below reach	10	29727/34520
+thenlper_gte-base	nq	16	200	1	0.90	14	31151/34520	matched	14	31151/34520
+thenlper_gte-base	nq	16	200	1	0.95	29	32837/34520	matched	28	16381/17260
+thenlper_gte-base	nq	16	200	1	0.99	200	17099/17260	matched	200	17099/17260
+thenlper_gte-base	nq	16	200	2	0.80	10	29857/34520	below reach	10	29857/34520
+thenlper_gte-base	nq	16	200	2	0.85	10	29857/34520	below reach	10	29857/34520
+thenlper_gte-base	nq	16	200	2	0.90	14	31191/34520	matched	14	31191/34520
+thenlper_gte-base	nq	16	200	2	0.95	29	32857/34520	matched	28	4098/4315
+thenlper_gte-base	nq	16	200	2	0.99	150	34183/34520	matched	150	34183/34520
+thenlper_gte-base	nq	16	200	3	0.80	10	29523/34520	below reach	10	29523/34520
+thenlper_gte-base	nq	16	200	3	0.85	10	29523/34520	matched	10	29523/34520
+thenlper_gte-base	nq	16	200	3	0.90	15	31177/34520	matched	15	31177/34520
+thenlper_gte-base	nq	16	200	3	0.95	28	32837/34520	matched	27	32783/34520
+thenlper_gte-base	nq	16	200	3	0.99	200	6849/6904	matched	150	8543/8630
+thenlper_gte-base	nq	16	200	4	0.80	10	733/863	below reach	10	733/863
+thenlper_gte-base	nq	16	200	4	0.85	11	29731/34520	overshoot	10	733/863
+thenlper_gte-base	nq	16	200	4	0.90	16	6247/6904	matched	15	7757/8630
+thenlper_gte-base	nq	16	200	4	0.95	30	4103/4315	matched	29	32783/34520
+thenlper_gte-base	nq	16	200	4	0.99	250	34207/34520	matched	200	854/863
+thenlper_gte-base	quora	16	200	0	0.80	10	95287/100000	below reach	10	95287/100000
+thenlper_gte-base	quora	16	200	0	0.85	10	95287/100000	below reach	10	95287/100000
+thenlper_gte-base	quora	16	200	0	0.90	10	95287/100000	below reach	10	95287/100000
+thenlper_gte-base	quora	16	200	0	0.95	10	95287/100000	matched	10	95287/100000
+thenlper_gte-base	quora	16	200	0	0.99	32	24751/25000	matched	32	24751/25000
+thenlper_gte-base	quora	16	200	1	0.80	10	23849/25000	below reach	10	23849/25000
+thenlper_gte-base	quora	16	200	1	0.85	10	23849/25000	below reach	10	23849/25000
+thenlper_gte-base	quora	16	200	1	0.90	10	23849/25000	below reach	10	23849/25000
+thenlper_gte-base	quora	16	200	1	0.95	10	23849/25000	matched	10	23849/25000
+thenlper_gte-base	quora	16	200	1	0.99	29	19801/20000	matched	29	19801/20000
+thenlper_gte-base	quora	16	200	2	0.80	10	19073/20000	below reach	10	19073/20000
+thenlper_gte-base	quora	16	200	2	0.85	10	19073/20000	below reach	10	19073/20000
+thenlper_gte-base	quora	16	200	2	0.90	10	19073/20000	below reach	10	19073/20000
+thenlper_gte-base	quora	16	200	2	0.95	10	19073/20000	matched	10	19073/20000
+thenlper_gte-base	quora	16	200	2	0.99	31	49511/50000	matched	30	19797/20000
+thenlper_gte-base	quora	16	200	3	0.80	10	47859/50000	below reach	10	47859/50000
+thenlper_gte-base	quora	16	200	3	0.85	10	47859/50000	below reach	10	47859/50000
+thenlper_gte-base	quora	16	200	3	0.90	10	47859/50000	below reach	10	47859/50000
+thenlper_gte-base	quora	16	200	3	0.95	10	47859/50000	matched	10	47859/50000
+thenlper_gte-base	quora	16	200	3	0.99	28	99041/100000	matched	27	98973/100000
+thenlper_gte-base	quora	16	200	4	0.80	10	19099/20000	below reach	10	19099/20000
+thenlper_gte-base	quora	16	200	4	0.85	10	19099/20000	below reach	10	19099/20000
+thenlper_gte-base	quora	16	200	4	0.90	10	19099/20000	below reach	10	19099/20000
+thenlper_gte-base	quora	16	200	4	0.95	10	19099/20000	matched	10	19099/20000
+thenlper_gte-base	quora	16	200	4	0.99	30	99017/100000	matched	30	99017/100000
+thenlper_gte-base	quora	8	200	1	0.80	10	87573/100000	below reach	10	87573/100000
+thenlper_gte-base	quora	8	200	1	0.85	10	87573/100000	below reach	10	87573/100000
+thenlper_gte-base	quora	8	200	1	0.90	13	90843/100000	matched	12	89859/100000
+thenlper_gte-base	quora	8	200	1	0.95	22	47541/50000	matched	22	47541/50000
+thenlper_gte-base	quora	8	200	1	0.99	150	99111/100000	matched	120	98947/100000
+thenlper_gte-base	quora	32	200	1	0.80	10	97159/100000	below reach	10	97159/100000
+thenlper_gte-base	quora	32	200	1	0.85	10	97159/100000	below reach	10	97159/100000
+thenlper_gte-base	quora	32	200	1	0.90	10	97159/100000	below reach	10	97159/100000
+thenlper_gte-base	quora	32	200	1	0.95	10	97159/100000	below reach	10	97159/100000
+thenlper_gte-base	quora	32	200	1	0.99	19	99039/100000	matched	19	99039/100000
+thenlper_gte-base	scidocs	16	200	0	0.80	10	897/1000	below reach	10	897/1000
+thenlper_gte-base	scidocs	16	200	0	0.85	10	897/1000	below reach	10	897/1000
+thenlper_gte-base	scidocs	16	200	0	0.90	11	9061/10000	matched	10	897/1000
+thenlper_gte-base	scidocs	16	200	0	0.95	18	9541/10000	matched	17	9481/10000
+thenlper_gte-base	scidocs	16	200	0	0.99	48	9901/10000	matched	47	9899/10000
+thenlper_gte-base	scidocs	16	200	1	0.80	10	9007/10000	below reach	10	9007/10000
+thenlper_gte-base	scidocs	16	200	1	0.85	10	9007/10000	below reach	10	9007/10000
+thenlper_gte-base	scidocs	16	200	1	0.90	10	9007/10000	matched	10	9007/10000
+thenlper_gte-base	scidocs	16	200	1	0.95	17	2383/2500	matched	16	9487/10000
+thenlper_gte-base	scidocs	16	200	1	0.99	47	99/100	matched	47	99/100
+thenlper_gte-base	scidocs	16	200	2	0.80	10	2247/2500	below reach	10	2247/2500
+thenlper_gte-base	scidocs	16	200	2	0.85	10	2247/2500	below reach	10	2247/2500
+thenlper_gte-base	scidocs	16	200	2	0.90	11	9091/10000	matched	10	2247/2500
+thenlper_gte-base	scidocs	16	200	2	0.95	18	953/1000	matched	17	9489/10000
+thenlper_gte-base	scidocs	16	200	2	0.99	47	99/100	matched	47	99/100
+thenlper_gte-base	scidocs	16	200	3	0.80	10	2257/2500	below reach	10	2257/2500
+thenlper_gte-base	scidocs	16	200	3	0.85	10	2257/2500	below reach	10	2257/2500
+thenlper_gte-base	scidocs	16	200	3	0.90	10	2257/2500	matched	10	2257/2500
+thenlper_gte-base	scidocs	16	200	3	0.95	17	9503/10000	matched	17	9503/10000
+thenlper_gte-base	scidocs	16	200	3	0.99	49	9907/10000	matched	48	4949/5000
+thenlper_gte-base	scidocs	16	200	4	0.80	10	4509/5000	below reach	10	4509/5000
+thenlper_gte-base	scidocs	16	200	4	0.85	10	4509/5000	below reach	10	4509/5000
+thenlper_gte-base	scidocs	16	200	4	0.90	10	4509/5000	matched	10	4509/5000
+thenlper_gte-base	scidocs	16	200	4	0.95	18	953/1000	matched	17	9499/10000
+thenlper_gte-base	scidocs	16	200	4	0.99	45	4951/5000	matched	45	4951/5000
+thenlper_gte-base	scidocs	8	200	1	0.80	10	2083/2500	below reach	10	2083/2500
+thenlper_gte-base	scidocs	8	200	1	0.85	12	8639/10000	overshoot	11	8493/10000
+thenlper_gte-base	scidocs	8	200	1	0.90	17	181/200	matched	16	4483/5000
+thenlper_gte-base	scidocs	8	200	1	0.95	30	2377/2500	matched	29	4747/5000
+thenlper_gte-base	scidocs	8	200	1	0.99	100	4959/5000	matched	90	9899/10000
+thenlper_gte-base	scidocs	32	200	1	0.80	10	9309/10000	below reach	10	9309/10000
+thenlper_gte-base	scidocs	32	200	1	0.85	10	9309/10000	below reach	10	9309/10000
+thenlper_gte-base	scidocs	32	200	1	0.90	10	9309/10000	below reach	10	9309/10000
+thenlper_gte-base	scidocs	32	200	1	0.95	13	2379/2500	matched	13	2379/2500
+thenlper_gte-base	scidocs	32	200	1	0.99	33	4951/5000	matched	33	4951/5000
+thenlper_gte-base	scifact	16	200	0	0.80	10	909/1000	below reach	10	909/1000
+thenlper_gte-base	scifact	16	200	0	0.85	10	909/1000	below reach	10	909/1000
+thenlper_gte-base	scifact	16	200	0	0.90	10	909/1000	matched	10	909/1000
+thenlper_gte-base	scifact	16	200	0	0.95	16	19/20	matched	16	19/20
+thenlper_gte-base	scifact	16	200	0	0.99	43	99/100	matched	43	99/100
+thenlper_gte-base	scifact	16	200	1	0.80	10	11/12	below reach	10	11/12
+thenlper_gte-base	scifact	16	200	1	0.85	10	11/12	below reach	10	11/12
+thenlper_gte-base	scifact	16	200	1	0.90	10	11/12	below reach	10	11/12
+thenlper_gte-base	scifact	16	200	1	0.95	17	2861/3000	matched	16	2849/3000
+thenlper_gte-base	scifact	16	200	1	0.99	44	991/1000	matched	44	991/1000
+thenlper_gte-base	scifact	16	200	2	0.80	10	551/600	below reach	10	551/600
+thenlper_gte-base	scifact	16	200	2	0.85	10	551/600	below reach	10	551/600
+thenlper_gte-base	scifact	16	200	2	0.90	10	551/600	below reach	10	551/600
+thenlper_gte-base	scifact	16	200	2	0.95	15	1433/1500	matched	14	237/250
+thenlper_gte-base	scifact	16	200	2	0.99	40	99/100	matched	40	99/100
+thenlper_gte-base	scifact	16	200	3	0.80	10	2741/3000	below reach	10	2741/3000
+thenlper_gte-base	scifact	16	200	3	0.85	10	2741/3000	below reach	10	2741/3000
+thenlper_gte-base	scifact	16	200	3	0.90	10	2741/3000	below reach	10	2741/3000
+thenlper_gte-base	scifact	16	200	3	0.95	15	951/1000	matched	15	951/1000
+thenlper_gte-base	scifact	16	200	3	0.99	44	2971/3000	matched	44	2971/3000
+thenlper_gte-base	scifact	16	200	4	0.80	10	2741/3000	below reach	10	2741/3000
+thenlper_gte-base	scifact	16	200	4	0.85	10	2741/3000	below reach	10	2741/3000
+thenlper_gte-base	scifact	16	200	4	0.90	10	2741/3000	below reach	10	2741/3000
+thenlper_gte-base	scifact	16	200	4	0.95	16	2851/3000	matched	16	2851/3000
+thenlper_gte-base	scifact	16	200	4	0.99	41	99/100	matched	41	99/100
+thenlper_gte-base	scifact	8	200	1	0.80	10	637/750	below reach	10	637/750
+thenlper_gte-base	scifact	8	200	1	0.85	11	2573/3000	matched	10	637/750
+thenlper_gte-base	scifact	8	200	1	0.90	16	2719/3000	matched	15	2687/3000
+thenlper_gte-base	scifact	8	200	1	0.95	28	571/600	matched	27	949/1000
+thenlper_gte-base	scifact	8	200	1	0.99	90	119/120	matched	80	593/600
+thenlper_gte-base	scifact	32	200	1	0.80	10	559/600	below reach	10	559/600
+thenlper_gte-base	scifact	32	200	1	0.85	10	559/600	below reach	10	559/600
+thenlper_gte-base	scifact	32	200	1	0.90	10	559/600	below reach	10	559/600
+thenlper_gte-base	scifact	32	200	1	0.95	14	143/150	matched	13	2849/3000
+thenlper_gte-base	scifact	32	200	1	0.99	32	99/100	matched	32	99/100
+thenlper_gte-base	trec-covid	16	200	0	0.80	10	437/500	below reach	10	437/500
+thenlper_gte-base	trec-covid	16	200	0	0.85	10	437/500	below reach	10	437/500
+thenlper_gte-base	trec-covid	16	200	0	0.90	12	227/250	matched	11	223/250
+thenlper_gte-base	trec-covid	16	200	0	0.95	15	19/20	matched	15	19/20
+thenlper_gte-base	trec-covid	16	200	0	0.99	41	124/125	matched	29	247/250
+thenlper_gte-base	trec-covid	16	200	1	0.80	10	113/125	below reach	10	113/125
+thenlper_gte-base	trec-covid	16	200	1	0.85	10	113/125	below reach	10	113/125
+thenlper_gte-base	trec-covid	16	200	1	0.90	10	113/125	matched	10	113/125
+thenlper_gte-base	trec-covid	16	200	1	0.95	19	19/20	matched	19	19/20
+thenlper_gte-base	trec-covid	16	200	1	0.99	47	99/100	matched	47	99/100
+thenlper_gte-base	trec-covid	16	200	2	0.80	10	467/500	below reach	10	467/500
+thenlper_gte-base	trec-covid	16	200	2	0.85	10	467/500	below reach	10	467/500
+thenlper_gte-base	trec-covid	16	200	2	0.90	10	467/500	below reach	10	467/500
+thenlper_gte-base	trec-covid	16	200	2	0.95	14	479/500	matched	13	237/250
+thenlper_gte-base	trec-covid	16	200	2	0.99	51	99/100	matched	51	99/100
+thenlper_gte-base	trec-covid	16	200	3	0.80	10	89/100	below reach	10	89/100
+thenlper_gte-base	trec-covid	16	200	3	0.85	10	89/100	below reach	10	89/100
+thenlper_gte-base	trec-covid	16	200	3	0.90	12	227/250	matched	11	447/500
+thenlper_gte-base	trec-covid	16	200	3	0.95	17	119/125	matched	17	119/125
+thenlper_gte-base	trec-covid	16	200	3	0.99	35	99/100	matched	35	99/100
+thenlper_gte-base	trec-covid	16	200	4	0.80	10	116/125	below reach	10	116/125
+thenlper_gte-base	trec-covid	16	200	4	0.85	10	116/125	below reach	10	116/125
+thenlper_gte-base	trec-covid	16	200	4	0.90	10	116/125	below reach	10	116/125
+thenlper_gte-base	trec-covid	16	200	4	0.95	16	119/125	matched	16	119/125
+thenlper_gte-base	trec-covid	16	200	4	0.99	49	249/250	matched	28	247/250
+thenlper_gte-base	trec-covid	8	200	1	0.80	10	103/125	below reach	10	103/125
+thenlper_gte-base	trec-covid	8	200	1	0.85	13	433/500	overshoot	12	421/500
+thenlper_gte-base	trec-covid	8	200	1	0.90	18	113/125	matched	15	449/500
+thenlper_gte-base	trec-covid	8	200	1	0.95	33	479/500	matched	30	118/125
+thenlper_gte-base	trec-covid	8	200	1	0.99	200	1	matched	70	493/500
+thenlper_gte-base	trec-covid	32	200	1	0.80	10	114/125	below reach	10	114/125
+thenlper_gte-base	trec-covid	32	200	1	0.85	10	114/125	below reach	10	114/125
+thenlper_gte-base	trec-covid	32	200	1	0.90	10	114/125	below reach	10	114/125
+thenlper_gte-base	trec-covid	32	200	1	0.95	17	19/20	matched	17	19/20
+thenlper_gte-base	trec-covid	32	200	1	0.99	28	99/100	matched	28	99/100

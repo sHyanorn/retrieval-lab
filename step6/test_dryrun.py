@@ -7,7 +7,6 @@ import gzip
 import hashlib
 import json
 import os
-import subprocess
 import sys
 
 import pytest
@@ -49,12 +48,15 @@ def test_the_dev_qrels_stand_in_for_the_test_qrels():
                 assert sha(p) != real, p
 
 
+def brief(log):
+    return json.loads(log.split("=== step6 brief ===\n", 1)[1].split("=== end step6 brief ===", 1)[0])
+
+
 def test_the_first_run_was_stopped_and_the_second_resumed():
     first, second = text("log-1"), text("log-2")
-    s1 = json.loads(REP.R.read(first)["summary.json"])
-    s2 = json.loads(REP.R.read(second)["summary.json"])
-    assert s1["status"] == "failed" and "SystemExit" in s1["reason"] and s1["not_done"]
-    assert s2["status"] == "done" and s2["not_done"] == [] and s2["collect"]["files"] == 5
+    s1, s2 = brief(first), brief(second)
+    assert s1["status"] == "failed" and "SystemExit" in s1["reason"] and s1["not_done"] > 0
+    assert s2["status"] == "done" and s2["not_done"] == 0 and s2["collect"]["files"] == 5
     done1 = sum(x["done"] for x in s1["units"].values())
     assert 3 <= done1 < 10
     assert f"{done1} of 10 units done in records" in second
@@ -83,18 +85,20 @@ def test_every_unit_and_the_layout():
 def test_no_measure_in_the_logs():
     for name in ("log-1", "log-2"):
         log = text(name)
-        # One report at the pod's exit, the small label-free files.
-        reports = REP.read_all(log)
-        assert [sorted(x) for x in reports] == [sorted(REP.TEXT) if name == "log-2" else sorted(set(REP.TEXT) - {"results/select.tsv"})]
-        assert "=== begin64 " not in log
+        # No report in the pod's log: the brief alone, a few KB, label-free.
+        assert "=== begin" not in log and REP.read_all(log) == []
+        b = log.split("=== step6 brief ===", 1)[1].split("=== end step6 brief ===", 1)[0]
+        assert len(b.encode()) < 8000
         W.assert_no_measure(log, vol())
 
 
 def test_the_reports_carry_every_file():
     out = os.path.join(vol(), "step6", "out")
     groups = []
-    for flag in ([], ["--sums"], ["--measures"]):
-        rep = subprocess.run([sys.executable, os.path.join(HERE, "report.py"), out] + flag, capture_output=True, text=True, check=True).stdout
+    for name in ("text", "sums", "measures"):
+        # The report files the job wrote, named with their sizes and SHA-256 in the brief of the second log.
+        rep = text("vol", "step6", "out", "reports", name + ".report")
+        assert brief(text("log-2"))["files"][f"reports/{name}.report"]["sha256"] == hashlib.sha256(rep.encode()).hexdigest()
         W.assert_no_measure(rep, vol())
         groups.append(REP.R.read(rep))
     assert "grid.tsv.gz" in groups[2] and f"results/nfcorpus/{SLUG}.tsv.gz" in groups[2] and f"step5/study/{SLUG}/nfcorpus/exact.tsv" in groups[2]

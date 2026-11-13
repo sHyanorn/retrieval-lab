@@ -214,6 +214,18 @@ def test_the_job_end_to_end(tmp_path, tools):
     assert "=== begin64 " not in text + sums
     for x in (text, sums, meas):
         W.assert_no_measure(x, w["vol"])
+    # The job's end: one report file per group on the volume, each the report of that group.
+    for name, x in (("text", text), ("sums", sums), ("measures", meas)):
+        with open(out(w, f"reports/{name}.report")) as f:
+            assert f.read() == x, name
+    # The brief, which alone goes to the pod's log at exit: a few KB, label-free, naming the files to carry.
+    b = rep("--brief")
+    assert len(b.encode()) < 8000 and b.startswith("=== step6 brief ===\n") and b.endswith("=== end step6 brief ===\n")
+    W.assert_no_measure(b, w["vol"])
+    bj = json.loads(b.split("\n", 1)[1].rsplit("=== end", 1)[0])
+    assert bj["status"] == "done" and bj["counts"] == s["counts"] and bj["not_done"] == 0 and bj["memory"]["slots"] == 2
+    for rel in ["manifest.tsv"] + [f"reports/{n}.report" for n in ("text", "sums", "measures")]:
+        assert bj["files"][rel] == {"bytes": os.path.getsize(out(w, rel)), "sha256": W.sha(out(w, rel))}, rel
     # The manifest: every file of the three groups but itself, with its size, SHA-256 and form.
     with open(out(w, "manifest.tsv")) as f:
         man = [ln.split("\t") for ln in f.read().splitlines()]
@@ -616,10 +628,13 @@ def test_the_start_command_dry_run(tmp_path, tools):
     text = logf.read_text()
     assert p.returncode == 0, text[-3000:]
     assert "step6/job.py exited with 0" in text and f"commit {head}" in text
-    # The small files alone, as one report; nothing of a measure in the log.
-    reports = REP.read_all(text)
-    assert [sorted(x) for x in reports] == [sorted(REP.TEXT)]
-    assert json.loads(reports[0]["summary.json"])["status"] == "done" and "=== begin64 " not in text
+    # No report in the log, only the brief; the reports are files on the volume, named in the brief.
+    assert "=== begin" not in text and REP.read_all(text) == []
+    bj = json.loads(text.split("=== step6 brief ===\n", 1)[1].split("=== end step6 brief ===", 1)[0])
+    assert bj["status"] == "done" and bj["collect"]["files"] == 5
+    for rel, x in bj["files"].items():
+        assert x == {"bytes": os.path.getsize(out(w, rel)), "sha256": W.sha(out(w, rel))}, rel
+    assert json.loads(REP.R.read(open(out(w, "reports/text.report")).read())["summary.json"])["status"] == "done"
     assert text.rstrip().endswith("dry run: curl -fsS -X DELETE -H 'Authorization: Bearer $RUNPOD_API_KEY' https://api.runpod.io/v2/pods/test")
     assert re.search(r"exit 0 in \d+ s", text)
     W.assert_no_measure(text, w["vol"])

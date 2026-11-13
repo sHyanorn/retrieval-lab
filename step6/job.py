@@ -62,9 +62,10 @@ VOL/step6/study/<slug>/<dataset>/             the layout cmd/study collect reads
 VOL/step6/bm25/<dataset>.run                  BM25 flat of the six small datasets
 VOL/step6/done/<unit>.json                    records of the units done
 VOL/step6/out                                 log, summary and the files to carry, named with
-                                              their sizes, SHA-256 and forms in manifest.tsv
-                                              (step6/report.py); out/results is collect's
-                                              output, out/grid.tsv.gz its grid.tsv gzipped
+                                              their sizes, SHA-256 and forms in manifest.tsv,
+                                              and their reports in out/reports (step6/report.py);
+                                              out/results is collect's output, out/grid.tsv.gz
+                                              its grid.tsv gzipped
 
 Exit status: 0 done; 2 stopped by a check; 3 space; 4 deadline; 1 an error,
 a child killed by signal 9, or a signal.
@@ -1251,10 +1252,12 @@ class Job:
                         "grid_tsv_gz_sha256": self.collected["files"]["out/grid.tsv.gz"]} if self.collected else None,
         }
         write_json(os.path.join(self.out, "summary.json"), s)
-        # Last: every file to carry, with its size, SHA-256 and form (step6/report.py).
-        with open(os.path.join(self.out, "manifest.tsv.tmp"), "w", encoding="utf-8") as f:
-            f.write(report.manifest(self.out))
-        os.replace(os.path.join(self.out, "manifest.tsv.tmp"), os.path.join(self.out, "manifest.tsv"))
+        # Last: every file to carry in manifest.tsv, with its size, SHA-256 and form, and the report of each
+        # group in out/reports, for a later pod to print (step6/report.py).
+        try:
+            report.write(self.out)
+        except OSError as e:
+            self.log(f"reports: {type(e).__name__}: {e}")
         self.log(f"{status}{': ' + reason if reason else ''}; {sum(x['done'] for x in by.values())} of {len(self.units)} "
                  f"units done{', collect done' if self.collected else ''}")
         return {"done": 0, "stopped": 2, "space": 3, "deadline": 4}.get(status, 1)

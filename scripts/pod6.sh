@@ -2,11 +2,12 @@
 # Sets up the step-6 CPU pod and runs step6/job.py on the network volume;
 # called by scripts/pod6-start.sh with the pod's start time. Everything it
 # prints also goes to VOL/step6/out/pod-<pod>-<start>.log. At exit, whatever
-# the outcome, it prints the report of the small label-free files with
-# step6/report.py, so that they leave the pod in its log, then waits
-# GRACE_MIN minutes (default 45), within the pod's time limit, for the log to
-# be read. The other files to carry stay on the volume, named in
-# step6/out/manifest.tsv, for another pod to print.
+# the outcome, it prints a few KB with step6/report.py --brief: status,
+# counts, times, space and memory, and the size and SHA-256 of the manifest
+# of the files to carry and of each report file, which the job wrote to the
+# volume (or, if it did not, report.py --write writes now) for another pod to
+# print at its own pace. Then it waits GRACE_MIN minutes (default 45), within
+# the pod's time limit, for the log to be read.
 # Environment: HARD_LIMIT_MIN; VOL_QUOTA_GB, MEM_GB and VCPU, the volume's
 # and the pod's sizes as created; VOL (default /workspace/rl), GRACE_MIN,
 # DEADLINE_H (hours from the pod's start; default its time limit less the
@@ -14,7 +15,8 @@
 # Go 1.27.3 is installed, JOB_ARGS (more arguments of step6/job.py, for a dry
 # run). The binaries, trec_eval, the runs and the copies of the inputs stay
 # on the pod's own disk; VOL gets the per-query files, records and logs. The
-# summary of an earlier pod is removed first; the job writes it again.
+# summary, manifest and reports of an earlier pod are removed first; the job
+# writes them again.
 set -euo pipefail
 start=${1:-$(date +%s)}
 repo=$(cd "$(dirname "$0")/.." && pwd)
@@ -22,12 +24,13 @@ vol=${VOL:-/workspace/rl}
 work=${WORK:-/root}
 out=$vol/step6/out
 mkdir -p "$out"
-rm -f "$out/summary.json"
+rm -rf "$out/summary.json" "$out/manifest.tsv" "$out/reports"
 exec > >(tee -a "$out/pod-${RUNPOD_POD_ID:-local}-$start.log") 2>&1
 cd "$repo"
 finish() {
 	code=$?
-	python3 step6/report.py "$out" || echo "step6/report.py failed"
+	[ -f "$out/reports/text.report" ] || python3 step6/report.py "$out" --write || echo "step6/report.py --write failed"
+	python3 step6/report.py "$out" --brief || echo "step6/report.py --brief failed"
 	wait=$((${GRACE_MIN:-45} * 60))
 	if [ -n "${HARD_LIMIT_MIN:-}" ]; then
 		left=$(awk "BEGIN { printf \"%d\", $start + ${HARD_LIMIT_MIN} * 60 - $(date +%s) - 60 }")

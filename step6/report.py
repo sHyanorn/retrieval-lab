@@ -15,15 +15,23 @@ writes manifest.tsv, every file of the three groups but itself with its
 size, SHA-256 and form, so that another pod can print them from the
 manifest and the files alone.
 
+The job ends by writing manifest.tsv and one report file per group under
+OUT/reports (--write), for a later pod to print at its own pace; the step-6
+pod prints only --brief, a few KB: status, counts, times, space and memory,
+and the size and SHA-256 of the manifest and of each report file.
+
 usage: python3 step6/report.py OUT [--sums | --measures]   one report of a group
        python3 step6/report.py OUT --files REL...           one report of the files given, relative to OUT
        python3 step6/report.py OUT --list                   every file of the groups: path, bytes, text or base64
+       python3 step6/report.py OUT --write                  manifest.tsv, and OUT/reports/<group>.report
+       python3 step6/report.py OUT --brief                  the few KB the step-6 pod prints at exit
        python3 step6/report.py --read LOG DIR               every report in LOG that checks, its files under DIR
 """
 
 import argparse
 import glob
 import importlib.util
+import json
 import os
 import sys
 
@@ -37,6 +45,7 @@ TEXT = ("summary.json", "manifest.tsv", "environment.json", "units.tsv", "result
 SUMS = ("runs.sha256", "perquery.sha256", "results/per-query.sha256")
 MEASURES = ("grid.tsv.gz", "results/*/*.tsv.gz", "step5/study/*/*/exact.tsv", "step5/bm25/*.tsv")
 LABEL_FREE = TEXT + SUMS
+REPORTS = (("text", TEXT), ("sums", SUMS), ("measures", MEASURES))
 
 
 def group(out, patterns):
@@ -66,6 +75,55 @@ def report(out, rels):
     R.FILES = tuple(glob.escape(r) for r in rels)
     R.BINARY = tuple(glob.escape(r) for r in rels if r not in LABEL_FREE)
     return R.report(out)
+
+
+def put(path, data):
+    os.makedirs(os.path.dirname(path), exist_ok=True)
+    with open(path + ".tmp", "wb") as f:
+        f.write(data)
+    os.replace(path + ".tmp", path)
+
+
+def write(out):
+    """manifest.tsv first, then the report of each group into out/reports/<group>.report."""
+    put(os.path.join(out, "manifest.tsv"), manifest(out).encode())
+    for name, patterns in REPORTS:
+        put(os.path.join(out, "reports", name + ".report"), report(out, group(out, patterns)).encode())
+
+
+def brief(out):
+    """The few KB the step-6 pod prints at exit, label-free: from summary.json, environment.json and units.tsv,
+    and the size and SHA-256 of manifest.tsv and of each report file."""
+    def load(rel):
+        try:
+            with open(os.path.join(out, rel), encoding="utf-8") as f:
+                return json.load(f)
+        except (OSError, ValueError):
+            return None
+    s, env = load("summary.json") or {}, load("environment.json") or {}
+    lim = env.get("limits") or {}
+    peak = secs = 0.0
+    total = 0.0
+    try:
+        with open(os.path.join(out, "units.tsv"), encoding="utf-8") as f:
+            for ln in f.read().splitlines()[1:]:
+                x = ln.split("\t")
+                peak, secs, total = max(peak, int(x[5])), max(secs, float(x[2])), total + float(x[2])
+    except (OSError, ValueError, IndexError):
+        pass
+    files = {}
+    for rel in ["manifest.tsv"] + [f"reports/{name}.report" for name, _ in REPORTS]:
+        p = os.path.join(out, rel)
+        if os.path.isfile(p):
+            with open(p, "rb") as f:
+                files[rel] = {"bytes": os.path.getsize(p), "sha256": R.sha(f.read())}
+    b = {k: s.get(k) for k in ("status", "reason", "pod", "commit", "hours_since_pod_start", "deadline_h", "counts", "units", "canary",
+                               "collect", "space")}
+    b.update(summary="summary.json" in os.listdir(out) if os.path.isdir(out) else False, not_done=len(s.get("not_done") or []),
+             not_done_first=(s.get("not_done") or [])[:5], files=files,
+             memory={k: lim.get(k) for k in ("memory", "budget", "cpus", "slots", "nproc")}, peak_rss_max=int(peak),
+             unit_seconds={"max": secs, "sum": round(total, 1)})
+    return "=== step6 brief ===\n" + json.dumps(b, indent=1, sort_keys=True) + "\n=== end step6 brief ===\n"
 
 
 def read_all(log):
@@ -131,7 +189,15 @@ def main(argv):
     g.add_argument("--measures", action="store_true", help="the files that hold a measure, in base64")
     g.add_argument("--files", nargs="+", metavar="REL", help="these files, relative to OUT")
     g.add_argument("--list", action="store_true", help="every file of the three groups, without content")
+    g.add_argument("--write", action="store_true", help="manifest.tsv, and the report of each group into OUT/reports")
+    g.add_argument("--brief", action="store_true", help="the few KB the step-6 pod prints at exit")
     a = p.parse_args(argv)
+    if a.write:
+        write(a.out)
+        return 0
+    if a.brief:
+        sys.stdout.write(brief(a.out))
+        return 0
     if a.list:
         for rel in group(a.out, LABEL_FREE + MEASURES):
             print(f"{rel}\t{os.path.getsize(os.path.join(a.out, rel))}\t{'text' if rel in LABEL_FREE else 'base64'}")

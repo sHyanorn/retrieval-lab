@@ -1,0 +1,4 @@
+# No line-ending conversion on any checkout, so that sha256sum of the
+# working file gives the checksum of D016.
+docs/PREREGISTRATION.md -text
+docs/PREREGISTRATION-AMENDMENTS.md -text

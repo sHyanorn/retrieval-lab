@@ -138,3 +138,8 @@ jobs:
         env:
           RL_STEP6_DRYRUN: ${{ runner.temp }}/dry
           RL_STEP6_DATA: ${{ runner.temp }}/data
+      # The carry printer over the dry run's manifest: every file printed in
+      # chunks into a log file, then rebuilt from it and checked against the
+      # manifest; the check prints counts, names, sizes and SHA-256 only.
+      - run: python scripts/carry6.py print --out "$RUNNER_TEMP/dry/vol/step6/out" --chunk-kib 64 --pause 0 --lead-s 0 --grace-min 0 > "$RUNNER_TEMP/carry.log"
+      - run: python scripts/carry6.py check "$RUNNER_TEMP/carry.log" --dir "$RUNNER_TEMP/carry"

@@ -2,11 +2,11 @@
 # Sets up the step-6 CPU pod and runs step6/job.py on the network volume;
 # called by scripts/pod6-start.sh with the pod's start time. Everything it
 # prints also goes to VOL/step6/out/pod-<pod>-<start>.log. At exit, whatever
-# the outcome, it prints two reports of step6/report.py, the label-free
-# checksum lists and then the small label-free files, so that they leave the
-# pod in its log, then waits GRACE_MIN minutes (default 45), within the pod's
-# time limit, for the log to be read. The files that hold measures stay on
-# the volume for another route.
+# the outcome, it prints the report of the small label-free files with
+# step6/report.py, so that they leave the pod in its log, then waits
+# GRACE_MIN minutes (default 45), within the pod's time limit, for the log to
+# be read. The other files to carry stay on the volume, named in
+# step6/out/manifest.tsv, for another pod to print.
 # Environment: HARD_LIMIT_MIN; VOL_QUOTA_GB, MEM_GB and VCPU, the volume's
 # and the pod's sizes as created; VOL (default /workspace/rl), GRACE_MIN,
 # DEADLINE_H (hours from the pod's start; default its time limit less the
@@ -27,7 +27,6 @@ exec > >(tee -a "$out/pod-${RUNPOD_POD_ID:-local}-$start.log") 2>&1
 cd "$repo"
 finish() {
 	code=$?
-	python3 step6/report.py "$out" --sums || echo "step6/report.py --sums failed"
 	python3 step6/report.py "$out" || echo "step6/report.py failed"
 	wait=$((${GRACE_MIN:-45} * 60))
 	if [ -n "${HARD_LIMIT_MIN:-}" ]; then

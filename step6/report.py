@@ -5,12 +5,15 @@ one report of the files it is given: a report checks itself, so a route that
 carries the files out of the pod can print any subset of them, in pieces of
 any size, and read back every report that arrived whole.
 
-Three groups: the small label-free files (the default, which the pod prints
-at exit), the label-free checksum lists, and the files that hold a
+Three groups: the small label-free files (the default, which the step-6 pod
+prints at exit), the label-free checksum lists, and the files that hold a
 label-based measure: collect's per-query files and grid.tsv, gzipped by the
 job, and step 5's per-query files. Every file outside the two label-free
 groups is printed in base64 only, so that no measure stands as text in a
-log; the reader writes files and prints nothing of their content.
+log; the reader writes files and prints nothing of their content. The job
+writes manifest.tsv, every file of the three groups but itself with its
+size, SHA-256 and form, so that another pod can print them from the
+manifest and the files alone.
 
 usage: python3 step6/report.py OUT [--sums | --measures]   one report of a group
        python3 step6/report.py OUT --files REL...           one report of the files given, relative to OUT
@@ -30,7 +33,7 @@ _spec = importlib.util.spec_from_file_location(
 R = importlib.util.module_from_spec(_spec)
 _spec.loader.exec_module(R)
 
-TEXT = ("summary.json", "environment.json", "units.tsv", "results/select.tsv", "neighbour.tsv", "dense-times.jsonl")
+TEXT = ("summary.json", "manifest.tsv", "environment.json", "units.tsv", "results/select.tsv", "neighbour.tsv", "dense-times.jsonl")
 SUMS = ("runs.sha256", "perquery.sha256", "results/per-query.sha256")
 MEASURES = ("grid.tsv.gz", "results/*/*.tsv.gz", "step5/study/*/*/exact.tsv", "step5/bm25/*.tsv")
 LABEL_FREE = TEXT + SUMS
@@ -42,6 +45,17 @@ def group(out, patterns):
     for pattern in patterns:
         rels += [os.path.relpath(p, out) for p in sorted(glob.glob(os.path.join(out, pattern))) if os.path.isfile(p)]
     return rels
+
+
+def manifest(out):
+    """The lines of manifest.tsv: every file of the three groups but the manifest, its bytes, SHA-256 and form."""
+    lines = ["path\tbytes\tsha256\tform"]
+    for rel in group(out, LABEL_FREE + MEASURES):
+        if rel != "manifest.tsv":
+            with open(os.path.join(out, rel), "rb") as f:
+                data = f.read()
+            lines.append(f"{rel}\t{len(data)}\t{R.sha(data)}\t{'text' if rel in LABEL_FREE else 'base64'}")
+    return "\n".join(lines) + "\n"
 
 
 def report(out, rels):

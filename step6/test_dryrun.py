@@ -83,10 +83,9 @@ def test_every_unit_and_the_layout():
 def test_no_measure_in_the_logs():
     for name in ("log-1", "log-2"):
         log = text(name)
-        # Two reports at the pod's exit, the checksum lists and the small files, all text and label-free.
+        # One report at the pod's exit, the small label-free files.
         reports = REP.read_all(log)
-        assert [sorted(x) for x in reports] == [sorted(REP.SUMS) if name == "log-2" else sorted(set(REP.SUMS) - {"results/per-query.sha256"}),
-                                                sorted(REP.TEXT) if name == "log-2" else sorted(set(REP.TEXT) - {"results/select.tsv"})]
+        assert [sorted(x) for x in reports] == [sorted(REP.TEXT) if name == "log-2" else sorted(set(REP.TEXT) - {"results/select.tsv"})]
         assert "=== begin64 " not in log
         W.assert_no_measure(log, vol())
 
@@ -105,3 +104,9 @@ def test_the_reports_carry_every_file():
                 assert f.read() == data, rel
     with open(os.path.join(out, "results", "grid.tsv"), "rb") as f:
         assert gzip.decompress(groups[2]["grid.tsv.gz"]) == f.read()
+    # The manifest names every file to carry, with its size and SHA-256.
+    every = {**groups[0], **groups[1], **groups[2]}
+    with open(os.path.join(out, "manifest.tsv"), encoding="utf-8") as f:
+        man = {r[0]: r[1:] for r in (ln.split("\t") for ln in f.read().splitlines()[1:])}
+    assert set(man) == set(every) - {"manifest.tsv"}
+    assert all(int(man[r][0]) == len(every[r]) and man[r][1] == hashlib.sha256(every[r]).hexdigest() for r in man)

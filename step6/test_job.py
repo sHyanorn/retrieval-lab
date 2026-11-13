@@ -214,6 +214,15 @@ def test_the_job_end_to_end(tmp_path, tools):
     assert "=== begin64 " not in text + sums
     for x in (text, sums, meas):
         W.assert_no_measure(x, w["vol"])
+    # The manifest: every file of the three groups but itself, with its size, SHA-256 and form.
+    with open(out(w, "manifest.tsv")) as f:
+        man = [ln.split("\t") for ln in f.read().splitlines()]
+    assert man[0] == ["path", "bytes", "sha256", "form"]
+    every = {**groups[0], **groups[1], **groups[2]}
+    assert {r[0] for r in man[1:]} == set(every) - {"manifest.tsv"}
+    for rel, size, h, form in man[1:]:
+        assert int(size) == len(every[rel]) and h == W.hashlib.sha256(every[rel]).hexdigest()
+        assert form == ("text" if rel in REP.LABEL_FREE else "base64")
     # A list of files: one report; a file with measures in it still in base64; a missing file refused.
     one = rep("--files", "units.tsv", "results/grid.tsv", "step5/bm25/quora.tsv")
     assert sorted(REP.R.read(one)) == ["results/grid.tsv", "step5/bm25/quora.tsv", "units.tsv"]
@@ -607,10 +616,10 @@ def test_the_start_command_dry_run(tmp_path, tools):
     text = logf.read_text()
     assert p.returncode == 0, text[-3000:]
     assert "step6/job.py exited with 0" in text and f"commit {head}" in text
-    # The checksum lists, then the small files, each a report of its own; nothing of a measure in the log.
+    # The small files alone, as one report; nothing of a measure in the log.
     reports = REP.read_all(text)
-    assert [sorted(x) for x in reports] == [sorted(REP.SUMS), sorted(REP.TEXT)]
-    assert json.loads(reports[1]["summary.json"])["status"] == "done" and "=== begin64 " not in text
+    assert [sorted(x) for x in reports] == [sorted(REP.TEXT)]
+    assert json.loads(reports[0]["summary.json"])["status"] == "done" and "=== begin64 " not in text
     assert text.rstrip().endswith("dry run: curl -fsS -X DELETE -H 'Authorization: Bearer $RUNPOD_API_KEY' https://api.runpod.io/v2/pods/test")
     assert re.search(r"exit 0 in \d+ s", text)
     W.assert_no_measure(text, w["vol"])

@@ -61,7 +61,8 @@ VOL/step5/{runs,study,bm25}                   step 5's runs and per-query files
 VOL/step6/study/<slug>/<dataset>/             the layout cmd/study collect reads
 VOL/step6/bm25/<dataset>.run                  BM25 flat of the six small datasets
 VOL/step6/done/<unit>.json                    records of the units done
-VOL/step6/out                                 log, summary and the files of the reports
+VOL/step6/out                                 log, summary and the files to carry, named with
+                                              their sizes, SHA-256 and forms in manifest.tsv
                                               (step6/report.py); out/results is collect's
                                               output, out/grid.tsv.gz its grid.tsv gzipped
 
@@ -76,6 +77,7 @@ import concurrent.futures
 import fractions
 import gzip
 import hashlib
+import importlib.util
 import json
 import math
 import os
@@ -91,6 +93,12 @@ import traceback
 
 HERE = os.path.dirname(os.path.abspath(__file__))
 REPO = os.path.dirname(HERE)
+
+# step6/report.py, the files to carry and their forms, under a name of its own.
+_spec = importlib.util.spec_from_file_location("step6_report", os.path.join(HERE, "report.py"))
+report = importlib.util.module_from_spec(_spec)
+_spec.loader.exec_module(report)
+
 GB = 1e9
 
 # The datasets of Section 4, in step 5's order; the six small ones are those
@@ -1243,6 +1251,10 @@ class Job:
                         "grid_tsv_gz_sha256": self.collected["files"]["out/grid.tsv.gz"]} if self.collected else None,
         }
         write_json(os.path.join(self.out, "summary.json"), s)
+        # Last: every file to carry, with its size, SHA-256 and form (step6/report.py).
+        with open(os.path.join(self.out, "manifest.tsv.tmp"), "w", encoding="utf-8") as f:
+            f.write(report.manifest(self.out))
+        os.replace(os.path.join(self.out, "manifest.tsv.tmp"), os.path.join(self.out, "manifest.tsv"))
         self.log(f"{status}{': ' + reason if reason else ''}; {sum(x['done'] for x in by.values())} of {len(self.units)} "
                  f"units done{', collect done' if self.collected else ''}")
         return {"done": 0, "stopped": 2, "space": 3, "deadline": 4}.get(status, 1)

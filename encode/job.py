@@ -16,9 +16,20 @@ VOL/step4/vectors/<dataset>/<model>      vectors, <model>.json its summary
 VOL/step4/reference/<model>              CPU vectors of check 1
 VOL/step4/out                            log, plan, checks, checksums, summary
 
+With --only MODEL DATASET --out DIR the job encodes one step that the cut
+rule cut, as plan.json of VOL/step4/out records it, and nothing else: no
+rate, no projection, no cut, no plan.json. It reads VOL/step4/out and
+changes nothing there; its own files go to DIR. Before the step, check 1 is
+run again for that model: the first 1,000 documents and the test queries of
+SciFact are encoded on this pod's device into DIR/check1-gpu, its CPU
+reference into DIR/reference, and the two compared. DIR's vectors.sha256
+holds the lines of VOL/step4/out's and the step's own, and its summary lists
+every step on the volume, so that it stands for both sessions.
+
 Exit status: 0 done, 1 an error, 2 stopped by a check or the cut rule.
 
 usage: python encode/job.py --vol DIR [--device cuda] [--price USD] [--deadline-h H] [--dry-run]
+       python encode/job.py --vol DIR --only MODEL DATASET --out DIR2 [--min-free-gb G]
 """
 
 import argparse
@@ -79,11 +90,16 @@ class Job:
     def __init__(self, a):
         self.a = a
         self.s4 = os.path.join(a.vol, "step4")
-        self.out = os.path.join(self.s4, "out")
+        self.base = os.path.join(self.s4, "out")
+        self.out = a.out or self.base
         self.data = a.data or os.path.join(a.vol, "data")
         os.makedirs(self.out, exist_ok=True)
-        self.models = tuple(m for m in P.ORDER if m in (a.models or P.ORDER))
-        self.datasets = tuple(a.datasets or P.TOKENS)
+        self.only = tuple(a.only) if a.only else None
+        if self.only:
+            self.models, self.datasets = (self.only[0],), (self.only[1],)
+        else:
+            self.models = tuple(m for m in P.ORDER if m in (a.models or P.ORDER))
+            self.datasets = tuple(a.datasets or P.TOKENS)
         self.first = self.steps(P.ORDER)[0]  # measures the rate
         self.encode_run = self._encode_run
         self.count_tokens = self._count_tokens
@@ -97,6 +113,7 @@ class Job:
         self.prior = sum(v for k, v in clock.items() if k != self.key)
         self.limit_h = self.prior / 3600 + a.deadline_h
         self.plan = read_json(os.path.join(self.out, "plan.json"))
+        self.record = read_json(os.path.join(self.base, "plan.json")) if self.only else None  # read, never written
         self.clock_lock, self.ended = threading.Lock(), threading.Event()
 
     clock_path = property(lambda self: os.path.join(self.out, "clock.json"))
@@ -205,7 +222,7 @@ class Job:
 
     def encode(self, m, d):
         data, out = self.dataset(d), self.vec(m, d)
-        if self.plan is None and (m, d) == self.first:
+        if self.plan is None and not self.only and (m, d) == self.first:
             self.warm_up(m, data)
         self.log(f"encode {m} on {d}")
         s = self.encode_run(m, data, out, device=self.a.device, batch=self.a.batch, chunk=self.a.chunk)
@@ -279,8 +296,8 @@ class Job:
             raise RuntimeError(f"{' '.join(cmd)}: {p.stderr.strip()}")
         return dict(json.loads(p.stdout), passed=p.returncode == 0)
 
-    def check1(self, m):
-        ref, vec = os.path.join(self.s4, "reference", slug(m)), self.vec(m, "scifact")
+    def check1(self, m, ref=None, vec=None):
+        ref, vec = ref or os.path.join(self.s4, "reference", slug(m)), vec or self.vec(m, "scifact")
         docs = self.agree(ref, vec, False)
         queries = self.agree(os.path.join(ref, "queries"), os.path.join(vec, "queries"), True)
         r = {"docs": docs, "queries": queries, "pass": docs["passed"] and queries["passed"]}
@@ -304,20 +321,9 @@ class Job:
         """Start or follow the CPU reference; run the checks whose inputs are ready."""
         sums = os.path.join(self.out, "reference.sha256")
         if "scifact" in self.datasets and self.plan and self.ref is None and not os.path.exists(sums):
-            threads = str(self.a.ref_threads or max(1, (os.cpu_count() or 2) // 2))
-            self.ref_log = open(sums + ".tmp", "w", encoding="utf-8")
-            cmd = ["nice", "-n", "10", os.path.join(REPO, "scripts", "reference.sh"), self.a.python,
-                   self.dataset("scifact"), os.path.join(self.s4, "reference")] + list(self.models)
-            self.log(f"CPU reference on {threads} threads: {' '.join(cmd)}")
-            self.ref = subprocess.Popen(cmd, cwd=REPO, stdout=self.ref_log, env=dict(os.environ, OMP_NUM_THREADS=threads))
+            self.start_reference(os.path.join(self.s4, "reference"))
         if self.ref is not None and self.ref.poll() is not None:
-            self.ref_log.close()
-            if self.ref.returncode != 0:
-                raise RuntimeError(f"scripts/reference.sh exited with {self.ref.returncode}")
-            self.ref = None
-            os.replace(sums + ".tmp", sums)
-            r = self.reference_match()
-            self.log(f"CPU reference done: {r['matches']} of {r['files']} files equal to step 3's")
+            self.end_reference()
         for m in self.models:
             if (os.path.exists(os.path.join(self.s4, "reference", slug(m) + ".json")) and self.done((m, "scifact"))
                     and not os.path.exists(os.path.join(self.out, "check1", slug(m) + ".json"))):
@@ -326,6 +332,27 @@ class Job:
             for d in P.CHECK2:
                 if self.done((P.BGE_BASE, d)) and not os.path.exists(os.path.join(self.out, "check2", d + ".json")):
                     self.check2(d)
+
+    def start_reference(self, dest):
+        """scripts/reference.sh for the job's models into dest, on half the CPUs; its checksums go to OUT/reference.sha256."""
+        sums = os.path.join(self.out, "reference.sha256")
+        threads = str(self.a.ref_threads or max(1, (os.cpu_count() or 2) // 2))
+        self.ref_log = open(sums + ".tmp", "w", encoding="utf-8")
+        cmd = ["nice", "-n", "10", os.path.join(REPO, "scripts", "reference.sh"), self.a.python,
+               self.dataset("scifact"), dest] + list(self.models)
+        self.log(f"CPU reference on {threads} threads: {' '.join(cmd)}")
+        self.ref = subprocess.Popen(cmd, cwd=REPO, stdout=self.ref_log, env=dict(os.environ, OMP_NUM_THREADS=threads))
+
+    def end_reference(self):
+        sums = os.path.join(self.out, "reference.sha256")
+        self.ref.wait()
+        self.ref_log.close()
+        if self.ref.returncode != 0:
+            raise RuntimeError(f"scripts/reference.sh exited with {self.ref.returncode}")
+        self.ref = None
+        os.replace(sums + ".tmp", sums)
+        r = self.reference_match()
+        self.log(f"CPU reference done: {r['matches']} of {r['files']} files equal to step 3's")
 
     def reference_match(self):
         def read(path):
@@ -369,12 +396,87 @@ class Job:
             self.encode(m, d)
         self.wait_check1()
 
+    # One step (--only).
+
+    def go_one(self):
+        m, d = self.only
+        self.log(f"start: pod {self.pod}, device {self.a.device}, one step: {m} on {d}, limit {self.limit_h:.2f} h, files {self.out}")
+        cuts = [c["model"] for c in (self.record or {}).get("cuts", [])]
+        if d != "nq" or m not in cuts:
+            raise Stop(f"{m} on {d} is not a cut recorded in {os.path.join(self.base, 'plan.json')}")
+        free = shutil.disk_usage(self.s4).free / 1e9
+        self.log(f"free space on the volume: {free:.1f} GB")
+        if free < self.a.min_free_gb:
+            raise Stop(f"{free:.1f} GB free on the volume, less than {self.a.min_free_gb:g} GB")
+        self.check1_one(m)
+        if not self.done(self.only):
+            self.encode(m, d)
+
+    def check1_one(self, m):
+        """Check 1 for m on this pod: its CPU reference and its SciFact vectors in OUT, the volume's untouched."""
+        r = read_json(os.path.join(self.out, "check1", slug(m) + ".json"))
+        if r is None:
+            ref = os.path.join(self.out, "reference")
+            if not os.path.exists(os.path.join(self.out, "reference.sha256")):
+                self.start_reference(ref)
+            gpu = os.path.join(self.out, "check1-gpu", "scifact", slug(m))
+            if not os.path.exists(gpu + ".json"):
+                self.log(f"encode {m} on scifact for check 1: the first 1000 documents and the test queries")
+                s = self.encode_run(m, self.dataset("scifact"), gpu, limit=1000, device=self.a.device, batch=self.a.batch, chunk=self.a.chunk)
+                write_json(gpu + ".json", dict(s, dataset="scifact"))
+            if self.ref is not None:
+                self.end_reference()
+            self.check1(m, os.path.join(ref, slug(m)), gpu)
+        elif not r["pass"]:
+            raise Stop(f"check 1 failed before for {m}")
+
+    def finish_one(self, status, reason):
+        m, d = self.only
+        kept = status == "done" and self.done(self.only)
+        rel = lambda p: p.split(os.sep)[-2:]  # dataset, model: the order of VOL/step4/out's vectors.sha256
+        files = glob.glob(os.path.join(self.base, "sha256", "*", "*.sha256"))
+        if kept:
+            files.append(os.path.join(self.out, "sha256", d, slug(m) + ".sha256"))
+        with open(os.path.join(self.out, "vectors.sha256"), "w", encoding="utf-8") as f:
+            for p in sorted(files, key=rel):
+                with open(p, encoding="utf-8") as g:
+                    f.write(g.read())
+        steps = [dict(read_json(self.vec(*s) + ".json"), dataset=s[1]) for s in P.steps(P.ORDER)
+                 if self.done(s) and (kept or s != self.only)]
+        record = self.record or {}
+        base = {k: sha256(os.path.join(self.base, k)) for k in ("plan.json", "summary.json", "vectors.sha256")
+                if os.path.exists(os.path.join(self.base, k))}
+        c1 = read_json(os.path.join(self.out, "check1", slug(m) + ".json"))
+        ref = os.path.exists(os.path.join(self.out, "reference.sha256"))
+        s = {
+            "status": status,
+            "reason": reason,
+            "pod": self.pod,
+            "device": self.a.device,
+            "gpu": read_json(self.vec(m, d) + ".json", {}).get("device") if kept else None,
+            "elapsed_h": round(self.elapsed_h(), 3),
+            "mode": "one step",
+            "only": [m, d],
+            "restored": [[m, d]] if kept else [],
+            "based_on": {"out": os.path.relpath(self.base, self.a.vol), "sha256": base},
+            "plan": record,
+            "steps": steps,
+            "not_done": [list(x) for x in P.steps(tuple(record.get("nq", [])) + (m,)) if not self.done(x)],
+            "check1": {m: c1} if c1 else {},
+            "check2": {},
+            "reference": self.reference_match() if ref else None,
+        }
+        write_json(os.path.join(self.out, "summary.json"), s)
+        self.log(f"{status}{': ' + reason if reason else ''}; {len(steps)} steps on the volume, this one {'kept' if kept else 'not kept'}, {s['elapsed_h']} h")
+
     def finish(self, status, reason):
         self.ended.set()
         self.tick()
         if self.ref is not None:
             self.ref.terminate()
             self.ref.wait()
+        if self.only:
+            return self.finish_one(status, reason)
         files = sorted(glob.glob(os.path.join(self.out, "sha256", "*", "*.sha256")))
         with open(os.path.join(self.out, "vectors.sha256"), "w", encoding="utf-8") as f:
             for p in files:
@@ -406,7 +508,7 @@ class Job:
         status, reason, code = "done", "", 0
         threading.Thread(target=self.ticking, daemon=True).start()
         try:
-            self.go()
+            self.go_one() if self.only else self.go()
         except Stop as e:
             status, reason, code = "stopped", str(e), 2
         except BaseException as e:  # noqa: BLE001 - every error ends the session with a summary
@@ -434,7 +536,16 @@ def parse(argv=None):
     p.add_argument("--ref-threads", type=int, help="threads of the CPU reference (default half the CPUs)")
     p.add_argument("--tick-s", type=float, default=60, help="seconds between two records of the pod's hours")
     p.add_argument("--dry-run", action="store_true", help="MiniLM on SciFact on the CPU")
+    p.add_argument("--only", nargs=2, metavar=("MODEL", "DATASET"),
+                   help="encode only this step, which plan.json of VOL/step4/out records as cut; needs --out")
+    p.add_argument("--out", help="the job's files (default VOL/step4/out; with --only, another directory)")
+    p.add_argument("--min-free-gb", type=float, default=15, help="with --only: stop if the volume has less free space")
     a = p.parse_args(argv)
+    if a.only:
+        if a.only[0] not in P.ORDER or a.only[1] not in P.TOKENS:
+            p.error(f"--only: unknown model or dataset: {' '.join(a.only)}")
+        if a.out is None or os.path.abspath(a.out) == os.path.abspath(os.path.join(a.vol, "step4", "out")):
+            p.error("--only needs an --out other than VOL/step4/out")
     if a.dry_run:
         a.device, a.models, a.datasets = "cpu", a.models or [P.MINILM], a.datasets or ["scifact"]
     return a

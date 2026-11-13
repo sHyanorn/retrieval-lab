@@ -233,3 +233,114 @@ def test_dry_run_killed_and_resumed(tmp_path):
     assert sa["check1"][MINILM]["pass"] and sa["reference"]["files"] == 4
     with open(a / "step4" / "out" / "vectors.sha256") as f, open(b / "step4" / "out" / "vectors.sha256") as g:
         assert f.read() == g.read()
+
+
+# One step (--only): NQ of the model that the cut rule cut, alone.
+
+MXBAI = P.CUT_ORDER[0]
+
+
+def files(d):
+    """Every file under d, by relative path, with its bytes."""
+    out = {}
+    for root, _, names in os.walk(d):
+        for n in names:
+            p = os.path.join(root, n)
+            with open(p, "rb") as f:
+                out[os.path.relpath(p, d)] = f.read()
+    return out
+
+
+def cut_session(vol, tmp_path):
+    """A whole session whose rate cuts NQ of mxbai, as the second GPU session did."""
+    todo = P.steps(P.ORDER[:-1])
+    r = sum(P.base_tokens(s) for s in todo) / 3600 / (9.0 - P.OVERHEAD_H) * 1.001
+    assert make_job(vol, tmp_path, rate=r, deadline_h="9", price="1.19").run() == 0
+    assert [c["model"] for c in summary(vol)["plan"]["cuts"]] == [MXBAI]
+    return files(vol / "step4" / "out"), files(vol / "step4" / "vectors")
+
+
+def one_step(vol, tmp_path, step=(MXBAI, "nq"), **kw):
+    j = make_job(vol, tmp_path, only=list(step), out=str(vol / "step4" / "out3"), **kw)
+    run, j.kwargs = j.encode_run, []
+
+    def recording(name, data, out, **k):
+        j.kwargs.append(k)
+        return run(name, data, out, **k)
+
+    j.encode_run = recording
+    j.warm_up = lambda m, data: j.calls.append(("warm up", m))
+    return j
+
+
+def read3(vol, name):
+    with open(vol / "step4" / "out3" / name) as f:
+        return json.load(f) if name.endswith(".json") else f.read().splitlines()
+
+
+def test_only_encodes_the_cut_step(vol, tmp_path):
+    out, vectors = cut_session(vol, tmp_path)
+    j = one_step(vol, tmp_path)
+    assert j.run() == 0
+    # Check 1's SciFact on this device, then the step; nothing else, and the volume's SciFact vectors untouched.
+    assert j.calls == [(MXBAI, "scifact"), (MXBAI, "nq")]
+    assert j.kwargs[0]["limit"] == 1000 and "limit" not in j.kwargs[1]
+    assert files(vol / "step4" / "out") == out
+    after = files(vol / "step4" / "vectors")
+    assert {k: v for k, v in after.items() if not k.startswith("nq/" + J.slug(MXBAI))} == vectors
+    log = "\n".join(read3(vol, "job.log"))
+    assert "one step: " + MXBAI in log and "free space on the volume" in log
+    assert not any(w in log for w in ("rate ", "projected", "cut NQ"))
+    assert not os.path.exists(vol / "step4" / "out3" / "plan.json")
+    s = read3(vol, "summary.json")
+    assert s["status"] == "done" and s["mode"] == "one step" and s["restored"] == [[MXBAI, "nq"]]
+    assert s["plan"] == json.loads(out["plan.json"]) and s["not_done"] == [] and s["check2"] == {}
+    assert len(s["steps"]) == 64 and [(x["model"], x["dataset"]) for x in s["steps"]] == P.steps()
+    assert s["check1"][MXBAI]["pass"] and s["reference"]["files"] == 4
+    assert s["based_on"]["sha256"]["summary.json"] == J.hashlib.sha256(out["summary.json"]).hexdigest()
+    assert sorted(os.listdir(vol / "step4" / "out3" / "reference")) == [J.slug(MXBAI), J.slug(MXBAI) + ".json"]
+    # The volume's lines, in their order, and the step's four.
+    old, new = out["vectors.sha256"].decode().splitlines(), read3(vol, "vectors.sha256")
+    added = [ln for ln in new if ln not in old]
+    assert len(old) == 63 * 4 and [ln for ln in new if ln in old] == old
+    assert len(added) == 4 and all(ln.split()[1].startswith(f"nq/{J.slug(MXBAI)}/") for ln in added)
+    assert len(read3(vol, "clock.json")) == 1
+
+
+def test_only_refuses_a_step_not_cut(vol, tmp_path):
+    out, _ = cut_session(vol, tmp_path)
+    j = one_step(vol, tmp_path, step=(BASE, "nq"))
+    assert j.run() == 2 and j.calls == []
+    s = read3(vol, "summary.json")
+    assert s["status"] == "stopped" and "not a cut recorded" in s["reason"] and s["restored"] == []
+    assert read3(vol, "vectors.sha256") == out["vectors.sha256"].decode().splitlines()
+    assert files(vol / "step4" / "out") == out
+
+
+def test_only_stops_without_free_space(vol, tmp_path):
+    out, _ = cut_session(vol, tmp_path)
+    j = one_step(vol, tmp_path, min_free_gb="1e12")
+    assert j.run() == 2 and j.calls == []
+    assert "GB free on the volume" in read3(vol, "summary.json")["reason"]
+    assert files(vol / "step4" / "out") == out
+
+
+def test_only_check1_failure_keeps_the_cut(vol, tmp_path):
+    out, _ = cut_session(vol, tmp_path)
+    j = one_step(vol, tmp_path, agree=AGREE_LOW("*out3/reference*"))
+    assert j.run() == 2 and j.calls == [(MXBAI, "scifact")]
+    s = read3(vol, "summary.json")
+    assert s["status"] == "stopped" and not s["check1"][MXBAI]["pass"] and s["restored"] == []
+    assert s["not_done"] == [[MXBAI, "nq"]] and len(s["steps"]) == 63
+    assert read3(vol, "vectors.sha256") == out["vectors.sha256"].decode().splitlines()
+    # A rerun stops again on the recorded failure.
+    j = one_step(vol, tmp_path)
+    assert j.run() == 2 and j.calls == []
+
+
+def test_only_needs_its_own_out(vol):
+    for extra in ([], ["--out", str(vol / "step4" / "out")]):
+        with pytest.raises(SystemExit):
+            J.parse(["--vol", str(vol), "--only", MXBAI, "nq"] + extra)
+    with pytest.raises(SystemExit):
+        J.parse(["--vol", str(vol), "--only", "no/model", "nq", "--out", str(vol / "o")])

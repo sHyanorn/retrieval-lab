@@ -101,3 +101,27 @@ def test_pod_sh_reports_at_exit(tmp_path):
     assert p.returncode == 2 and time.time() - t < 60
     files = R.read(p.stdout)
     assert json.loads(files["summary.json"]) == {"status": "stopped"} and "check1/m.json" in files
+
+
+# The same with OUT and ONLY: job.py gets --out and --only, and the report is of OUT.
+FAKE_ONE = """#!/bin/sh
+out=$(echo "$@" | sed 's/.*--out \\([^ ]*\\).*/\\1/')
+printf '{"args": "%s"}\\n' "$*" > "$out/summary.json"
+exit 0
+"""
+
+
+@pytest.mark.skipif(not shutil.which("go"), reason="needs Go")
+def test_pod_sh_only_and_out(tmp_path):
+    py = tmp_path / "py"
+    py.write_text(FAKE_ONE)
+    py.chmod(0o755)
+    out = tmp_path / "vol" / "step4" / "out3"
+    env = dict(os.environ, DRY_RUN="1", PYTHON=str(py), VOL=str(tmp_path / "vol"), PRICE="1.39", HARD_LIMIT_MIN="1",
+               GRACE_MIN="0", OUT=str(out), ONLY="mixedbread-ai/mxbai-embed-large-v1 nq")
+    start = int(time.time())
+    p = subprocess.run([os.path.join(REPO, "scripts", "pod.sh"), str(start)], env=env, capture_output=True, text=True)
+    assert p.returncode == 0, p.stderr
+    args = json.loads(R.read(p.stdout)["summary.json"])["args"]
+    assert f"--out {out} " in args and args.endswith("--only mixedbread-ai/mxbai-embed-large-v1 nq --dry-run --python " + str(py))
+    assert (out / f"pod-local-{start}.log").exists() and not (tmp_path / "vol" / "step4" / "out").exists()

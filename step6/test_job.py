@@ -638,3 +638,189 @@ def test_the_start_command_dry_run(tmp_path, tools):
     assert text.rstrip().endswith("dry run: curl -fsS -X DELETE -H 'Authorization: Bearer $RUNPOD_API_KEY' https://api.runpod.io/v2/pods/test")
     assert re.search(r"exit 0 in \d+ s", text)
     W.assert_no_measure(text, w["vol"])
+
+
+# The findings of the review of 2026-11-13
+
+
+def large(dataset, dim, docs, queries):
+    """A build unit with the sizes of one real cell, as Job.size computes them."""
+    u = J.Unit("build", dataset, BGE, (16, 200, 1))
+    u.n, u.dim = docs, dim
+    u.vbytes = 45 + 4 * docs * dim
+    graph = docs * ((1 + 2 * 16) * 4 + (1 + 16) * 4 / 15 + 5)
+    u.steady = int(u.vbytes + graph + 32 * docs + 0.6 * J.GB + 30 * queries * 1000)
+    return u
+
+
+@pytest.mark.parametrize("dataset, dim, docs, queries", [("quora", 768, 522931, 10000), ("quora", 1024, 522931, 10000),
+                                                         ("nq", 384, 2681468, 3452), ("nq", 1024, 2681468, 3452)])
+def test_the_read_token_passes_on_when_the_read_ends(dataset, dim, docs, queries):
+    """The token is held while the file and its values are both in memory, and passed on once RSS is back at
+    the unit's GOMEMLIMIT, where Go leaves it after the read; not at a multiple of the file, which for Quora
+    sits below that limit and would wait for Go's two-minute collection."""
+    u = large(dataset, dim, docs, queries)
+    peak = 2 * u.vbytes
+    assert not J.read_over(u, 0.6 * u.vbytes, 0.6 * u.vbytes)  # reading
+    assert not J.read_over(u, peak, peak)  # both in memory
+    assert J.read_over(u, peak, u.steady)  # Go at its limit, the file's bytes collected
+    assert J.read_over(u, peak, 1.005 * u.steady) and not J.read_over(u, peak, 1.3 * u.steady)
+    # Quora's limit is above 1.3 times its file, so the old threshold would not have been reached at the limit.
+    if dataset == "quora":
+        assert u.steady > 1.3 * u.vbytes
+
+
+def test_kill_escalates_to_signal_9(tmp_path, tools):
+    w = make(tmp_path, tools)
+    job = J.Job(J.parse(args(w, tools, tmp_path, "--kill-after-s", "2")))
+    job.env = job.environment()
+    p = subprocess.Popen([sys.executable, "-c", "import signal, time, sys; signal.signal(signal.SIGTERM, signal.SIG_IGN); "
+                          "print('ready', flush=True); time.sleep(60)"], stdout=subprocess.PIPE, text=True)
+    assert p.stdout.readline().strip() == "ready"  # its handler is in place before the signal
+    t = time.time()
+    job.kill(p)
+    assert p.poll() is not None and -p.returncode == signal.SIGKILL and 2 <= time.time() - t < 20
+    assert "SIGKILL" in log(w)
+
+
+def test_a_child_does_not_outlive_its_thread(tmp_path, tools):
+    """A signal or an error in the thread that runs a child ends that child; the canary and collect run in the
+    main thread, where a SIGTERM would otherwise leave cmd/dense or cmd/study behind."""
+    w = make(tmp_path, tools)
+    job = J.Job(J.parse(args(w, tools, tmp_path, "--kill-after-s", "2")))
+    job.env = job.environment()
+    out = str(tmp_path / "child.out")
+    started = threading.Event()
+    pids = []
+
+    def watch():
+        started.wait(10)
+        time.sleep(1)
+        with job.lock:
+            pids.extend(p.pid for p in job.procs)
+        for p in list(job.procs):
+            p.send_signal(signal.SIGUSR1)  # stands in for the SystemExit of a SIGTERM in that thread
+
+    def child():
+        started.set()
+        job.child(None, [sys.executable, "-c", "import signal, time; signal.signal(signal.SIGTERM, signal.SIG_IGN); time.sleep(60)"],
+                  out, out)
+
+    # The watcher waits a second, so that the child's handler is in place before the signal.
+
+    th = threading.Thread(target=watch)
+    th.start()
+    with pytest.raises(subprocess.CalledProcessError):
+        child()
+    th.join()
+    assert pids and not os.path.exists(f"/proc/{pids[0]}")
+
+
+def test_the_canary_falls_back_to_another_recorded_build(tmp_path, tools):
+    w = make(tmp_path, tools)
+    assert run(args(w, tools, tmp_path)) == 0
+    # No record of --canary: another build recorded by the earlier start is made again instead.
+    a = args(w, tools, tmp_path, canary=f"{BGE}:nfcorpus:16:200:99")
+    assert run(a) == 0
+    text = log(w)
+    assert "no record of" in text and "instead" in text
+    c = summary(w)["canary"]
+    assert c["checked"] is True and c["unit"] in self_builds(w)
+    # That build's runs must still equal its record.
+    path = os.path.join(w["vol"], "step6", "done", c["unit"] + ".json")
+    with open(path) as f:
+        r = json.load(f)
+    r["runs"]["23"]["sha256"] = "0" * 64
+    with open(path, "w") as f:
+        json.dump(r, f)
+    assert run(a) == 2 and "ef 23 differ" in summary(w)["reason"]
+
+
+def self_builds(w):
+    return [r for r in records(w) if r.startswith("build/")]
+
+
+def test_collects_record_is_bound_to_the_per_query_files_it_read(tmp_path, tools):
+    w = make(tmp_path, tools)
+    assert run(args(w, tools, tmp_path)) == 0
+    first = W.sha(out(w, "results/grid.tsv"))
+    with open(os.path.join(w["vol"], "step6", "done", "collect.json")) as f:
+        rec = json.load(f)
+    assert len(rec["layout_sha256"]) == 64
+    # A unit redone with other files: collect's record no longer stands.
+    unit = f"build/{J.slug(BGE)}/nfcorpus/m8-efc200-s1"
+    os.remove(os.path.join(w["vol"], "step6", "done", unit + ".json"))
+    shutil.rmtree(os.path.join(w["vol"], "step6", "study", J.slug(BGE), "nfcorpus", "m8-efc200-s1"))
+    assert run(args(w, tools, tmp_path)) == 0
+    text = log(w)
+    assert "removing the output of an earlier start, whose record does not stand" in text and "collect: done in its record" not in text
+    assert W.sha(out(w, "results/grid.tsv")) == first  # the same files again, so the same output
+    with open(os.path.join(w["vol"], "step6", "done", "collect.json")) as f:
+        assert json.load(f)["layout_sha256"] == rec["layout_sha256"]
+
+
+def test_an_earlier_starts_collect_output_is_not_carried(tmp_path, tools):
+    """A job that does not reach collect must not leave an earlier start's results in its manifest."""
+    w = make(tmp_path, tools)
+    assert run(args(w, tools, tmp_path)) == 0
+    os.remove(os.path.join(w["vol"], "step6", "done", f"build/{J.slug(BGE)}/nfcorpus/m32-efc200-s1.json"))
+    shutil.rmtree(os.path.join(w["vol"], "step6", "study", J.slug(BGE), "nfcorpus", "m32-efc200-s1"))
+    assert run(args(w, tools, tmp_path, "--start", str(time.time()), "--deadline-h", "0.0001")) == 4
+    assert "removing the output of an earlier start" in log(w)
+    assert not os.path.exists(out(w, "results")) and not os.path.exists(out(w, "grid.tsv.gz"))
+    with open(out(w, "manifest.tsv")) as f:
+        assert not [ln for ln in f.read().splitlines()[1:] if ln.startswith(("results/", "grid.tsv.gz"))]
+    assert summary(w)["collect"] is None
+
+
+def test_one_job_at_a_time_on_the_volume(tmp_path, tools):
+    w = make(tmp_path, tools)
+    lock = os.path.join(w["vol"], "step6", "lock.json")
+    os.makedirs(os.path.dirname(lock), exist_ok=True)
+    with open(lock, "w") as f:
+        json.dump({"run_id": "other-1", "pod": "other", "pid": 1, "at": time.time()}, f)
+    assert run(args(w, tools, tmp_path)) == 2
+    s = summary(w)
+    assert s["status"] == "stopped" and "another job holds" in s["reason"] and records(w) == []
+    # A lock of a job that is gone goes stale and is taken over; the job then holds it while it runs.
+    with open(lock, "w") as f:
+        json.dump({"run_id": "other-1", "pod": "other", "pid": 1, "at": time.time() - 4000}, f)
+    assert run(args(w, tools, tmp_path, "--lock-stale-s", "900")) == 0
+    assert "taking over the lock" in log(w)
+    assert not os.path.exists(lock)  # released at the end
+
+
+def test_a_job_whose_lock_is_taken_stops(tmp_path, tools, monkeypatch):
+    w = make(tmp_path, tools)
+    job = J.Job(J.parse(args(w, tools, tmp_path, "--lock-every-s", "0.2")))
+    orig = J.Job.execute
+
+    def execute(self, u):
+        # Another job takes the lock while this one works.
+        with open(self.lock_path(), "w") as f:
+            json.dump({"run_id": "other-2", "pod": "other", "pid": 1, "at": time.time()}, f)
+        return orig(self, u)
+
+    monkeypatch.setattr(J.Job, "execute", execute)
+    assert job.run() == 2
+    s = summary(w)
+    assert s["status"] == "stopped" and "another job took the lock" in s["reason"]
+
+
+def test_the_summary_is_written_even_if_a_signal_comes_at_the_end(tmp_path, tools, monkeypatch):
+    """SIGTERM is ignored once the units have ended, so the summary, the manifest and the reports of a job that
+    is signalled at its end are still written; before that it ends the job, which then records what it has."""
+    w = make(tmp_path, tools)
+    assert run(args(w, tools, tmp_path)) == 0
+    os.remove(out(w, "summary.json"))
+    orig = J.Job.finish
+
+    def finish(self, status, reason):
+        os.kill(os.getpid(), signal.SIGTERM)  # a SIGTERM arriving as the summary is written
+        time.sleep(0.2)
+        return orig(self, status, reason)
+
+    monkeypatch.setattr(J.Job, "finish", finish)
+    assert run(args(w, tools, tmp_path)) == 0
+    assert summary(w)["status"] == "done" and os.path.exists(out(w, "manifest.tsv"))
+    assert signal.getsignal(signal.SIGTERM) is signal.SIG_IGN

@@ -61,6 +61,7 @@ VOL/step5/{runs,study,bm25}                   step 5's runs and per-query files
 VOL/step6/study/<slug>/<dataset>/             the layout cmd/study collect reads
 VOL/step6/bm25/<dataset>.run                  BM25 flat of the six small datasets
 VOL/step6/done/<unit>.json                    records of the units done
+VOL/step6/lock.json                           the lock of the job running, written every minute
 VOL/step6/out                                 log, summary and the files to carry, named with
                                               their sizes, SHA-256 and forms in manifest.tsv,
                                               and their reports in out/reports (step6/report.py);
@@ -255,6 +256,19 @@ def mean_len(path, limit):
 def ratstr(fr):
     """A fraction as big.Rat's RatString writes it, as cmd/study collect writes neighbour recall."""
     return str(fr.numerator) if fr.denominator == 1 else f"{fr.numerator}/{fr.denominator}"
+
+
+def read_over(u, seen, now):
+    """Whether the read of u's vector file is over, from the largest RSS seen and the RSS now.
+
+    cmd/dense holds the file and the values read from it at once (amendment 22), about twice the file, which is
+    above the GOMEMLIMIT it runs under; when the read ends the file's bytes become garbage and Go, over its
+    limit, collects them at once, so RSS comes back to the limit. The limit is a different multiple of the file
+    for each dataset and dimension (1.62 times for Quora at 768, 1.11 for NQ at 1,024), so the threshold is
+    taken from the limit: below it the read is certainly over, and waiting for a fall to 1.3 times the file
+    would wait for Go's two-minute forced collection instead. It is kept under the read's own peak, so that a
+    unit whose limit is above that peak still holds the token while it reads."""
+    return seen >= 1.2 * u.vbytes and now <= max(1.3 * u.vbytes, min(1.01 * u.steady, 1.9 * u.vbytes))
 
 
 def rss(pid):
@@ -476,16 +490,20 @@ class Job:
                     if u is not None:
                         u.peak = max(u.peak, r)
                         if u.token:
-                            if seen >= 1.5 * u.vbytes and r <= 1.3 * u.vbytes:
+                            if read_over(u, seen, r):
                                 self.release(u)
                             elif time.time() - t0 > self.a.read_wait_s:
                                 self.log(f"{u.key}: read token passed on after {self.a.read_wait_s:.0f} s, "
-                                         f"RSS {r / GB:.2f} GB")
+                                         f"RSS {r / GB:.2f} GB of a vector file of {u.vbytes / GB:.2f} GB")
                                 self.release(u)
                     try:
                         p.wait(nap)
                     except subprocess.TimeoutExpired:
                         nap = min(0.5, 2 * nap)
+            except BaseException:
+                # A signal or an error in this thread: the child does not outlive the job.
+                self.kill(p)
+                raise
             finally:
                 with self.lock:
                     self.procs.discard(p)
@@ -497,6 +515,21 @@ class Job:
         if p.returncode != 0:
             self.halt()
             raise subprocess.CalledProcessError(p.returncode, [os.path.basename(cmd[0])] + cmd[1:])
+
+    def kill(self, p):
+        """Ends one child: SIGTERM, then SIGKILL after --kill-after-s, and waits for it."""
+        if p.poll() is not None:
+            return
+        p.terminate()
+        try:
+            p.wait(self.a.kill_after_s)
+        except subprocess.TimeoutExpired:
+            self.log(f"a child did not end {self.a.kill_after_s:.0f} s after SIGTERM; SIGKILL")
+            p.kill()
+            try:
+                p.wait(30)
+            except subprocess.TimeoutExpired:
+                self.log("a child did not end after SIGKILL")
 
     def release(self, u):
         if u.token:
@@ -520,8 +553,11 @@ class Job:
             self.cv.notify_all()
         if first and not isinstance(e, Ended):
             self.log(f"end: {type(e).__name__}: {e}")
+        for p in procs:  # every child first, so that the waits of kill() overlap
+            if p.poll() is None:
+                p.terminate()
         for p in procs:
-            p.terminate()
+            self.kill(p)
 
     def stop_new(self, e):
         """No new unit starts; the running ones finish and record."""
@@ -609,6 +645,40 @@ class Job:
         if lim["budget"] <= 0:
             raise Stop(f"a memory budget of {lim['budget']} bytes from {lim['memory']}")
         return lim
+
+    # The lock: one job at a time on the volume
+
+    def lock_path(self):
+        return os.path.join(self.s6, "lock.json")
+
+    def take_lock(self):
+        """Stops unless this job may run: another job's lock is fresh. A lock older than --lock-stale-s is
+        that of a job whose pod is gone, and is taken over."""
+        r = read_json(self.lock_path())
+        if r is not None and r.get("run_id") != self.run_id:
+            age = time.time() - r.get("at", 0)
+            if age < self.a.lock_stale_s:
+                raise Stop(f"another job holds {os.path.relpath(self.lock_path(), self.a.vol)}: run {r.get('run_id')} on pod "
+                           f"{r.get('pod')}, {age:.0f} s ago; it must end, or its lock go stale after "
+                           f"{self.a.lock_stale_s:.0f} s, before this job may run")
+            self.log(f"lock: taking over the lock of run {r.get('run_id')}, last written {age / 3600:.2f} h ago")
+        self.touch_lock()
+
+    def touch_lock(self):
+        write_json(self.lock_path(), {"run_id": self.run_id, "pod": os.environ.get("RUNPOD_POD_ID", "local"), "pid": os.getpid(),
+                                      "at": time.time(), "started": self.start})
+
+    def hold_lock(self):
+        """Keeps the lock fresh while the job runs, and stops the job if another takes it."""
+        while not self.stopped.wait(self.a.lock_every_s):
+            r = read_json(self.lock_path())
+            if r is not None and r.get("run_id") != self.run_id:
+                self.end(Stop(f"another job took the lock: run {r.get('run_id')} on pod {r.get('pod')}"))
+                return
+            try:
+                self.touch_lock()
+            except OSError as e:
+                self.log(f"lock: {type(e).__name__}: {e}")
 
     # Space
 
@@ -1013,14 +1083,21 @@ class Job:
     # The canary
 
     def check_canary(self):
-        """With records of an earlier start, the canary is built and searched again; its 65 run files must
-        equal its record's."""
-        if all(r.get("run_id") == self.run_id for r in self.records.values()):
+        """With records of an earlier start, one build it recorded is made again; its 65 run files must equal
+        its record's. The build is --canary where that has such a record, else the shortest build recorded by
+        an earlier start, so that records of another machine are never accepted unchecked."""
+        earlier = {k for k, r in self.records.items() if r.get("run_id") != self.run_id}
+        if not earlier:
             return None
-        u = self.canary
-        if u is None or u.key not in self.records:
-            self.log(f"canary: no record of {self.a.canary}; not checked")
-            return {"checked": False}
+        u = self.canary if self.canary is not None and self.canary.key in earlier else None
+        if u is None:
+            builds = sorted((self.byk[k] for k in earlier if self.byk[k].kind == "build"), key=lambda x: x.prior)
+            if not builds:
+                # Only BM25 runs, whose own SHA-256 the committed file fixes (inputs()); nothing else to check.
+                self.log(f"canary: no build recorded by an earlier start; {len(earlier)} BM25 records stand by their SHA-256")
+                return {"checked": False, "reason": "no build recorded by an earlier start", "earlier_records": sorted(earlier)}
+            u = builds[0]
+            self.log(f"canary: no record of {self.a.canary} by an earlier start; {u.key} instead")
         work = os.path.join(self.local, "canary")
         shutil.rmtree(work, ignore_errors=True)
         os.makedirs(work)
@@ -1036,7 +1113,8 @@ class Job:
             raise Stop(f"canary {u.key}: the runs at ef {', '.join(map(str, differ[:5]))}{' and more' if len(differ) > 5 else ''} "
                        f"differ from those recorded by {rec['run_id']} on {rec['environment'].get('cpu_model')}")
         self.log(f"canary {u.key}: its 65 run files equal those recorded by {rec['run_id']}")
-        return {"checked": True, "unit": u.key, "record": rec["run_id"], "cpu_model": rec["environment"].get("cpu_model")}
+        return {"checked": True, "unit": u.key, "record": rec["run_id"], "cpu_model": rec["environment"].get("cpu_model"),
+                "earlier_records": len(earlier)}
 
     # The scheduler
 
@@ -1116,7 +1194,7 @@ class Job:
                         self.running[go.key] = go
                         self.log(f"unit {go.key}: start, about {self.estimate(go) / 3600:.2f} h, {go.reserve / GB:.2f} GB "
                                  f"reserved, {go.local / GB:.2f} GB of disk; {len(self.running)} running")
-                        th = threading.Thread(target=self.unit_thread, args=(go,), daemon=True)
+                        th = threading.Thread(target=self.unit_thread, args=(go,), name=go.key, daemon=True)
                         self.threads.append(th)
                         th.start()
                     if not self.running:
@@ -1141,7 +1219,7 @@ class Job:
             if timer:
                 timer.cancel()
 
-    def unit_thread(self, u):
+    def unit_thread(self, u):  # noqa: D102 - one unit, in a thread named after it
         try:
             rec = self.execute(u)
             with self.cv:
@@ -1165,15 +1243,47 @@ class Job:
 
     # Collect
 
-    def collect(self):
-        """cmd/study collect, once, over the complete layout; its record names every file it wrote."""
+    def layout_sha256(self):
+        """The SHA-256 of every per-query file of the layout, by path, as one hash: what collect would read."""
+        h = hashlib.sha256()
+        for k in sorted(self.records):
+            for rel, want in sorted((self.records[k].get("files") or {}).items()):
+                if rel.startswith("study/"):
+                    h.update(f"{rel} {want}\n".encode())
+        for m, d in sorted(self.cells):
+            rel = f"study/{slug(m)}/{d}/exact.tsv"
+            h.update(f"{rel} {self.s5perquery[f'study/{slug(m)}/{d}/exact.tsv']}\n".encode())
+        return h.hexdigest()
+
+    def clear_stale_collect(self):
+        """Removes collect's output where its record is gone or no longer stands, so that no report of this
+        job carries an earlier one's results."""
         res = os.path.join(self.out, "results")
+        gz = os.path.join(self.out, "grid.tsv.gz")
+        if not os.path.isdir(res) and not os.path.exists(gz):
+            return
+        r = read_json(self.record_path("collect"))
+        if r is not None and r.get("units") == sorted(self.records) and r.get("layout_sha256") == self.layout_sha256():
+            return
+        self.log("collect: removing the output of an earlier start, whose record does not stand")
+        shutil.rmtree(res, ignore_errors=True)
+        if os.path.exists(gz):
+            os.remove(gz)
+        if r is not None:
+            os.remove(self.record_path("collect"))
+
+    def collect(self):
+        """cmd/study collect, once, over the complete layout; its record names every file it wrote and the
+        layout it read."""
+        res = os.path.join(self.out, "results")
+        layout = self.layout_sha256()
         r = read_json(self.record_path("collect"))
         if r is not None:
-            if r.get("units") == sorted(self.records) and all(
+            if r.get("units") == sorted(self.records) and r.get("layout_sha256") == layout and all(
                     os.path.isfile(os.path.join(self.s6, k)) and sha256(os.path.join(self.s6, k)) == v for k, v in r["files"].items()):
                 self.log("collect: done in its record")
                 return r
+            self.log("collect: its record names other units, another layout or other files; done again")
             os.remove(self.record_path("collect"))
         shutil.rmtree(res, ignore_errors=True)
         if os.path.exists(os.path.join(self.out, "grid.tsv.gz")):
@@ -1192,8 +1302,8 @@ class Job:
         for root, _, names in os.walk(res):
             for n in names:
                 files[os.path.relpath(os.path.join(root, n), self.s6)] = sha256(os.path.join(root, n))
-        r = {"files": files, "units": sorted(self.records), "seconds": round(time.time() - t, 1), "environment": self.env,
-             "run_id": self.run_id}
+        r = {"files": files, "units": sorted(self.records), "layout_sha256": layout, "seconds": round(time.time() - t, 1),
+             "environment": self.env, "run_id": self.run_id}
         write_json(self.record_path("collect"), r)
         with open(os.path.join(res, "select.tsv"), encoding="utf-8") as f:
             rows = len(f.read().splitlines()) - 1
@@ -1264,7 +1374,7 @@ class Job:
 
     def run(self):
         signal.signal(signal.SIGTERM, lambda *_: sys.exit(143))
-        status, reason = "done", ""
+        status, reason, heartbeat = "done", "", None
         try:
             self.env = self.environment()
             self.log(f"environment: commit {self.env['commit']}, {GO_VERSION} {GOARCH} {GOAMD64}, the code of step 2 as at "
@@ -1274,8 +1384,12 @@ class Job:
             os.makedirs(self.local, exist_ok=True)
             shutil.rmtree(os.path.join(self.local, "units"), ignore_errors=True)
             shutil.rmtree(os.path.join(self.s6, "tmp"), ignore_errors=True)
+            self.take_lock()
+            heartbeat = threading.Thread(target=self.hold_lock, daemon=True)
+            heartbeat.start()
             self.read_records()
             self.size()
+            self.clear_stale_collect()
             c = counts(self.units)
             self.log(f"work: {c['builds']} builds, {c['runs']} runs, {c['perquery']} + {c['fused']} per-query files, "
                      f"{c['bm25']} BM25 runs; {len(self.records)} of {len(self.units)} units done in records")
@@ -1303,9 +1417,26 @@ class Job:
                 self.log(traceback.format_exc())
         finally:
             self.end(Ended())
+            late = []
             for th in self.threads:
-                th.join()
-        return self.finish(status, reason)
+                th.join(self.a.join_s)
+                if th.is_alive():
+                    late.append(th.name)
+            if late:
+                self.log(f"{len(late)} unit threads did not end within {self.a.join_s:.0f} s: {', '.join(late[:3])}")
+                if status == "done":
+                    status, reason = "failed", f"{len(late)} unit threads did not end within {self.a.join_s:.0f} s"
+            if heartbeat is not None:
+                heartbeat.join(5)
+        # The summary and the files to carry are written whatever happens, a signal included.
+        signal.signal(signal.SIGTERM, signal.SIG_IGN)
+        code = self.finish(status, reason)
+        try:
+            if read_json(self.lock_path(), {}).get("run_id") == self.run_id:
+                os.remove(self.lock_path())
+        except OSError:
+            pass
+        return code
 
 
 def parse(argv=None):
@@ -1331,6 +1462,10 @@ def parse(argv=None):
     p.add_argument("--canary", default="sentence-transformers/all-MiniLM-L6-v2:nfcorpus:16:200:1",
                    help="model:dataset:M:efC:seed of the build made again when records of an earlier start exist")
     p.add_argument("--read-gb", type=float, default=1.0, help="vector files larger than this are read one at a time")
+    p.add_argument("--kill-after-s", type=float, default=120, help="seconds after SIGTERM before a child is sent SIGKILL")
+    p.add_argument("--join-s", type=float, default=600, help="seconds to wait for the unit threads at the end")
+    p.add_argument("--lock-every-s", type=float, default=60, help="seconds between two writes of the volume's lock")
+    p.add_argument("--lock-stale-s", type=float, default=900, help="a lock older than this is that of a job that is gone")
     p.add_argument("--read-wait-s", type=float, default=1800, help="the read token passes on after this long at most")
     p.add_argument("--du-every-s", type=float, default=1800, help="seconds between two du -sb of the volume")
     p.add_argument("--hash-threads", type=int, default=8, help="files hashed at a time")

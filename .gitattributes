@@ -2,3 +2,6 @@
 # working file gives the checksum of D016.
 docs/PREREGISTRATION.md -text
 docs/PREREGISTRATION-AMENDMENTS.md -text
+study/results/** -text
+results/step5/perquery/** -text
+results/step6/** -text

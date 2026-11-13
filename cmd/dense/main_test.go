@@ -11,6 +11,7 @@ import (
 
 	"github.com/sHyanorn/retrieval-lab/internal/dense"
 	"github.com/sHyanorn/retrieval-lab/internal/eval"
+	"github.com/sHyanorn/retrieval-lab/internal/fusion"
 )
 
 func TestReadQueryVectors(t *testing.T) {
@@ -165,5 +166,51 @@ func TestWorkersWriteTheSameRun(t *testing.T) {
 	}
 	if bytes.Contains(one, []byte("d000 Q0 d000")) || !bytes.Contains(one, []byte("\nd035 Q0 d132 1 ")) {
 		t.Fatalf("self-hit kept, or tie not first by ID:\n%.400s", one)
+	}
+}
+
+// An HNSW run that holds every document of the exact run, or of its top at
+// the dense run's depth, must fuse to the same run (PREREGISTRATION.md,
+// Section 6). It does once fusion ranks each dense run as trec_eval does;
+// by their lines the two differ, since the exact run lists ties by
+// document ID ascending and the study's HNSW runs by ID descending.
+func TestFusedRunsOfTheSameDocumentsAgree(t *testing.T) {
+	file := func(h []eval.Hit) eval.Run {
+		var b bytes.Buffer
+		if err := eval.WriteRun(&b, "q", h, "t"); err != nil {
+			t.Fatal(err)
+		}
+		r, err := eval.ReadRun(&b)
+		if err != nil {
+			t.Fatal(err)
+		}
+		return r
+	}
+	bm25 := eval.Run{"q": {{DocID: "c", Score: 3}}}
+	fuse := func(d eval.Run, depth int) []eval.Hit {
+		return fusion.RRF([]eval.Run{bm25, d}, []int{1000, depth}, 60, 1000)["q"]
+	}
+	for _, c := range []struct {
+		name  string
+		ids   []string
+		vecs  []float32
+		depth int
+	}{
+		// a and z tie at 1, above c.
+		{"tie above the depth", []string{"a", "z", "c"}, []float32{1, 0, 1, 0, 0, 1}, 100},
+		// x and y tie at 0.8 across a depth of 2: the exact run's first two
+		// lines hold x, trec_eval's top two y.
+		{"tie across the depth", []string{"b", "x", "y"}, []float32{1, 0, 0.6, 0.8, 0.6, 0.8}, 2},
+	} {
+		x := &dense.Index{IDs: c.ids, Vecs: c.vecs}
+		hits := x.Search([]float32{1, 0}, 1000)
+		exact := file(hits)                // as cmd/dense writes the exact run
+		approx := file(cut(hits, c.depth)) // as cmd/dense -grid study writes a run that found them all
+		if e, a := fuse(fusion.TrecOrder(exact), c.depth), fuse(fusion.TrecOrder(approx), c.depth); !slices.Equal(e, a) {
+			t.Errorf("%s: fused %v with the exact run, %v with an HNSW run of the same documents", c.name, e, a)
+		}
+		if e, a := fuse(exact, c.depth), fuse(approx, c.depth); slices.Equal(e, a) {
+			t.Errorf("%s: by their lines the two runs fuse alike, %v", c.name, e)
+		}
 	}
 }

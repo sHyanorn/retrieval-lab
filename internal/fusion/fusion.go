@@ -4,7 +4,7 @@
 // run is first cut to its own depth, its first lines per query: a depth at
 // least the run's length is Pyserini's depth, and a shorter one fuses the
 // dense run's top 100 with BM25's top 1,000 (docs/PREREGISTRATION.md,
-// Section 6).
+// Section 6). A run's order is its lines, unless TrecOrder ranks it first.
 package fusion
 
 import (
@@ -25,6 +25,20 @@ func RRF(runs []eval.Run, depths []int, k, keep int) eval.Run {
 		}
 		return s
 	})
+}
+
+// TrecOrder returns run with each query's hits in trec_eval's order, score
+// descending and ties by document ID descending, as eval.Ranked orders
+// them. RRF then takes a hit's rank, and a depth its cut, from the scores
+// of the run rather than from its lines, so that two runs holding the same
+// documents at the same scores fuse alike however each was written. The
+// study fuses its dense runs so (docs/DECISIONS.md, D015).
+func TrecOrder(run eval.Run) eval.Run {
+	out := make(eval.Run, len(run))
+	for qid, hits := range run {
+		out[qid] = eval.Ranked(hits)
+	}
+	return out
 }
 
 // Normalize maps each run's scores for a query, after the cut, to

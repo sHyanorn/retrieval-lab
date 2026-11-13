@@ -65,3 +65,38 @@ func TestDepthPerRun(t *testing.T) {
 		t.Errorf("Normalize = %v, want %v", got["q1"], want)
 	}
 }
+
+func TestTrecOrder(t *testing.T) {
+	// d2 and d3 tie at 0.5 across a depth of 2. The run lists them by
+	// document ID ascending, as exact search writes ties; trec_eval puts d3
+	// first.
+	lines := []eval.Hit{h("d1", 0.9), h("d2", 0.5), h("d3", 0.5)}
+	run := eval.Run{"q1": slices.Clone(lines)}
+	ranked := TrecOrder(run)
+	want := []eval.Hit{h("d1", 0.9), h("d3", 0.5), h("d2", 0.5)}
+	if !slices.Equal(ranked["q1"], want) {
+		t.Errorf("TrecOrder = %v, want %v", ranked["q1"], want)
+	}
+	if !slices.Equal(run["q1"], lines) {
+		t.Errorf("TrecOrder changed its input to %v", run["q1"])
+	}
+	if again := TrecOrder(ranked); !slices.Equal(again["q1"], want) {
+		t.Errorf("TrecOrder of a run in trec_eval's order = %v, want it unchanged", again["q1"])
+	}
+	// The depth cuts trec_eval's order: d3 is kept, where the lines keep d2.
+	r61, r62 := 1/float64(61), 1/float64(62)
+	if got, want := RRF([]eval.Run{ranked}, []int{2}, 60, 1000)["q1"], []eval.Hit{h("d1", r61), h("d3", r62)}; !slices.Equal(got, want) {
+		t.Errorf("RRF = %v, want %v", got, want)
+	}
+	if got, want := RRF([]eval.Run{run}, []int{2}, 60, 1000)["q1"], []eval.Hit{h("d1", r61), h("d2", r62)}; !slices.Equal(got, want) {
+		t.Errorf("RRF by lines = %v, want %v", got, want)
+	}
+	// Normalize maps the tied document kept to 0, the cut run's minimum, in
+	// either order; only which of the two is kept differs.
+	if got, want := Normalize([]eval.Run{ranked}, []int{2}, 1000)["q1"], []eval.Hit{h("d1", 1), h("d3", 0)}; !slices.Equal(got, want) {
+		t.Errorf("Normalize = %v, want %v", got, want)
+	}
+	if got, want := Normalize([]eval.Run{run}, []int{2}, 1000)["q1"], []eval.Hit{h("d1", 1), h("d2", 0)}; !slices.Equal(got, want) {
+		t.Errorf("Normalize by lines = %v, want %v", got, want)
+	}
+}

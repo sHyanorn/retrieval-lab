@@ -96,3 +96,45 @@ jobs:
         working-directory: scripts
       # How many of the dry run's CPU reference files equal step 3's.
       - run: python -c 'import glob, json, sys; [print(json.load(open(p))["reference"]) for p in glob.glob(sys.argv[1] + "/*/a/step4/out/summary.json")]' "$RUNNER_TEMP/pytest"
+
+  step6:
+    runs-on: ubuntu-latest
+    timeout-minutes: 120
+    env:
+      DATASETS: nfcorpus
+      DENSE_DATASETS: nfcorpus
+    steps:
+      # The whole history: the job compares the code of step 2 with bd072df's.
+      - uses: actions/checkout@3d3c42e5aac5ba805825da76410c181273ba90b1 # v7.0.1
+        with:
+          fetch-depth: 0
+      - uses: actions/setup-python@6d4fd22b20465ccc0f7354476588e8df7c9ca0e0 # v7.1.0
+        with:
+          python-version: "3.13"
+      - uses: actions/setup-go@b7ad1dad31e06c5925ef5d2fc7ad053ef454303e # v7.0.0
+        with:
+          go-version-file: go.mod
+      - run: pip install pytest
+      - run: make data trec-eval dense-assets DATA="$RUNNER_TEMP/data"
+      - run: go build -o "$RUNNER_TEMP/bin/" ./cmd/dense ./cmd/eval ./cmd/fuse ./cmd/bm25 ./cmd/study ./cmd/embed
+      # The step-6 job on synthetic worlds with the real binaries: the work
+      # list, layout and collect, records and resumption, the canary, the
+      # checks of inputs, environment and tags, space, memory, signal 9, the
+      # deadline, a log free of measures, the report, the start command.
+      - run: python -m pytest -q -p no:cacheprovider --basetemp "$RUNNER_TEMP/pytest" test_job.py
+        working-directory: step6
+        env:
+          RL_STEP6_BIN: ${{ runner.temp }}/bin
+          RL_TREC_EVAL: ${{ runner.temp }}/data/trec_eval/trec_eval
+      # The dry run: NFCorpus's documents encoded as CI encodes them, its dev
+      # qrels in place of its test qrels; the start command stopped once
+      # after three builds and run again to the end.
+      - run: make embed DATA="$RUNNER_TEMP/data"
+      - run: python step6/dryrun.py prepare --data "$RUNNER_TEMP/data" --bin "$RUNNER_TEMP/bin" --out "$RUNNER_TEMP/dry"
+      - run: python step6/dryrun.py run --data "$RUNNER_TEMP/data" --out "$RUNNER_TEMP/dry" --commit "$GITHUB_SHA" --stop-after 3
+      - run: python step6/dryrun.py run --data "$RUNNER_TEMP/data" --out "$RUNNER_TEMP/dry" --commit "$GITHUB_SHA"
+      - run: python -m pytest -q -p no:cacheprovider test_dryrun.py
+        working-directory: step6
+        env:
+          RL_STEP6_DRYRUN: ${{ runner.temp }}/dry
+          RL_STEP6_DATA: ${{ runner.temp }}/data

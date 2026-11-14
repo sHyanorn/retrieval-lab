@@ -34,6 +34,8 @@ usage: python3 scripts/carry6.py print --out OUT [--chunk-kib K] [--pause S] [--
 """
 
 import argparse
+import bisect
+import hashlib
 import json
 import os
 import re
@@ -45,6 +47,7 @@ import logtest as L  # noqa: E402  the chunk reports, REPRINT, the log lines of 
 
 R = L.R
 MANIFEST = "manifest.tsv"
+BLOCK = 1 << 20  # bytes read at a time when a file is checked
 HEADER = "path\tbytes\tsha256\tform"
 DONE = "=== carry done ==="
 CARRY = "=== carry manifest "
@@ -103,6 +106,46 @@ def nums_of(reprint, name, n):
     return L.parse_reprint(f"{name}:{spec}", {name: n})[name]
 
 
+class Stream:
+    """The files [(path, bytes)] as one stream, read a range at a time; at most one file open."""
+
+    def __init__(self, files):
+        self.files, self.starts, self.f, self.open_i = files, [], None, None
+        n = 0
+        for _, size in files:
+            self.starts.append(n)
+            n += size
+        self.size = n
+
+    def __len__(self):
+        return self.size
+
+    def read(self, offset, n):
+        out = []
+        end = min(self.size, offset + n)
+        i = bisect.bisect_right(self.starts, offset) - 1
+        while offset < end:
+            path, size = self.files[i]
+            k = min(end, self.starts[i] + size) - offset
+            if k > 0:
+                if self.open_i != i:
+                    self.close()
+                    self.f, self.open_i = open(path, "rb"), i
+                self.f.seek(offset - self.starts[i])
+                b = self.f.read(k)
+                if len(b) != k:
+                    raise OSError(f"{path}: shorter than the manifest says")
+                out.append(b)
+                offset += k
+            i += 1
+        return b"".join(out)
+
+    def close(self):
+        if self.f is not None:
+            self.f.close()
+        self.f, self.open_i = None, None
+
+
 def carry(a, out=sys.stdout):
     root = a.out
 
@@ -121,24 +164,28 @@ def carry(a, out=sys.stdout):
     name, parts, bad = stream_name(msha), [], []
     for rel, size, h in files:
         try:
-            with open(inside(root, rel), "rb") as f:
-                data = f.read()
+            p = inside(root, rel)
+            got, n = hashlib.sha256(), 0
+            with open(p, "rb") as f:
+                for b in iter(lambda: f.read(BLOCK), b""):
+                    got.update(b)
+                    n += len(b)
         except ValueError as e:
             bad.append(f"{rel[:200]}: {e}")
             continue
         except OSError as e:
             bad.append(f"{rel}: {e.strerror}")
             continue
-        if len(data) != size or R.sha(data) != h:
+        if n != size or got.hexdigest() != h:
             bad.append(f"{rel}: its size or SHA-256 differs from the manifest")
             continue
-        parts.append(data)
+        parts.append((p, size))
     if bad:
         for b in bad:
             say(f"refused: {b}")
         say(f"refused: {len(bad)} of {len(files)} files of manifest {msha}; nothing printed")
         return 2
-    data = b"".join(parts)
+    data = Stream(parts)
     cb = a.chunk_kib * 1024
     n = L.count(len(data), cb)
     try:
@@ -167,8 +214,9 @@ def carry(a, out=sys.stdout):
     extra = f" reprint {L.ranges(nums)}" if a.reprint else ""
     put(f"{L.PHASE}{name} start {L.utc()} chunks {len(nums)} chunk_bytes {cb} pause {a.pause}{extra} ===\n")
     for i in nums:
-        put(L.chunk_report(L.chunk_name(name, i), data[(i - 1) * cb:i * cb]))
+        put(L.chunk_report(L.chunk_name(name, i), data.read((i - 1) * cb, cb)))
         sleep(a.pause)
+    data.close()
     put(f"{L.PHASE}{name} end {L.utc()} ===\n")
     put(manifest_report(root))
     put(f"{DONE} {size} bytes {L.utc()}\n")
@@ -299,20 +347,28 @@ def check(logs, dir, manifest=None, sides=()):
         if size and (not cb or not all(i in good for i in range(first, last + 1))):
             incomplete.append({"path": rel, "bytes": size})
         else:
-            data = b"".join(good[i] for i in range(first, last + 1))[offset - (first - 1) * cb:][:size] if size else b""
             try:
                 target = inside(dir, rel)
             except ValueError as e:
                 refused.append({"path": rel[:200], "bytes": size, "reason": str(e)})
                 offset += size
                 continue
-            if len(data) != size or R.sha(data) != h:
-                refused.append({"path": rel, "bytes": size, "sha256": h, "got_sha256": R.sha(data),
+            # The file's bytes, slice by slice from its chunks, written beside its place and kept only if they check.
+            os.makedirs(os.path.dirname(target), exist_ok=True)
+            got, wrote = hashlib.sha256(), 0
+            with open(target + ".part", "wb") as f:
+                for i in range(first, last + 1) if size else ():
+                    lo = max(offset, (i - 1) * cb) - (i - 1) * cb
+                    hi = min(offset + size, i * cb) - (i - 1) * cb
+                    piece = good[i][lo:hi]
+                    got.update(piece)
+                    wrote += len(piece)
+                    f.write(piece)
+            if wrote != size or got.hexdigest() != h:
+                os.remove(target + ".part")
+                refused.append({"path": rel, "bytes": size, "sha256": h, "got_sha256": got.hexdigest(),
                                 "reason": "its size or SHA-256 differs from the manifest"})
             else:
-                os.makedirs(os.path.dirname(target), exist_ok=True)
-                with open(target + ".part", "wb") as f:
-                    f.write(data)
                 os.replace(target + ".part", target)
                 written.append({"path": rel, "bytes": size, "sha256": h})
         offset += size

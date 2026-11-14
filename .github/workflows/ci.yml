@@ -49,6 +49,12 @@ jobs:
       - uses: actions/setup-go@b7ad1dad31e06c5925ef5d2fc7ad053ef454303e # v7.0.0
         with:
           go-version-file: go.mod
+      # The BEIR zips of DATASETS; scripts/data.sh checks them against
+      # scripts/data.sha256 whether restored or downloaded.
+      - uses: actions/cache@55cc8345863c7cc4c66a329aec7e433d2d1c52a9 # v6.1.0
+        with:
+          path: ${{ runner.temp }}/data/*.zip
+          key: beir-${{ env.DATASETS }}-${{ hashFiles('scripts/data.sha256') }}
       - run: make data trec-eval dense-assets DATA="$RUNNER_TEMP/data"
       # The encoder against Anserini's reference query vectors.
       - run: go test ./internal/dense/
@@ -115,6 +121,12 @@ jobs:
         with:
           go-version-file: go.mod
       - run: pip install pytest
+      # The BEIR zips of DATASETS; scripts/data.sh checks them against
+      # scripts/data.sha256 whether restored or downloaded.
+      - uses: actions/cache@55cc8345863c7cc4c66a329aec7e433d2d1c52a9 # v6.1.0
+        with:
+          path: ${{ runner.temp }}/data/*.zip
+          key: beir-${{ env.DATASETS }}-${{ hashFiles('scripts/data.sha256') }}
       - run: make data trec-eval dense-assets DATA="$RUNNER_TEMP/data"
       - run: go build -o "$RUNNER_TEMP/bin/" ./cmd/dense ./cmd/eval ./cmd/fuse ./cmd/bm25 ./cmd/study ./cmd/embed
       # The step-6 job on synthetic worlds with the real binaries: the work

@@ -5,10 +5,11 @@ DATASETS ?= scifact nfcorpus arguana scidocs fiqa trec-covid
 TREC_EVAL = $(DATA)/trec_eval/trec_eval
 DENSE    ?= $(DATA)/dense
 DENSE_DATASETS ?= scifact nfcorpus arguana
+VARIANTS ?= sqrt-tf avgdl idf-twice coord k1 exact-length bleve-length all-docs all
 ORT_LIB   = $(DENSE)/onnxruntime-linux-x64-1.31.1/lib/libonnxruntime.so.1.31.1
 
 .DEFAULT_GOAL := help
-.PHONY: help build test lint fmt data trec-eval bm25 check table reproduce reference dense-assets embed dense dense-table dense-check ann ann-table fuse fusion-table anchor-build-table
+.PHONY: help build test lint fmt data trec-eval bm25 check table reproduce reference variants dense-assets embed dense dense-table dense-check ann ann-table fuse fusion-table anchor-build-table
 
 help: ## Show available targets
 	@awk -F':.*## ' '/^[a-z0-9-]+:.*## / {printf "  %-10s %s\n", $$1, $$2}' $(MAKEFILE_LIST)
@@ -57,6 +58,16 @@ reference: build ## Rank DATASETS with Bleve's own BM25 on two fresh builds each
 		bin/bm25 -data $(DATA)/$$d -index $(DATA)/index-reference/$$d -run $(RUNS)/$$d.bleve$$b.run -bleve-scoring >/dev/null || exit 1; \
 	done; done
 	bin/table -reference -data $(DATA) -runs $(RUNS)
+
+variants: build ## Rank DATASETS on the indexes of bm25 with cmd/variants, first with no switch (checked against results/bm25-flat.sha256), then with each of Bleve's BM25 differences, and write results/bleve-variants.md (after bm25 and reference)
+	for d in $(DATASETS); do \
+		bin/variants -data $(DATA)/$$d -index $(DATA)/index/$$d -run $(RUNS)/$$d.port.run >/dev/null && \
+		grep " $$d.run$$" results/bm25-flat.sha256 | sed 's/run$$/port.run/' | (cd $(RUNS) && sha256sum -c -) || exit 1; \
+		for v in $(VARIANTS); do \
+			bin/variants -data $(DATA)/$$d -index $(DATA)/index/$$d -run $(RUNS)/$$d.$$v.run -variant $$v >$(RUNS)/$$d.$$v.json || exit 1; \
+		done; \
+	done
+	bin/table -variants -doc results/bleve-variants.md -data $(DATA) -runs $(RUNS)
 
 dense-assets: ## Download the BGE model, tokenizer, ONNX Runtime and Pyserini's indexes of DENSE_DATASETS into DENSE
 	scripts/dense.sh $(DENSE) $(DENSE_DATASETS)

@@ -4,7 +4,8 @@
 // <dataset>.stats.json in -runs; with -reference, the Bleve reference table
 // from <dataset>.bleve1.run and <dataset>.bleve2.run; with -dense, the
 // BGE-base tables from <dataset>.bge.run and the vectors in -vectors and
-// -prebuilt.
+// -prebuilt; with -variants, the tables of Bleve's BM25 differences, one at
+// a time, into results/bleve-variants.md.
 package main
 
 import (
@@ -39,18 +40,19 @@ func main() {
 	denseMode := flag.Bool("dense", false, "write the BGE-base tables")
 	annMode := flag.Bool("ann", false, "write the HNSW tables")
 	fusionMode := flag.Bool("fusion", false, "write the fusion tables (with -anchors results/anchors-fusion.tsv)")
+	variants := flag.Bool("variants", false, "write the tables of Bleve's BM25 differences (with -doc results/bleve-variants.md)")
 	anchorBuild := flag.Bool("anchor-build", false, "write the tables of the study's anchor build from -data (with -anchors results/anchors-hnsw.tsv and -data study/results)")
 	vectors := flag.String("vectors", "", "with -dense: directory of this project's document vectors, one per dataset")
 	prebuilt := flag.String("prebuilt", "", "with -dense: directory of Pyserini's flat indexes, one per dataset")
 	check := flag.Bool("check", false, "with -dense: write nothing; exit 1 if a result falls short of the tolerance or a vector of the agreement threshold")
 	flag.Parse()
-	if err := run(*anchorsPath, *data, *runs, *doc, *reference, *denseMode, *annMode, *fusionMode, *anchorBuild, *check, *vectors, *prebuilt); err != nil {
+	if err := run(*anchorsPath, *data, *runs, *doc, *reference, *variants, *denseMode, *annMode, *fusionMode, *anchorBuild, *check, *vectors, *prebuilt); err != nil {
 		fmt.Fprintln(os.Stderr, "table:", err)
 		os.Exit(1)
 	}
 }
 
-func run(anchorsPath, data, runs, doc string, reference, denseMode, annMode, fusionMode, anchorBuild, check bool, vectors, prebuilt string) error {
+func run(anchorsPath, data, runs, doc string, reference, variants, denseMode, annMode, fusionMode, anchorBuild, check bool, vectors, prebuilt string) error {
 	buf, err := os.ReadFile(doc)
 	if err != nil {
 		return err
@@ -73,6 +75,8 @@ func run(anchorsPath, data, runs, doc string, reference, denseMode, annMode, fus
 		var anchors []anchor
 		if anchors, err = readAnchors(anchorsPath); err == nil && reference {
 			text, err = referenceTable(text, anchors, mean)
+		} else if err == nil && variants {
+			text, err = variantsTables(text, anchors, data, runs)
 		} else if err == nil {
 			text, err = mainTables(text, anchors, runs, mean)
 		}

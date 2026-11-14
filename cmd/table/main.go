@@ -39,17 +39,18 @@ func main() {
 	denseMode := flag.Bool("dense", false, "write the BGE-base tables")
 	annMode := flag.Bool("ann", false, "write the HNSW tables")
 	fusionMode := flag.Bool("fusion", false, "write the fusion tables (with -anchors results/anchors-fusion.tsv)")
+	anchorBuild := flag.Bool("anchor-build", false, "write the tables of the study's anchor build from -data (with -anchors results/anchors-hnsw.tsv and -data study/results)")
 	vectors := flag.String("vectors", "", "with -dense: directory of this project's document vectors, one per dataset")
 	prebuilt := flag.String("prebuilt", "", "with -dense: directory of Pyserini's flat indexes, one per dataset")
 	check := flag.Bool("check", false, "with -dense: write nothing; exit 1 if a result falls short of the tolerance or a vector of the agreement threshold")
 	flag.Parse()
-	if err := run(*anchorsPath, *data, *runs, *doc, *reference, *denseMode, *annMode, *fusionMode, *check, *vectors, *prebuilt); err != nil {
+	if err := run(*anchorsPath, *data, *runs, *doc, *reference, *denseMode, *annMode, *fusionMode, *anchorBuild, *check, *vectors, *prebuilt); err != nil {
 		fmt.Fprintln(os.Stderr, "table:", err)
 		os.Exit(1)
 	}
 }
 
-func run(anchorsPath, data, runs, doc string, reference, denseMode, annMode, fusionMode, check bool, vectors, prebuilt string) error {
+func run(anchorsPath, data, runs, doc string, reference, denseMode, annMode, fusionMode, anchorBuild, check bool, vectors, prebuilt string) error {
 	buf, err := os.ReadFile(doc)
 	if err != nil {
 		return err
@@ -64,6 +65,8 @@ func run(anchorsPath, data, runs, doc string, reference, denseMode, annMode, fus
 		text, err = annTables(text, anchorsPath, data, runs)
 	case fusionMode:
 		text, err = fusionTables(text, anchorsPath, data, runs)
+	case anchorBuild:
+		text, err = anchorBuildTables(text, anchorsPath, data)
 	case denseMode:
 		text, short, err = denseTables(text, anchorsPath, runs, vectors, prebuilt, mean)
 	default:

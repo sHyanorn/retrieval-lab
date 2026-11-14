@@ -51,7 +51,7 @@ func TestCheckLeavesTheDocumentAlone(t *testing.T) {
 	if err := os.WriteFile(doc, []byte(before), 0o600); err != nil {
 		t.Fatal(err)
 	}
-	if err := run("../../results/anchors-bge.tsv", dir, dir, doc, false, true, false, false, true, dir, dir); err != nil {
+	if err := run("../../results/anchors-bge.tsv", dir, dir, doc, false, true, false, false, false, true, dir, dir); err != nil {
 		t.Fatal(err)
 	}
 	after, err := os.ReadFile(doc)
@@ -65,5 +65,19 @@ func TestNDCGChangeRoundsTheDifference(t *testing.T) {
 	// 0.4026 − 0.4062 = −0.0036.
 	if got := ndcgChange(0.402553, 0.406231); got != "-0.0037" {
 		t.Fatalf("ndcgChange = %s, want -0.0037", got)
+	}
+}
+
+func TestAnchorBuildTablesMatchTheDocument(t *testing.T) {
+	doc, err := os.ReadFile("../../docs/BENCHMARKS.md")
+	if err != nil {
+		t.Fatal(err)
+	}
+	got, err := anchorBuildTables(string(doc), "../../results/anchors-hnsw.tsv", "../../study/results")
+	if err != nil {
+		t.Fatal(err)
+	}
+	if got != string(doc) {
+		t.Fatal("the anchor build's tables in docs/BENCHMARKS.md differ from those of study/results; run make anchor-build-table")
 	}
 }

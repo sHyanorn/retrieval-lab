@@ -198,6 +198,31 @@ Mean milliseconds per query on one goroutine, and the graph build on one gorouti
 | scifact | 3 | 5.08 | 0.09 | 0.14 | 0.24 | 0.33 | 0.55 | 0.68 | 1.07 | 1.36 |
 <!-- /hnsw-time -->
 
+### The study's anchor build against Lucene's HNSW
+
+Added on 2026-11-14, after the study's readings in `docs/STUDY.md`. The anchor build of the registration (Section 6) is BGE-base-en-v1.5 on recserve's HNSW as copied in D014, with M 16, efConstruction 100 and seed 0 (corpus order, level seed 1), searched at ef 1000, on the eight datasets of Section 4 (amendment 24). `cmd/table -anchor-build` (amendment 32) computes its mean nDCG@10, and that of exact search, from the per-query files in `study/results/` and sets them beside the Lucene HNSW numbers in `results/anchors-hnsw.tsv`: Pyserini 2.0.0's condition `bge-base-en-v1.5.lucene-hnsw` (ef 1000) on all eight datasets, and Table 2 of Lin (ACL 2025 Industry Track; Lucene 9.9.1, M 16, efConstruction 100, efSearch 1000) on the three of at least 100k documents, which gives the flat index's nDCG@10 and the mean loss of HNSW against it over five trials, with its minimum and maximum, to three decimals. Δ is the anchor build's value, to four decimals, minus Pyserini's; it includes the difference of exact search from Pyserini's flat condition as `beir.yaml` gives it at commit d1b77315499a601c1bf9c2d88a2baa72019244ee, not at Pyserini 2.0.0 (BGE-base-en-v1.5 against Pyserini, above, and -0.0001 on Quora and -0.0003 on NQ in `results/step5/check3.tsv`). Exact minus anchor build is the difference of the unrounded means: 0.000013 on Quora, where they round to 0.8875 and 0.8874. Lucene's HNSW is another implementation: these numbers are set side by side, are exploratory, and no threshold applies to them.
+
+<!-- anchor-build-pyserini -->
+| Dataset | exact | anchor build | Pyserini 2.0.0 | Δ |
+|---|---|---|---|---|
+| scifact | 0.7404 | 0.7404 | 0.7408 | -0.0004 |
+| nfcorpus | 0.3735 | 0.3735 | 0.3735 | 0.0000 |
+| arguana | 0.6375 | 0.6375 | 0.6375 | 0.0000 |
+| scidocs | 0.2172 | 0.2172 | 0.2172 | 0.0000 |
+| fiqa | 0.4062 | 0.4036 | 0.4065 | -0.0029 |
+| trec-covid | 0.7809 | 0.7809 | 0.7835 | -0.0026 |
+| quora | 0.8875 | 0.8874 | 0.8876 | -0.0002 |
+| nq | 0.5412 | 0.5395 | 0.5415 | -0.0020 |
+<!-- /anchor-build-pyserini -->
+
+<!-- anchor-build-lin -->
+| Dataset | exact | Lin: flat | exact minus anchor build | Lin: flat minus HNSW, mean [min, max] |
+|---|---|---|---|---|
+| trec-covid | 0.7809 | 0.781 | 0.0000 | 0.000 [0.000, 0.000] |
+| quora | 0.8875 | 0.889 | 0.0000 | 0.000 [0.000, 0.000] |
+| nq | 0.5412 | 0.541 | +0.0017 | 0.002 [0.001, 0.003] |
+<!-- /anchor-build-lin -->
+
 ## Fusion protocol
 
 `cmd/fuse` fuses each dataset's BM25 flat run and BGE run as Pyserini's `pyserini.fusion` does for its BEIR fusion page (D015): RRF with k = 60, and Normalize, the sum of the min-max normalised scores; both over the top 1000 of each run, keeping 1000. `cmd/table -fusion` computes the tables below from the run files. The anchors, in `results/anchors-fusion.tsv`, are from `docs/experiments-beir-fusion.md` of Pyserini at commit d1b77315499a601c1bf9c2d88a2baa72019244ee and of Anserini at commit 6390709ad7a637ec974b69d8a8556e9607652edc. The fused runs depend on the CPU through the BGE runs (D012) and are not checksummed.

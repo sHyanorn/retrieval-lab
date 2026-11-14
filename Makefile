@@ -8,7 +8,7 @@ DENSE_DATASETS ?= scifact nfcorpus arguana
 ORT_LIB   = $(DENSE)/onnxruntime-linux-x64-1.31.1/lib/libonnxruntime.so.1.31.1
 
 .DEFAULT_GOAL := help
-.PHONY: help build test lint fmt data trec-eval bm25 check table reproduce reference dense-assets embed dense dense-table dense-check ann ann-table fuse fusion-table
+.PHONY: help build test lint fmt data trec-eval bm25 check table reproduce reference dense-assets embed dense dense-table dense-check ann ann-table fuse fusion-table anchor-build-table
 
 help: ## Show available targets
 	@awk -F':.*## ' '/^[a-z0-9-]+:.*## / {printf "  %-10s %s\n", $$1, $$2}' $(MAKEFILE_LIST)
@@ -99,3 +99,6 @@ fuse: build ## Fuse the BM25 and BGE runs of DENSE_DATASETS in RUNS, RRF and Nor
 
 fusion-table: build ## Write the fusion tables into docs/BENCHMARKS.md from RUNS
 	bin/table -fusion -anchors results/anchors-fusion.tsv -data $(DATA) -runs $(RUNS)
+
+anchor-build-table: build ## Write the tables of the study's anchor build into docs/BENCHMARKS.md from study/results
+	bin/table -anchor-build -anchors results/anchors-hnsw.tsv -data study/results

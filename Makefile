@@ -59,7 +59,7 @@ reference: build ## Rank DATASETS with Bleve's own BM25 on two fresh builds each
 	done; done
 	bin/table -reference -data $(DATA) -runs $(RUNS)
 
-variants: build ## Rank DATASETS on the indexes of bm25 with cmd/variants, first with no switch (checked against results/bm25-flat.sha256), then with each of Bleve's BM25 differences, and write results/bleve-variants.md (after bm25 and reference)
+variants: build ## Rank DATASETS on the indexes of bm25 with cmd/variants, first with no switch (checked against results/bm25-flat.sha256), then with each of Bleve's BM25 differences, and write results/bleve-variants.md and its nDCG@10 table in docs/BENCHMARKS.md (after bm25 and reference)
 	for d in $(DATASETS); do \
 		bin/variants -data $(DATA)/$$d -index $(DATA)/index/$$d -run $(RUNS)/$$d.port.run >/dev/null && \
 		grep " $$d.run$$" results/bm25-flat.sha256 | sed 's/run$$/port.run/' | (cd $(RUNS) && sha256sum -c -) || exit 1; \
@@ -67,7 +67,7 @@ variants: build ## Rank DATASETS on the indexes of bm25 with cmd/variants, first
 			bin/variants -data $(DATA)/$$d -index $(DATA)/index/$$d -run $(RUNS)/$$d.$$v.run -variant $$v >$(RUNS)/$$d.$$v.json || exit 1; \
 		done; \
 	done
-	bin/table -variants -doc results/bleve-variants.md -data $(DATA) -runs $(RUNS)
+	bin/table -variants -data $(DATA) -runs $(RUNS)
 
 dense-assets: ## Download the BGE model, tokenizer, ONNX Runtime and Pyserini's indexes of DENSE_DATASETS into DENSE
 	scripts/dense.sh $(DENSE) $(DENSE_DATASETS)

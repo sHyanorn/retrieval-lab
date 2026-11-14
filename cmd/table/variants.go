@@ -32,15 +32,16 @@ var variantRuns = []struct{ name, label string }{
 	{"bleve2", "Bleve's BM25, build 2"},
 }
 
-// variantsTables writes four tables, one column or row per dataset of the
+// variantsTables computes four tables, one column or row per dataset of the
 // anchors, from RUNS/<dataset>.run (the Lucene port), the runs of
 // variantRuns and RUNS/<dataset>.all.json (Bleve's statistics as
 // cmd/variants prints them: documents and terms in the dictionary, whose
 // ratio rounded up is Bleve's avgdl): nDCG@10 of each run and its
 // difference from the port's; the number of positions at which each run's
 // document differs from the port's; the run with all of Bleve's differences
-// against Bleve's own runs; the statistics Lucene and Bleve score with.
-func variantsTables(text string, anchors []anchor, data, runs string) (string, error) {
+// against Bleve's own runs; the statistics Lucene and Bleve score with. It
+// returns them by the name of their markers.
+func variantsTables(anchors []anchor, data, runs string) (map[string]string, error) {
 	ndcg := make([][]string, len(variantRuns)+1)
 	lines := make([][]string, len(variantRuns)+1)
 	var bleve, stats strings.Builder
@@ -49,11 +50,11 @@ func variantsTables(text string, anchors []anchor, data, runs string) (string, e
 	for _, a := range anchors {
 		qrels, err := beir.Qrels(filepath.Join(data, a.dataset), "test")
 		if err != nil {
-			return "", err
+			return nil, err
 		}
 		port, err := readRun(filepath.Join(runs, a.dataset+".run"))
 		if err != nil {
-			return "", err
+			return nil, err
 		}
 		base := eval.Mean(eval.Evaluate(qrels, port)).NDCG10
 		ndcg[0] = append(ndcg[0], fmt.Sprintf("%.4f", base))
@@ -63,7 +64,7 @@ func variantsTables(text string, anchors []anchor, data, runs string) (string, e
 		for i, v := range variantRuns {
 			r, err := readRun(filepath.Join(runs, a.dataset+"."+v.name+".run"))
 			if err != nil {
-				return "", err
+				return nil, err
 			}
 			m := eval.Mean(eval.Evaluate(qrels, r)).NDCG10
 			n, _ := differing(port, r)
@@ -92,7 +93,7 @@ func variantsTables(text string, anchors []anchor, data, runs string) (string, e
 			err = json.Unmarshal(raw, &st)
 		}
 		if err != nil {
-			return "", fmt.Errorf("%s statistics: %w", a.dataset, err)
+			return nil, fmt.Errorf("%s statistics: %w", a.dataset, err)
 		}
 		fmt.Fprintf(&stats, "| %s | %d | %d | %d | %.2f | %d | %.0f |\n", a.dataset, st.Docs, st.NonEmpty, st.Tokens,
 			float64(st.Tokens)/float64(st.NonEmpty), st.Bleve.Terms, math.Ceil(float64(st.Bleve.Terms)/float64(st.Bleve.Docs)))
@@ -101,19 +102,43 @@ func variantsTables(text string, anchors []anchor, data, runs string) (string, e
 	for _, v := range variantRuns {
 		labels = append(labels, v.label)
 	}
-	tables := map[string]string{
+	return map[string]string{
 		"variants-ndcg":  grid(anchors, append([]string{"Lucene BM25Similarity, ported"}, labels...), ndcg),
 		"variants-lines": grid(anchors, append([]string{"Lines in the port's run"}, labels...), lines),
 		"variants-bleve": bleve.String(),
 		"variants-stats": stats.String(),
+	}, nil
+}
+
+// writeVariants writes the tables of variantsTables into the file at
+// results and returns text with the nDCG@10 table written into it.
+func writeVariants(text, results string, anchors []anchor, data, runs string) (string, error) {
+	tables, err := variantsTables(anchors, data, runs)
+	if err != nil {
+		return "", err
 	}
+	buf, err := os.ReadFile(results)
+	if err != nil {
+		return "", err
+	}
+	r, text, err := spliceVariants(string(buf), text, tables)
+	if err != nil {
+		return "", err
+	}
+	return text, os.WriteFile(results, []byte(r), 0o644) //nolint:gosec // a tracked text file
+}
+
+// spliceVariants writes every table into results and the nDCG@10 table into
+// doc.
+func spliceVariants(results, doc string, tables map[string]string) (string, string, error) {
 	for _, name := range slices.Sorted(maps.Keys(tables)) {
 		var err error
-		if text, err = splice(text, name, tables[name]); err != nil {
-			return "", err
+		if results, err = splice(results, name, tables[name]); err != nil {
+			return "", "", err
 		}
 	}
-	return text, nil
+	doc, err := splice(doc, "variants-ndcg", tables["variants-ndcg"])
+	return results, doc, err
 }
 
 // grid is a table with one row per label and one column per dataset.

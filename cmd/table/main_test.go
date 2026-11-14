@@ -54,7 +54,7 @@ func TestCheckLeavesTheDocumentAlone(t *testing.T) {
 	if err := os.WriteFile(doc, []byte(before), 0o600); err != nil {
 		t.Fatal(err)
 	}
-	if err := run("../../results/anchors-bge.tsv", dir, dir, doc, false, false, true, false, false, false, true, dir, dir); err != nil {
+	if err := run("../../results/anchors-bge.tsv", dir, dir, doc, "", false, false, true, false, false, false, true, dir, dir); err != nil {
 		t.Fatal(err)
 	}
 	after, err := os.ReadFile(doc)
@@ -110,5 +110,29 @@ func TestDifferingSeparatesTiesFromMoves(t *testing.T) {
 	}
 	if n, apart := differing(a, b); n != 155 || apart != 2 {
 		t.Fatalf("differing = %d, %d apart; want 155, 2 apart", n, apart)
+	}
+}
+
+func TestVariantsWriteTheirNDCGTableIntoTheDocument(t *testing.T) {
+	tables := map[string]string{"variants-ndcg": "ndcg\n", "variants-lines": "lines\n", "variants-bleve": "bleve\n", "variants-stats": "stats\n"}
+	var results, want string
+	for _, name := range []string{"variants-ndcg", "variants-lines", "variants-bleve", "variants-stats"} {
+		results += "<!-- " + name + " -->\nold\n<!-- /" + name + " -->\n"
+		want += "<!-- " + name + " -->\n" + tables[name] + "<!-- /" + name + " -->\n"
+	}
+	// The document holds the nDCG@10 table alone.
+	doc := "a\n<!-- variants-ndcg -->\nold\n<!-- /variants-ndcg -->\nb\n"
+	r, d, err := spliceVariants(results, doc, tables)
+	if err != nil {
+		t.Fatal(err)
+	}
+	if r != want {
+		t.Errorf("results = %q, want %q", r, want)
+	}
+	if want := "a\n<!-- variants-ndcg -->\nndcg\n<!-- /variants-ndcg -->\nb\n"; d != want {
+		t.Errorf("document = %q, want %q", d, want)
+	}
+	if _, _, err := spliceVariants(results, "no markers", tables); err == nil {
+		t.Error("want an error for a document without the nDCG@10 markers")
 	}
 }

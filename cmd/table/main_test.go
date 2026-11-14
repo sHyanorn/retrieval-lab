@@ -4,6 +4,7 @@ import (
 	"fmt"
 	"os"
 	"path/filepath"
+	"strings"
 	"testing"
 
 	"github.com/sHyanorn/retrieval-lab/internal/eval"
@@ -60,6 +61,30 @@ func TestCheckLeavesTheDocumentAlone(t *testing.T) {
 	after, err := os.ReadFile(doc)
 	if err != nil || string(after) != before {
 		t.Fatalf("-check rewrote the document (%v):\n%s", err, after)
+	}
+}
+
+func TestVariantsNDCGTableMatchesTheResults(t *testing.T) {
+	doc, err := os.ReadFile("../../docs/BENCHMARKS.md")
+	if err != nil {
+		t.Fatal(err)
+	}
+	results, err := os.ReadFile("../../results/bleve-variants.md")
+	if err != nil {
+		t.Fatal(err)
+	}
+	const start, end = "<!-- variants-ndcg -->\n", "<!-- /variants-ndcg -->"
+	r := string(results)
+	i, j := strings.Index(r, start), strings.Index(r, end)
+	if i < 0 || j < i {
+		t.Fatal("results/bleve-variants.md holds no nDCG@10 table")
+	}
+	got, err := splice(string(doc), "variants-ndcg", r[i+len(start):j])
+	if err != nil {
+		t.Fatal(err)
+	}
+	if got != string(doc) {
+		t.Fatal("the nDCG@10 table of docs/BENCHMARKS.md differs from that of results/bleve-variants.md; run make variants")
 	}
 }
 

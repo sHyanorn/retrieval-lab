@@ -88,6 +88,43 @@ Not this project's retrieval path (D008): Bleve's BM25 scorer with k1 = 0.9 and 
 | scifact | 0.6789 | 0.6745 | 0.6745 | -0.0044 |
 <!-- /bleve-bm25 -->
 
+### Bleve's differences, one at a time
+
+`cmd/variants` ranks on the index of `make bm25` with a copy of the scoring of `internal/bm25`, kept outside step 2's code (amendment 26), and its `-variant` switches on, alone or together, the differences of Bleve v2.6.3's BM25 that D005 lists (of item 5, the factor k1 in the numerator) and two more (V6, V7), with everything else as above. `make variants`, run after `make bm25` and `make reference`, first ranks each dataset with no switch and checks the run files against `results/bm25-flat.sha256`, then ranks with each switch and writes `results/bleve-variants.md`: the table below, the number of run lines on which each switch changes the document, the run with every switch against both builds of the reference, and the statistics each scoring uses. Paths are Bleve v2.6.3's.
+
+- V1 `sqrt-tf`: tf is the square root of the frequency (`search/scorer/scorer_term.go:204-209`).
+- V2 `avgdl`: avgdl is the number of terms in the field's dictionary over the number of documents, rounded up (`search/searcher/search_term.go:117`): 2 to 7 on these indexes, where Lucene's is 92 to 175.
+- V3 `idf-twice`: each clause is multiplied again by idf · queryNorm, with queryNorm = 1 / sqrt(Σ idf²) (`scorer_term.go:121,223-224`, `search/searcher/search_disjunction_slice.go:104-116`).
+- V4 `coord`: a document's score is multiplied by the query tokens it matches over all query tokens (`search/scorer/scorer_disjunction.go:65-66`).
+- V5 `k1`: each clause is multiplied by k1, as Bleve's numerator is (`scorer_term.go:148-149`).
+- V6 `exact-length`: the number of tokens in place of Lucene's one-byte norm. `bleve-length`: the length Bleve's scorer computes, 1/(norm · norm) (`scorer_term.go:146`), where the norm is 1/sqrt(length) rounded to float32 (zapx v17.2.5 `posting.go:894-896`); in float32 it differs from the number of tokens, for a length of 6 for instance.
+- V7 `all-docs`: idf counts every document, not only those with a token (`search_term.go:96,157`); the two counts differ on TREC-COVID, FiQA and ArguAna.
+
+Bleve's match query makes one clause with boost 1 per query token; the port makes one per distinct term, boosted by its count (D006). V3 and V4 count tokens, which gives the same scores as one clause per token (`TestIDFTwiceAndCoordCountTokens`).
+
+nDCG@10, with the difference from the port in parentheses:
+
+<!-- variants-ndcg -->
+| Run | trec-covid | nfcorpus | fiqa | arguana | scidocs | scifact |
+|---|---|---|---|---|---|---|
+| Lucene BM25Similarity, ported | 0.5947 | 0.3218 | 0.2361 | 0.3970 | 0.1490 | 0.6789 |
+| V1 `sqrt-tf`: tf is sqrt(freq) | 0.5509 (-0.0438) | 0.3162 (-0.0056) | 0.2473 (+0.0112) | 0.4263 (+0.0293) | 0.1460 (-0.0030) | 0.6822 (+0.0033) |
+| V2 `avgdl`: Bleve's average length | 0.3079 (-0.2868) | 0.3174 (-0.0044) | 0.1394 (-0.0967) | 0.4979 (+0.1009) | 0.1438 (-0.0052) | 0.6504 (-0.0285) |
+| V3 `idf-twice`: idf · queryNorm again | 0.5328 (-0.0619) | 0.3143 (-0.0075) | 0.2344 (-0.0017) | 0.4283 (+0.0313) | 0.1436 (-0.0054) | 0.6703 (-0.0086) |
+| V4 `coord`: coordination factor | 0.5184 (-0.0763) | 0.3082 (-0.0136) | 0.1876 (-0.0485) | 0.3255 (-0.0715) | 0.1272 (-0.0218) | 0.6471 (-0.0318) |
+| V5 `k1`: numerator times k1 | 0.5947 (0.0000) | 0.3218 (0.0000) | 0.2361 (0.0000) | 0.3972 (+0.0002) | 0.1490 (0.0000) | 0.6789 (0.0000) |
+| V6 `exact-length`: exact length | 0.5955 (+0.0008) | 0.3206 (-0.0012) | 0.2353 (-0.0008) | 0.4003 (+0.0033) | 0.1498 (+0.0008) | 0.6777 (-0.0012) |
+| V6 `bleve-length`: Bleve's length | 0.5955 (+0.0008) | 0.3206 (-0.0012) | 0.2353 (-0.0008) | 0.4003 (+0.0033) | 0.1498 (+0.0008) | 0.6777 (-0.0012) |
+| V7 `all-docs`: idf over all documents | 0.5947 (0.0000) | 0.3218 (0.0000) | 0.2361 (0.0000) | 0.3970 (0.0000) | 0.1490 (0.0000) | 0.6789 (0.0000) |
+| All: V1 to V5, V6 Bleve's length, V7 | 0.3513 (-0.2434) | 0.3122 (-0.0096) | 0.1906 (-0.0455) | 0.5458 (+0.1488) | 0.1524 (+0.0034) | 0.6745 (-0.0044) |
+| Bleve's BM25, build 1 | 0.3513 (-0.2434) | 0.3122 (-0.0096) | 0.1906 (-0.0455) | 0.5453 (+0.1483) | 0.1524 (+0.0034) | 0.6745 (-0.0044) |
+| Bleve's BM25, build 2 | 0.3513 (-0.2434) | 0.3122 (-0.0096) | 0.1906 (-0.0455) | 0.5452 (+0.1482) | 0.1524 (+0.0034) | 0.6745 (-0.0044) |
+<!-- /variants-ndcg -->
+
+Alone, V2 moves nDCG@10 most on TREC-COVID, FiQA and ArguAna, and V4 on NFCorpus, SCIDOCS and SciFact. The effects do not add up: on TREC-COVID the seven alone (V6 with Bleve's length) sum to -0.4680, and together they come to -0.2434. V5 leaves the order unchanged in exact arithmetic; in float32 it moves 0 to 98 run lines per dataset and nDCG@10 by at most 0.0002. The two lengths of V6 give the same nDCG@10 to four decimals. V7 leaves nDCG@10 unchanged to four decimals.
+
+All gives Bleve's nDCG@10 to four decimals on five datasets; on ArguAna it gives 0.5458, against 0.5453 and 0.5452 for the two builds of the reference run behind this table (0.5448 in the reference table above). The run files still hold different documents on 47 (NFCorpus) to 8,635 (ArguAna) lines, and on every such line the two documents' scores, rounded to four decimals as they are before the tie adjustment (D007), are at most 0.0001 apart: within each run that holds both, or else across the two runs at that line. The port computes in float32, as Lucene does, and orders equal scores by document ID; Bleve sums in float64, which separates scores that are equal in float32. Bleve's two builds hold different documents on 0 to 10,845 lines, all of the same kind. Over the builds recorded so far, Bleve's own nDCG@10 has been 0.5442 to 0.5453 on ArguAna and 0.3512 to 0.3513 on TREC-COVID, and the same on the other four (D008, the reference table above and this table).
+
 ## BGE-base-en-v1.5 run protocol
 
 `cmd/embed` encodes each corpus with BGE-base-en-v1.5 (D009, D010) and writes the vectors in the layout of Pyserini's faiss flat indexes; `cmd/dense` encodes the test queries, searches exactly (D011) and writes the run. `cmd/table -dense` computes the tables below from the run files and the vectors. The anchors are the `bge-base-en-v1.5.lucene-flat` condition of `pyserini/2cr/beir.yaml` at commit d1b77315499a601c1bf9c2d88a2baa72019244ee, with the `bge-base-en-v1.5.faiss` condition beside it, in `results/anchors-bge.tsv`. The run files are not checksummed: the vectors depend in their last bits on the CPU (D012).

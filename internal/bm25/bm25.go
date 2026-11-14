@@ -93,11 +93,11 @@ type Stats struct {
 
 // Index is a Bleve index with the statistics and tables for scoring.
 type Index struct {
-	idx   bleve.Index
-	r     index.IndexReader
-	an    analysis.Analyzer
-	stats Stats
-	norms [256]float32
+	idx    bleve.Index
+	r      index.IndexReader
+	an     analysis.Analyzer
+	stats  Stats
+	lucene *scoring
 }
 
 // Contents is the text BM25 flat indexes for a document: Anserini's
@@ -213,7 +213,7 @@ func open(idx bleve.Index) (*Index, error) {
 	}
 	// BM25Similarity.avgFieldLength.
 	avgdl := float32(float64(x.stats.Tokens) / float64(x.stats.NonEmpty))
-	x.norms = normCache(avgdl)
+	x.lucene = newScoring(Variant{}, x.stats.NonEmpty, avgdl)
 	return x, nil
 }
 
@@ -240,21 +240,21 @@ func (x *Index) terms(query string) map[string]int {
 // them: Lucene's BM25 summed over the query's terms; ordered by score, then
 // document ID ascending; scores then passed through adjustTies.
 func (x *Index) Search(query string, k int) ([]eval.Hit, error) {
-	counts := x.terms(query)
-	sums := map[string]float64{}
-	for _, t := range slices.Sorted(maps.Keys(counts)) {
-		if err := x.addTerm(sums, t, float32(counts[t])); err != nil {
-			return nil, err
-		}
+	return x.search(query, k, x.lucene)
+}
+
+func (x *Index) search(query string, k int, s *scoring) ([]eval.Hit, error) {
+	byID, err := x.scores(query, s)
+	if err != nil {
+		return nil, err
 	}
 	type cand struct {
 		id    string
 		score float32
 	}
-	cs := make([]cand, 0, len(sums))
-	for id, s := range sums {
-		// Lucene sums the clause scores in double and returns a float.
-		cs = append(cs, cand{id, float32(s)})
+	cs := make([]cand, 0, len(byID))
+	for id, score := range byID {
+		cs = append(cs, cand{id, score})
 	}
 	slices.SortFunc(cs, func(a, b cand) int { return cmp.Compare(b.score, a.score) })
 	if len(cs) > k {
@@ -287,32 +287,81 @@ func (x *Index) Search(query string, k int) ([]eval.Hit, error) {
 	return hits, nil
 }
 
-// addTerm adds one clause's BM25 score to every document holding term,
-// keyed by Bleve's internal document ID.
-func (x *Index) addTerm(sums map[string]float64, term string, boost float32) error {
-	tfr, err := x.r.TermFieldReader(context.Background(), []byte(term), field, true, true, false)
-	if err != nil {
-		return err
-	}
-	defer tfr.Close() //nolint:errcheck // read-only
-	df := int64(tfr.Count())
-	if df == 0 {
-		return nil
-	}
-	weight := float32(boost * idf(df, x.stats.NonEmpty))
-	var d index.TermFieldDoc
-	for {
-		p, err := tfr.Next(&d)
+// clause is one distinct query term: its postings, the number of times it
+// occurs in the query (the clause's boost) and its idf.
+type clause struct {
+	tfr    index.TermFieldReader
+	tokens int
+	idf    float32
+}
+
+// scores returns the score of every document that holds a query term, keyed
+// by Bleve's internal document ID: Lucene's BM25 summed over the query's
+// terms, with the switches of s.
+func (x *Index) scores(query string, s *scoring) (map[string]float32, error) {
+	counts := x.terms(query)
+	clauses := make([]clause, 0, len(counts))
+	defer func() {
+		for _, c := range clauses {
+			c.tfr.Close() //nolint:errcheck // read-only
+		}
+	}()
+	// Bleve's match query has one clause per token, with boost 1, a term the
+	// index does not hold included: queryNorm and the coordination factor
+	// count tokens.
+	tokens, sumSq := 0, 0.0
+	for _, t := range slices.Sorted(maps.Keys(counts)) {
+		tfr, err := x.r.TermFieldReader(context.Background(), []byte(t), field, true, true, false)
 		if err != nil {
-			return err
+			return nil, err
 		}
-		if p == nil {
-			return nil
-		}
-		// Bleve stores the exact length; its posting returns 1/sqrt(length).
-		length := int(math.Round(1 / (p.Norm * p.Norm)))
-		sums[string(p.ID)] += float64(termScore(weight, float32(p.Freq), x.norms[intToByte4(length)]))
+		c := clause{tfr, counts[t], idf(int64(tfr.Count()), s.docCount)}
+		clauses = append(clauses, c)
+		tokens += c.tokens
+		sumSq += float64(c.tokens) * float64(c.idf) * float64(c.idf)
 	}
+	queryNorm := 1 / math.Sqrt(sumSq)
+	type sum struct {
+		score  float64
+		tokens int
+	}
+	sums := map[string]sum{}
+	for _, c := range clauses {
+		if c.tfr.Count() == 0 {
+			continue
+		}
+		weight := float32(float32(c.tokens) * c.idf)
+		var d index.TermFieldDoc
+		for {
+			p, err := c.tfr.Next(&d)
+			if err != nil {
+				return nil, err
+			}
+			if p == nil {
+				break
+			}
+			score := termScore(weight, s.freq(p.Freq), s.normInverse(p.Norm))
+			if s.K1 {
+				score = float32(score * k1)
+			}
+			if s.IDFTwice {
+				// The weight holds the boost once; Bleve's queryWeight is
+				// boost · idf · queryNorm and its term score holds idf alone.
+				score = float32(score * float32(float64(c.idf)*queryNorm))
+			}
+			a := sums[string(p.ID)]
+			sums[string(p.ID)] = sum{a.score + float64(score), a.tokens + c.tokens}
+		}
+	}
+	out := make(map[string]float32, len(sums))
+	for id, a := range sums {
+		if s.Coord {
+			a.score *= float64(a.tokens) / float64(tokens)
+		}
+		// Lucene sums the clause scores in double and returns a float.
+		out[id] = float32(a.score)
+	}
+	return out, nil
 }
 
 // SearchBleve ranks with Bleve's own BM25 instead of Lucene's, for the

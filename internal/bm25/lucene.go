@@ -59,14 +59,19 @@ func idf(docFreq, docCount int64) float32 {
 	return float32(math.Log(1 + (float64(docCount-docFreq)+0.5)/(float64(docFreq)+0.5)))
 }
 
-// normCache is the table BM25Similarity.scorer builds: for each norm byte,
-// 1 / (k1 · ((1 − b) + b · length / avgdl)).
+// normCache is the table BM25Similarity.scorer builds: normInverse of the
+// length each norm byte decodes to.
 func normCache(avgdl float32) [256]float32 {
 	var c [256]float32
 	for i := range c {
-		c[i] = 1 / (k1 * ((1 - b) + float32(b*float32(byte4ToInt(uint8(i))))/avgdl))
+		c[i] = normInverse(float32(byte4ToInt(uint8(i))), avgdl)
 	}
 	return c
+}
+
+// normInverse is 1 / (k1 · ((1 − b) + b · length / avgdl)).
+func normInverse(length, avgdl float32) float32 {
+	return 1 / (k1 * ((1 - b) + float32(b*length)/avgdl))
 }
 
 // termScore is BM25Scorer.score: weight is boost · idf. It equals

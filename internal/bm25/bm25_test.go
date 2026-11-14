@@ -27,8 +27,13 @@ var corpus = []beir.Doc{
 
 func build(t *testing.T) *Index {
 	t.Helper()
+	return buildDocs(t, corpus)
+}
+
+func buildDocs(t *testing.T, docs []beir.Doc) *Index {
+	t.Helper()
 	x, err := Build(filepath.Join(t.TempDir(), "idx"), func(fn func(beir.Doc) error) error {
-		for _, d := range corpus {
+		for _, d := range docs {
 			if err := fn(d); err != nil {
 				return err
 			}

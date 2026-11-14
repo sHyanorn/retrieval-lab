@@ -34,6 +34,12 @@ jobs:
       - uses: actions/setup-go@b7ad1dad31e06c5925ef5d2fc7ad053ef454303e # v7.0.0
         with:
           go-version-file: go.mod
+      # The BEIR zips of the six datasets; scripts/data.sh checks them against
+      # scripts/data.sha256 whether restored or downloaded.
+      - uses: actions/cache@55cc8345863c7cc4c66a329aec7e433d2d1c52a9 # v6.1.0
+        with:
+          path: ${{ runner.temp }}/data/*.zip
+          key: beir-six-${{ hashFiles('scripts/data.sha256') }}
       # Download, index, rank and evaluate the six datasets; fails if a run
       # file's SHA-256, a trec_eval comparison or the tables differ.
       - run: make reproduce DATA="$RUNNER_TEMP/data"
@@ -83,6 +89,11 @@ jobs:
           go-version-file: go.mod
       - run: pip install --index-url https://download.pytorch.org/whl/cpu torch==2.15.0
       - run: pip install -r encode/requirements.txt
+      # SciFact's zip, checked by scripts/data.sh as above.
+      - uses: actions/cache@55cc8345863c7cc4c66a329aec7e433d2d1c52a9 # v6.1.0
+        with:
+          path: ${{ runner.temp }}/data/*.zip
+          key: beir-scifact-${{ hashFiles('scripts/data.sha256') }}
       - run: scripts/data.sh "$RUNNER_TEMP/data" scifact
       # The encoding script on all-MiniLM-L6-v2 at its registered revision,
       # on the CPU: output layout, ID order, resumption, prompts, settings.

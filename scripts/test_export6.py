@@ -531,3 +531,24 @@ def test_start_command_serves_the_export(tmp_path):
     log = path.read_text()
     assert MARKER not in log.encode() and TOKEN not in log and snapshot(vol) == before
     assert "exit: deleting the pod" in log and log.rstrip().endswith("https://api.runpod.io/v2/pods/test")
+
+
+LISTS = {"step6-perquery": "results/step6/perquery.sha256", "step5-runs": "results/step5/runs.sha256"}
+
+
+def test_the_committed_export_manifest():
+    """results/export/manifest.tsv: each set's contents list is the text pack writes from the set's committed list, and
+    its parts are numbered from 001, each of PART_BYTES but the last; it names no other file."""
+    with open(os.path.join(REPO, "results/export/manifest.tsv"), encoding="utf-8") as f:
+        rows = C.parse_manifest(f.read())
+    names = sorted({rel.split(".", 1)[0] for rel, _, _ in rows})
+    assert "step6-perquery" in names and set(names) <= set(LISTS)
+    seen = 0
+    for name in names:
+        text = "".join(f"{h}  {rel}\n" for rel, h in E.read_list(os.path.join(REPO, LISTS[name]))).encode()
+        assert (f"{name}.contents.tsv", len(text), hashlib.sha256(text).hexdigest()) in rows
+        parts = [(rel, n) for rel, n, _ in rows if rel.startswith(f"{name}.tar.gz.")]
+        assert [rel for rel, _ in parts] == [f"{name}.tar.gz.{i:03d}" for i in range(1, len(parts) + 1)]
+        assert parts and all(n == E.PART_BYTES for _, n in parts[:-1]) and 0 < parts[-1][1] <= E.PART_BYTES
+        seen += 1 + len(parts)
+    assert seen == len(rows)

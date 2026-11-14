@@ -1,13 +1,17 @@
+import contextlib
 import gzip
 import hashlib
+import http.client
 import io
 import json
 import os
 import random
 import signal
+import socket
 import subprocess
 import sys
 import tarfile
+import threading
 import time
 import tracemalloc
 from types import SimpleNamespace
@@ -22,6 +26,7 @@ import export6 as E  # noqa: E402
 import logtest as L  # noqa: E402
 
 MARKER = b"ndcg_cut_10 0.4321987 a measure that must not show"
+TOKEN = "t0k3nT0K3Nt0k3nT0K3N"
 
 
 def put(root, rel, data):
@@ -321,4 +326,208 @@ def test_start_command_dry_run(tmp_path):
     for name, lst in (("step6-perquery", "six"), ("step5-runs", "five")):
         assert E.verify(str(tmp_path / "carried"), name, E.read_list(lists[lst]))["pass"]
     rc, log, _ = start(tmp_path, vol, MODE="other", HARD_LIMIT_MIN="1.2", GRACE_MIN="0")
-    assert rc != 0 and "MODE must be du or export" in log and log.rstrip().endswith("https://api.runpod.io/v2/pods/test")
+    assert rc != 0 and "MODE must be du, export or serve" in log and log.rstrip().endswith("https://api.runpod.io/v2/pods/test")
+
+
+@contextlib.contextmanager
+def serving(out, handler=None):
+    s = E.server(out, TOKEN, 0, "127.0.0.1", **({"handler": handler} if handler else {}))
+    threading.Thread(target=s.serve_forever, daemon=True).start()
+    try:
+        yield f"http://127.0.0.1:{s.server_address[1]}", s.server_address[1]
+    finally:
+        s.shutdown()
+        s.server_close()
+
+
+def request(port, method, path, headers=None):
+    c = http.client.HTTPConnection("127.0.0.1", port, timeout=10)
+    c.request(method, path, headers=headers or {})
+    r = c.getresponse()
+    body = r.read()
+    c.close()
+    return r.status, dict(r.getheaders()), body
+
+
+def test_serve_gives_the_listed_files_whole_and_by_range(tmp_path, capsys):
+    vol, lists = make_vol(str(tmp_path))
+    out = str(tmp_path / "export")
+    a, b = pack(vol, lists, out)
+    part = a["parts"][0]["path"]
+    with open(os.path.join(out, part), "rb") as f:
+        data = f.read()
+    n = len(data)
+    with serving(out) as (_, port):
+        for name in [p["path"] for p in a["parts"] + b["parts"]] + ["step6-perquery.contents.tsv", "step5-runs.contents.tsv",
+                                                                    "manifest.tsv"]:
+            st, h, body = request(port, "GET", f"/{TOKEN}/{name}")
+            with open(os.path.join(out, name), "rb") as f:
+                assert st == 200 and body == f.read() and h["Content-Length"] == str(len(body)) and h["Cache-Control"] == "no-store"
+        st, h, body = request(port, "HEAD", f"/{TOKEN}/{part}")
+        assert st == 200 and body == b"" and h["Content-Length"] == str(n) and h["Accept-Ranges"] == "bytes"
+        st, h, body = request(port, "GET", f"/{TOKEN}/{part}", {"Range": "bytes=100-199"})
+        assert st == 206 and body == data[100:200] and h["Content-Range"] == f"bytes 100-199/{n}"
+        st, h, body = request(port, "GET", f"/{TOKEN}/{part}", {"Range": "bytes=3000-"})
+        assert st == 206 and body == data[3000:] and h["Content-Range"] == f"bytes 3000-{n - 1}/{n}"
+        st, h, body = request(port, "GET", f"/{TOKEN}/{part}", {"Range": f"bytes={n - 5}-{n + 99}"})
+        assert st == 206 and body == data[-5:] and h["Content-Range"] == f"bytes {n - 5}-{n - 1}/{n}"
+        st, h, body = request(port, "GET", f"/{TOKEN}/{part}", {"Range": f"bytes={n}-"})
+        assert st == 416 and body == b"" and h["Content-Range"] == f"bytes */{n}"
+        for other in ("bytes=-100", "bytes=0-1,5-6", "bytes=200-100", "lines=0-1"):  # ignored, as RFC 9110 allows
+            st, h, body = request(port, "GET", f"/{TOKEN}/{part}", {"Range": other})
+            assert st == 200 and body == data
+    log = capsys.readouterr().out
+    assert f"GET {part} bytes=100-199 206 100 B" in log and f"HEAD {part} - 200 0 B" in log and TOKEN not in log
+
+
+def test_serve_gives_nothing_else(tmp_path, capsys):
+    vol, lists = make_vol(str(tmp_path))
+    out = str(tmp_path / "export")
+    pack(vol, lists, out)
+    with open(os.path.join(out, "stray.bin"), "wb") as f:  # in OUT, not in the manifest
+        f.write(b"stray")
+    with open(os.path.join(out, "manifest.tsv"), "rb") as f:
+        manifest = f.read()
+    with serving(out) as (_, port):
+        for path in ("/manifest.tsv", f"/{TOKEN}", f"/{TOKEN}/", f"/{TOKEN}/stray.bin", f"/{TOKEN}x/manifest.tsv",
+                     f"/{TOKEN[:-1]}/manifest.tsv", f"/{TOKEN}/../{TOKEN}/manifest.tsv", f"/{TOKEN}/manifest.tsv?x=1",
+                     f"/{TOKEN}//manifest.tsv", f"/{TOKEN}/x/manifest.tsv", f"/x/{TOKEN}/manifest.tsv"):
+            for method in ("GET", "HEAD"):
+                st, _, body = request(port, method, path)
+                assert st == 404 and b"stray" not in body and manifest.split(b"\n")[1] not in body, (method, path)
+        for method in ("POST", "PUT", "DELETE"):
+            st, _, body = request(port, method, f"/{TOKEN}/manifest.tsv")
+            assert st == 501 and manifest.split(b"\n")[1] not in body
+    log = capsys.readouterr().out
+    assert TOKEN[:-1] not in log and "GET - - 404 0 B" in log
+    for bad in ("short", "x" * 15, "x" * 16 + "/", "x" * 16 + " "):
+        with pytest.raises(ValueError, match="16 or more letters and digits"):
+            E.server(out, bad, 0, "127.0.0.1")
+    p = os.path.join(out, "step6-perquery.tar.gz.001")
+    with open(p, "ab") as f:
+        f.write(b"x")
+    with pytest.raises(E.Refused, match="step6-perquery.tar.gz.001: 4001 bytes, the manifest has 4000"):
+        E.server(out, TOKEN, 0, "127.0.0.1")
+
+
+def test_fetch_resumes_a_cut_transfer_and_refuses_a_file_that_differs(tmp_path, monkeypatch):
+    vol, lists = make_vol(str(tmp_path))
+    out = str(tmp_path / "export")
+    pack(vol, lists, out)
+    rows = C.parse_manifest(open(os.path.join(out, "manifest.tsv")).read())
+    slept = []
+    monkeypatch.setattr(E, "sleep", slept.append)
+
+    class Cut(E.Handler):
+        """Cuts the first response to each file, which has no Range, after half of the file."""
+        cut = set()
+
+        def send(self, body):
+            name = self.path.rsplit("/", 1)[-1]
+            if self.headers.get("Range") or name in self.cut or name not in self.files:
+                return super().send(body)
+            self.cut.add(name)
+            with open(self.files[name], "rb") as f:
+                data = f.read()
+            self.send_response(200)
+            self.send_header("Content-Length", str(len(data)))
+            self.end_headers()
+            self.wfile.write(data[:len(data) // 2])
+
+    got = tmp_path / "got"
+    with serving(out, Cut) as (url, _):
+        s = E.fetch(f"{url}/{TOKEN}", rows, str(got))
+    assert [f["path"] for f in s["files"]] == [r for r, _, _ in rows] and all(f["requests"] == 2 for f in s["files"])
+    assert sorted(os.listdir(got)) == sorted(r for r, _, _ in rows) and slept == []
+    for rel, n, h in rows:
+        assert os.path.getsize(got / rel) == n and sha_file(got / rel) == h
+    for name, lst in (("step6-perquery", "six"), ("step5-runs", "five")):
+        assert E.verify(str(got), name, E.read_list(lists[lst]))["pass"]
+    # A byte changed on the pod, the size kept: the file is refused and removed.
+    rel = rows[-1][0]
+    with open(os.path.join(out, rel), "r+b") as f:
+        b = f.read(1)
+        f.seek(0)
+        f.write(bytes([b[0] ^ 1]))
+    with serving(out) as (url, _):
+        with pytest.raises(E.Refused, match=f"{rel}: its SHA-256 differs from the manifest"):
+            E.fetch(f"{url}/{TOKEN}", rows, str(tmp_path / "again"))
+        with pytest.raises(E.Refused, match="step6-perquery.tar.gz.999: HTTP Error 404"):
+            E.fetch(f"{url}/{TOKEN}", [("step6-perquery.tar.gz.999", 10, "0" * 64)], str(tmp_path / "none"))
+    assert not [n for n in os.listdir(tmp_path / "again") if n.startswith(rel)] and slept == []
+    # Nothing answers: three requests without progress, with a pause after the first two.
+    with socket.socket() as s:
+        s.bind(("127.0.0.1", 0))
+        port = s.getsockname()[1]
+    with pytest.raises(E.Refused, match=f"{rows[0][0]}: no progress in 3 requests"):
+        E.fetch(f"http://127.0.0.1:{port}/{TOKEN}", rows, str(tmp_path / "down"), tries=3)
+    assert slept == [5, 10] and os.listdir(tmp_path / "down") == []
+
+
+def test_fetch_and_verify_as_the_workflow_runs_them(tmp_path, capsys):
+    vol, lists = make_vol(str(tmp_path))
+    out = str(tmp_path / "export")
+    pack(vol, lists, out)
+    manifest = os.path.join(out, "manifest.tsv")
+    got = str(tmp_path / "got")
+    with serving(out) as (url, _):
+        assert E.main(["fetch", "--url", f"{url}/{TOKEN}", "--manifest", manifest, "--dir", got, "--names", "step6-perquery"]) == 0
+        assert E.main(["fetch", "--url", f"{url}/{TOKEN}", "--manifest", manifest, "--dir", got, "--names", "step5-runs",
+                       "step4-vectors"]) == 2
+    printed = capsys.readouterr().out
+    assert sorted(os.listdir(got)) == sorted(r for r, _, _ in C.parse_manifest(open(manifest).read()) if r.startswith("step6-perquery."))
+    assert E.main(["verify", "--dir", got, "--name", "step6-perquery", "--list", lists["six"]]) == 0
+    assert "refused: no file of step4-vectors in the manifest" in printed and url not in printed and TOKEN not in printed
+    s = json.loads(printed.split("=== export6 fetch ===\n", 1)[1].split("=== end export6 fetch ===", 1)[0])
+    assert [f["path"] for f in s["files"]] == sorted(os.listdir(got)) and all(f["requests"] == 1 for f in s["files"])
+
+
+def launch(tmp_path, vol, **env):
+    """The start command running in its dry run; its process and log."""
+    with open(os.path.join(HERE, "export6-start.sh")) as f:
+        cmd = f.read()
+    head = subprocess.run(["git", "-C", REPO, "rev-parse", "HEAD"], capture_output=True, text=True, check=True).stdout.strip()
+    env = dict(os.environ, DRY_RUN="1", COMMIT=head, REPO_URL=REPO, WORK=str(tmp_path / "work"), RUNPOD_POD_ID="test", VOL=vol,
+               **env)
+    log = tmp_path / "serve.log"
+    with open(log, "w") as f:
+        p = subprocess.Popen(["bash", "-c", cmd], stdout=f, stderr=subprocess.STDOUT, env=env, start_new_session=True)
+    return p, log
+
+
+@pytest.mark.skipif(not committed("scripts/export6.py", "scripts/export6-start.sh", "scripts/carry6.py", "scripts/logtest.py",
+                                  "encode/report.py", "results/step6/perquery.sha256", "results/step5/runs.sha256"),
+                    reason="the start command fetches HEAD; commit first")
+def test_start_command_serves_the_export(tmp_path):
+    """MODE=serve packs as MODE=export does, prints the manifest and serves the files until the pod is deleted; without
+    a token it packs nothing."""
+    vol, lists = make_vol(str(tmp_path))
+    before = snapshot(vol)
+    rc, log, _ = start(tmp_path, vol, MODE="serve", HARD_LIMIT_MIN="1.2", GRACE_MIN="0", SERVE_TOKEN="short")
+    assert rc != 0 and "SERVE_TOKEN must be 16 or more letters and digits" in log and "export6 pack" not in log
+    assert log.rstrip().endswith("https://api.runpod.io/v2/pods/test")
+    with socket.socket() as s:
+        s.bind(("127.0.0.1", 0))
+        port = s.getsockname()[1]
+    p, path = launch(tmp_path, vol, MODE="serve", HARD_LIMIT_MIN="3", SERVE_TOKEN=TOKEN, PORT=str(port), PART_MIB="1",
+                     LIST6=lists["six"], LIST5=lists["five"])
+    try:
+        t = time.time()
+        while "serving" not in path.read_text() and p.poll() is None and time.time() - t < 90:
+            time.sleep(0.2)
+        log = path.read_text()
+        assert f"serving 5 files on port {port}" in log
+        text = log.split("=== export6 manifest ===\n", 1)[1].split("=== end export6 manifest ===", 1)[0]
+        assert f"{hashlib.sha256(text.encode()).hexdigest()}  manifest.tsv" in log
+        rows = C.parse_manifest(text)
+        assert [r for r, _, _ in rows] == ["step5-runs.contents.tsv", "step5-runs.tar.gz.001", "step6-perquery.contents.tsv",
+                                           "step6-perquery.tar.gz.001"]
+        E.fetch(f"http://127.0.0.1:{port}/{TOKEN}", rows, str(tmp_path / "got"))
+    finally:
+        os.killpg(p.pid, signal.SIGTERM)
+        p.wait(timeout=30)
+    for name, lst in (("step6-perquery", "six"), ("step5-runs", "five")):
+        assert E.verify(str(tmp_path / "got"), name, E.read_list(lists[lst]))["pass"]
+    log = path.read_text()
+    assert MARKER not in log.encode() and TOKEN not in log and snapshot(vol) == before
+    assert "exit: deleting the pod" in log and log.rstrip().endswith("https://api.runpod.io/v2/pods/test")

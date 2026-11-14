@@ -18,27 +18,48 @@ verify: reads the parts of NAME in DIR as one stream, unpacks it member by membe
 with the list: missing, extra and differing members are counted and named; with --extract the members are
 written under a directory. It prints counts, names, sizes and SHA-256, never a file's content.
 
+serve: serves OUT's manifest.tsv and the files it lists, and nothing else, over HTTP at /TOKEN/<file>: GET and
+HEAD, a single byte range (bytes=A-B or bytes=A-). Each request is logged by method, file, range, status and the
+bytes sent, never by its path, which holds the token.
+
+fetch: downloads from URL (the server's address and token) every file of the manifest whose name begins with
+NAME., for each NAME; a transfer that is cut is resumed by a range request. Each file must have the size and
+SHA-256 of its line, or it is removed and the fetch refused.
+
 usage: python3 scripts/export6.py du --vol VOL
        python3 scripts/export6.py pack --base DIR --list FILE --name NAME --out OUT [--part-bytes N]
        python3 scripts/export6.py manifest --out OUT
        python3 scripts/export6.py verify --dir DIR --name NAME --list FILE [--extract DIR]
+       python3 scripts/export6.py serve --out OUT --token TOKEN [--port 8000]
+       python3 scripts/export6.py fetch --url URL --manifest FILE --dir DIR --names NAME...
 """
 
 import argparse
 import glob
 import gzip
 import hashlib
+import http.client
+import http.server
 import json
 import os
 import re
 import subprocess
 import sys
 import tarfile
+import time
+import urllib.error
+import urllib.request
+
+sys.path.insert(0, os.path.dirname(os.path.abspath(__file__)))
+import carry6 as C  # noqa: E402  its manifest reader
 
 BLOCK = 1 << 20
 PART_BYTES = 1945 * (1 << 20)  # under GitHub's 2 GiB for one release asset
 HEADER = "path\tbytes\tsha256\tform"  # scripts/carry6.py's manifest
 LINE = re.compile(r"([0-9a-f]{64})  (.+)")
+RANGE = re.compile(r"bytes=(\d+)-(\d*)")
+AGENT = "retrieval-lab-export6"
+sleep = time.sleep  # tests replace it
 
 
 class Refused(Exception):
@@ -283,6 +304,132 @@ def verify(dir, name, entries, extract=None):
     return s
 
 
+class Handler(http.server.BaseHTTPRequestHandler):
+    """GET and HEAD of the files of server(), at /TOKEN/<file>."""
+
+    files, token = {}, ""
+
+    def do_GET(self):
+        self.send(True)
+
+    def do_HEAD(self):
+        self.send(False)
+
+    def send(self, body):
+        t, rng = time.monotonic(), self.headers.get("Range")
+        prefix = f"/{self.token}/"
+        name = self.path[len(prefix):] if self.path.startswith(prefix) else None
+        if name not in self.files:
+            self.send_error(404)
+            return self.note("-", rng, 404, 0, t)
+        size = os.path.getsize(self.files[name])
+        a, b, code = 0, size - 1, 200
+        m = RANGE.fullmatch(rng or "")
+        if m and m[2] and int(m[2]) < int(m[1]):
+            m = None  # not a valid range: ignored
+        if m and int(m[1]) >= size:
+            self.send_response(416)
+            self.send_header("Content-Range", f"bytes */{size}")
+            self.send_header("Content-Length", "0")
+            self.end_headers()
+            return self.note(name, rng, 416, 0, t)
+        if m:
+            a, b, code = int(m[1]), min(int(m[2]), size - 1) if m[2] else size - 1, 206
+        self.send_response(code)
+        self.send_header("Content-Type", "application/octet-stream")
+        self.send_header("Content-Length", str(b - a + 1))
+        self.send_header("Accept-Ranges", "bytes")
+        self.send_header("Cache-Control", "no-store")
+        if code == 206:
+            self.send_header("Content-Range", f"bytes {a}-{b}/{size}")
+        self.end_headers()
+        sent = 0
+        if body:
+            try:
+                with open(self.files[name], "rb") as f:
+                    f.seek(a)
+                    while sent < b - a + 1:
+                        sent += self.wfile.write(f.read(min(BLOCK, b - a + 1 - sent)))
+            except OSError:  # the client went away
+                pass
+        self.note(name, rng, code, sent, t)
+
+    def note(self, name, rng, code, sent, t):
+        print(f"{time.strftime('%Y-%m-%dT%H:%M:%SZ', time.gmtime())} {self.command} {name} {rng or '-'} {code} {sent} B "
+              f"{time.monotonic() - t:.1f} s", flush=True)
+
+    def log_message(self, *args):  # its lines hold the path, and so the token
+        pass
+
+
+def server(out, token, port, host="0.0.0.0", handler=Handler):
+    """An HTTP server of OUT's manifest.tsv and the files it lists, each checked against its size."""
+    if not re.fullmatch(r"[A-Za-z0-9]{16,}", token):
+        raise ValueError("the token must be 16 or more letters and digits")
+    files = {"manifest.tsv": os.path.join(out, "manifest.tsv")}
+    with open(files["manifest.tsv"], encoding="utf-8") as f:
+        for rel, n, _ in C.parse_manifest(f.read()):
+            files[rel] = os.path.join(out, rel)
+            if os.path.getsize(files[rel]) != n:
+                raise Refused(f"{rel}: {os.path.getsize(files[rel])} bytes, the manifest has {n}")
+    s = http.server.ThreadingHTTPServer((host, port), type("Serve", (handler,), {"files": files, "token": token}))
+    s.daemon_threads = True
+    return s
+
+
+def fetch(url, rows, dir, tries=8, timeout=60):
+    """Downloads the files of rows, [(path, bytes, sha256)], from url into dir. A cut transfer is resumed by a range
+    request; after tries requests in a row without progress, or an answer 4xx, it is refused. A file whose size or
+    SHA-256 differs from its row is removed and refused. A summary of sizes, times and requests."""
+    os.makedirs(dir, exist_ok=True)
+    done = []
+    for rel, size, want in rows:
+        part, t, requests, fails, why = os.path.join(dir, C.safe(rel) + ".part"), time.monotonic(), 0, 0, None
+        open(part, "wb").close()
+        while os.path.getsize(part) < size:
+            have = before = os.path.getsize(part)
+            req = urllib.request.Request(f"{url}/{rel}", headers={"User-Agent": AGENT, **({"Range": f"bytes={have}-"} if have else {})})
+            requests += 1
+            try:
+                with urllib.request.urlopen(req, timeout=timeout) as r:
+                    if r.status == 200:
+                        have = 0
+                    elif r.status != 206 or not r.headers.get("Content-Range", "").startswith(f"bytes {have}-"):
+                        raise OSError(f"status {r.status}, Content-Range {r.headers.get('Content-Range')}")
+                    with open(part, "r+b") as f:
+                        f.truncate(have)
+                        f.seek(have)
+                        for b in iter(lambda: r.read(BLOCK), b""):
+                            f.write(b)
+            except urllib.error.HTTPError as e:
+                if 400 <= e.code < 500:
+                    os.remove(part)
+                    raise Refused(f"{rel}: {e}") from None
+                why = e
+            except (OSError, http.client.HTTPException) as e:
+                why = e
+            if os.path.getsize(part) > before:
+                fails = 0
+                continue
+            fails += 1
+            if fails >= tries:
+                os.remove(part)
+                raise Refused(f"{rel}: no progress in {tries} requests: {type(why).__name__}: {why}"[:300])
+            sleep(min(60, 5 * 2 ** (fails - 1)))
+        h = hashlib.sha256()
+        with open(part, "rb") as f:
+            for b in iter(lambda: f.read(BLOCK), b""):
+                h.update(b)
+        if os.path.getsize(part) != size or h.hexdigest() != want:
+            os.remove(part)
+            raise Refused(f"{rel}: its SHA-256 differs from the manifest")
+        os.replace(part, os.path.join(dir, rel))
+        s = time.monotonic() - t
+        done.append({"path": rel, "bytes": size, "seconds": round(s, 1), "mib_per_s": round(size / (1 << 20) / max(s, 1e-3), 2),
+                     "requests": requests})
+    return {"files": done}
+
+
 def main(argv):
     p = argparse.ArgumentParser(description=__doc__.split("\n")[0])
     sub = p.add_subparsers(dest="cmd", required=True)
@@ -301,7 +448,34 @@ def main(argv):
     v.add_argument("--name", required=True)
     v.add_argument("--list", required=True)
     v.add_argument("--extract")
+    s = sub.add_parser("serve")
+    s.add_argument("--out", required=True)
+    s.add_argument("--token", required=True)
+    s.add_argument("--port", type=int, default=8000)
+    f = sub.add_parser("fetch")
+    f.add_argument("--url", required=True, help="the server's address and token, without a final /")
+    f.add_argument("--manifest", required=True)
+    f.add_argument("--dir", required=True)
+    f.add_argument("--names", nargs="+", required=True)
     a = p.parse_args(argv)
+    if a.cmd == "serve":
+        s = server(a.out, a.token, a.port)
+        print(f"serving {len(s.RequestHandlerClass.files)} files on port {a.port}", flush=True)
+        s.serve_forever()
+        return 1
+    if a.cmd == "fetch":
+        with open(a.manifest, encoding="utf-8") as f:
+            rows = C.parse_manifest(f.read())
+        try:
+            for n in a.names:
+                if not any(r.startswith(n + ".") for r, _, _ in rows):
+                    raise Refused(f"no file of {n} in the manifest")
+            s = fetch(a.url.rstrip("/"), [x for x in rows if any(x[0].startswith(n + ".") for n in a.names)], a.dir)
+        except Refused as e:
+            print(f"refused: {e}", flush=True)
+            return 2
+        print(f"=== export6 fetch ===\n{json.dumps(s, indent=1)}\n=== end export6 fetch ===", flush=True)
+        return 0
     if a.cmd == "du":
         print("=== export6 du ===")
         print(json.dumps(du(a.vol), indent=1))

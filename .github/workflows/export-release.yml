@@ -1,0 +1,64 @@
+name: export-release
+# Run by hand against a pod that serves the export (scripts/export6-start.sh,
+# MODE=serve). Downloads every file of the sets, requires its size and SHA-256
+# to equal results/export/manifest.tsv and every member of each set to equal
+# its line of the set's checksum list; unless dry_run, then creates a draft
+# release of them with the notes of .github/export-release.md. A release
+# always has both sets.
+on:
+  workflow_dispatch:
+    inputs:
+      base_url:
+        description: The pod's address and token, https://POD-8000.proxy.runpod.net/TOKEN
+        required: true
+        type: string
+      tag:
+        description: The release's tag (not used by a dry run)
+        required: false
+        type: string
+        default: study-files
+      sets:
+        description: The sets a dry run downloads
+        required: false
+        type: string
+        default: step6-perquery step5-runs
+      dry_run:
+        description: Download and check only
+        required: false
+        type: boolean
+        default: true
+
+permissions:
+  contents: read
+
+jobs:
+  export:
+    runs-on: ubuntu-latest
+    timeout-minutes: 120
+    permissions:
+      contents: write
+    env:
+      BASE_URL: ${{ inputs.base_url }}
+      TAG: ${{ inputs.tag }}
+      SETS: ${{ inputs.dry_run && inputs.sets || 'step6-perquery step5-runs' }}
+    steps:
+      - uses: actions/checkout@3d3c42e5aac5ba805825da76410c181273ba90b1 # v7.0.1
+      - uses: actions/setup-python@6d4fd22b20465ccc0f7354476588e8df7c9ca0e0 # v7.1.0
+        with:
+          python-version: "3.13"
+      - run: read -ra sets <<< "$SETS" && python scripts/export6.py fetch --url "$BASE_URL" --manifest results/export/manifest.tsv --dir "$RUNNER_TEMP/export" --names "${sets[@]}"
+      - run: |
+          for n in $SETS; do
+            case $n in
+            step6-perquery) list=results/step6/perquery.sha256 ;;
+            step5-runs) list=results/step5/runs.sha256 ;;
+            *) echo "unknown set $n"; exit 1 ;;
+            esac
+            python scripts/export6.py verify --dir "$RUNNER_TEMP/export" --name "$n" --list "$list"
+          done
+      - if: ${{ !inputs.dry_run }}
+        env:
+          GH_TOKEN: ${{ github.token }}
+        run: |
+          gh release create "$TAG" --draft --target "$GITHUB_SHA" --title "Per-query files of step 6 and run files of step 5" \
+            --notes-file .github/export-release.md "$RUNNER_TEMP"/export/* results/export/manifest.tsv

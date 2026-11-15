@@ -2,7 +2,7 @@
 
 ## 1. Summary
 
-A hybrid retrieval system in Go: BM25, dense vectors, fusion and reranking. BM25, exact dense retrieval and fusion are each accepted against a published number that a third party can reproduce with public commands and data; approximate search is measured against exact search, and reranking is accepted against intervals over queries. A pre-registered study built on the system follows as a second stage and is out of scope here.
+A hybrid retrieval system in Go: BM25, dense vectors and fusion, with cross-encoder reranking still to come (M5). BM25, exact dense retrieval and fusion are each accepted against a published number that a third party can reproduce with public commands and data; approximate search is measured against exact search, and reranking is to be accepted against intervals over queries. A pre-registered study built on the system follows as a second stage and is out of scope here.
 
 ## 2. Data, anchors and measures
 
@@ -19,11 +19,13 @@ A hybrid retrieval system in Go: BM25, dense vectors, fusion and reranking. BM25
 | Dense retrieval, exact search | ONNX Runtime, a small embedding model | Pyserini BGE-base-en-v1.5 |
 | Approximate search (HNSW) | | exact search on the same vectors |
 | Fusion: RRF and convex combination | run files | Pyserini's BEIR fusion page |
-| Cross-encoder reranking | ONNX Runtime | intervals over queries |
+| Cross-encoder reranking (not implemented yet) | ONNX Runtime | intervals over queries |
 
 Out of scope: a new inverted-index engine or vector database, filtered vector search benchmarks, anything that needs a GPU.
 
-## 4. Completion criteria for BM25
+## 4. Completion criteria
+
+### BM25
 
 Fixed before any BM25 result existed.
 

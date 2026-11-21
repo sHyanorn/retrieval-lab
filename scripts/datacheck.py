@@ -55,8 +55,9 @@ def fetch(rel, dest, want):
 def beir_qrels(data):
     with open(os.path.join(data, "qrels", "test.tsv"), encoding="utf-8", newline="") as f:
         lines = f.read().replace("\r\n", "\n").split("\n")
-    if lines[0] != "query-id\tcorpus-id\tscore":
-        raise SystemExit(f"{data}: qrels header {lines[0]!r}")
+    header = "query-id\tcorpus-id\tscore"
+    if lines[0] != header:
+        raise SystemExit(f"{data}: qrels header {lines[0]!r}, want {header!r}")
     out = {}
     for ln in lines[1:]:
         if ln:

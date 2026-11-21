@@ -73,7 +73,7 @@ def mteb(model, rev, task):
         d = json.loads(raw)
         tests = [s for s in d["scores"]["test"] if s.get("hf_subset", "default") == "default"]
         if len(tests) != 1:
-            raise SystemExit(f"{rel}: {len(tests)} default test scores")
+            raise SystemExit(f"{rel}: {len(tests)} default test scores, want 1")
         value = repr(tests[0]["ndcg_at_10"])  # the shortest repr, as json writes it
         if not 0 < float(value) < 1:
             raise SystemExit(f"{rel}: nDCG@10 {value} not in (0, 1)")
@@ -84,8 +84,11 @@ def mteb(model, rev, task):
 def pyserini():
     """{(condition, dataset): {"nDCG@10": value, "R@100": value}}, values as the file prints them."""
     raw = get(BEIR_YAML)
-    if hashlib.sha256(raw).hexdigest() != BEIR_YAML_SHA256:
-        raise SystemExit("beir.yaml: SHA-256 differs")
+    if raw is None:
+        raise SystemExit(f"{BEIR_YAML}: not found")
+    got = hashlib.sha256(raw).hexdigest()
+    if got != BEIR_YAML_SHA256:
+        raise SystemExit(f"beir.yaml: SHA-256 {got}, want {BEIR_YAML_SHA256}")
     out, cond, ds = {}, None, None
     for ln in raw.decode().split("\n"):
         if m := re.match(r"  - name: (\S+)$", ln):

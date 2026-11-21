@@ -52,8 +52,9 @@ def pyserini():
     """{dataset: (nDCG@10, R@100)} of CONDITION, as the file prints them."""
     with urllib.request.urlopen(BEIR_YAML, timeout=120) as r:
         raw = r.read()
-    if hashlib.sha256(raw).hexdigest() != BEIR_YAML_SHA256:
-        raise SystemExit("beir.yaml: SHA-256 differs")
+    got = hashlib.sha256(raw).hexdigest()
+    if got != BEIR_YAML_SHA256:
+        raise SystemExit(f"beir.yaml: SHA-256 {got}, want {BEIR_YAML_SHA256}")
     out, cond, ds = {}, None, None
     for ln in raw.decode().split("\n"):
         if m := re.match(r"  - name: (\S+)$", ln):

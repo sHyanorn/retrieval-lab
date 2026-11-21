@@ -6,7 +6,7 @@ TREC_EVAL = $(DATA)/trec_eval/trec_eval
 DENSE    ?= $(DATA)/dense
 DENSE_DATASETS ?= scifact nfcorpus arguana
 VARIANTS ?= sqrt-tf avgdl idf-twice coord k1 exact-length bleve-length all-docs all
-ORT_LIB   = $(DENSE)/onnxruntime-linux-x64-1.31.1/lib/libonnxruntime.so.1.31.1
+ORT_LIB   = $(DENSE)/onnxruntime-1.31.1/onnxruntime/capi/libonnxruntime.so.1.31.1
 
 .DEFAULT_GOAL := help
 .PHONY: help build test lint fmt data trec-eval bm25 check table reproduce reference variants dense-assets embed dense dense-table dense-check ann ann-table fuse fusion-table anchor-build-table

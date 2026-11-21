@@ -1,7 +1,8 @@
 #!/usr/bin/env bash
 # Downloads into DIR what the BGE-base runs need: the ONNX model Anserini's
-# BgeBaseEn15Encoder uses, the BAAI tokenizer.json, ONNX Runtime 1.31.1, and,
-# only to compare vectors, Pyserini's prebuilt faiss flat index of each NAME.
+# BgeBaseEn15Encoder uses, the BAAI tokenizer.json, ONNX Runtime 1.31.1 (its
+# PyPI wheel, of which only the shared library is unpacked), and, only to
+# compare vectors, Pyserini's prebuilt faiss flat index of each NAME.
 # Everything is checked against scripts/dense.sha256. With PREBUILT_ONLY=1
 # only the prebuilt indexes are downloaded. An archive counts as unpacked once
 # its .ok file exists; without it the directory is unpacked again. Owners in
@@ -18,9 +19,10 @@ cd "$dir"
 if [ "${PREBUILT_ONLY:-0}" != 1 ]; then
 get https://huggingface.co/castorini/bge-base-en-v1.5-onnx/resolve/c8a4305d344e3f74e43710ae814e5b168a751313/bge-base-en-v1.5-optimized.onnx bge-base-en-v1.5-optimized.onnx
 get https://huggingface.co/BAAI/bge-base-en-v1.5/resolve/a5beb1e3e68b9ab74eb54cfd186867f64f240e1a/tokenizer.json tokenizer.json
-get https://github.com/microsoft/onnxruntime/releases/download/v1.31.1/onnxruntime-linux-x64-1.31.1.tgz onnxruntime-linux-x64-1.31.1.tgz
-for f in bge-base-en-v1.5-optimized.onnx tokenizer.json onnxruntime-linux-x64-1.31.1.tgz; do check "$f"; done
-[ -f onnxruntime-linux-x64-1.31.1.ok ] || { rm -rf onnxruntime-linux-x64-1.31.1 && tar xzf onnxruntime-linux-x64-1.31.1.tgz --no-same-owner && touch onnxruntime-linux-x64-1.31.1.ok; }
+whl=onnxruntime-1.31.1-cp313-cp313-manylinux_2_28_x86_64.whl
+get https://files.pythonhosted.org/packages/fc/0a/c887bcb84a9455b2723825381a77af38611a80f996f804e20fde5f671b63/$whl $whl
+for f in bge-base-en-v1.5-optimized.onnx tokenizer.json $whl; do check "$f"; done
+[ -f onnxruntime-1.31.1.ok ] || { rm -rf onnxruntime-1.31.1 && unzip -q $whl onnxruntime/capi/libonnxruntime.so.1.31.1 -d onnxruntime-1.31.1 && touch onnxruntime-1.31.1.ok; }
 fi
 for n in "$@"; do
 	f=prebuilt/$n.tar.gz

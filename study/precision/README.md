@@ -18,7 +18,7 @@ D=../retrieval-lab-data
 make data DATASETS="scifact nfcorpus arguana scidocs fiqa"
 make trec-eval
 make embed DENSE_DATASETS="scifact nfcorpus arguana"
-ORT=$D/dense/onnxruntime-linux-x64-1.31.1/lib/libonnxruntime.so.1.31.1
+ORT=$D/dense/onnxruntime-1.31.1/onnxruntime/capi/libonnxruntime.so.1.31.1
 # make embed would also fetch Pyserini's indexes of these two, which scripts/dense.sha256 does not list
 for d in scidocs fiqa; do
   bin/embed -data $D/$d -out $D/dense/vectors/$d -model $D/dense -ort $ORT >$D/runs/$d.embed.json

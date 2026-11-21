@@ -66,7 +66,7 @@ jobs:
       - run: go test ./internal/dense/
         env:
           RL_MODEL_DIR: ${{ runner.temp }}/data/dense
-          RL_ORT_LIB: ${{ runner.temp }}/data/dense/onnxruntime-linux-x64-1.31.1/lib/libonnxruntime.so.1.31.1
+          RL_ORT_LIB: ${{ runner.temp }}/data/dense/onnxruntime-1.31.1/onnxruntime/capi/libonnxruntime.so.1.31.1
           RL_REQUIRE_MODEL: "1"
       # Encode, search exactly and on the HNSW graph, check every run against
       # trec_eval; then fail if nDCG@10 is more than 0.005 from the anchor or
@@ -142,7 +142,15 @@ jobs:
         with:
           path: ${{ runner.temp }}/data/*.zip
           key: beir-${{ env.DATASETS }}-${{ hashFiles('scripts/data.sha256') }}
-      - run: make data trec-eval dense-assets DATA="$RUNNER_TEMP/data"
+      # 9195dc3's scripts/dense.sh downloads a release asset that is gone: this
+      # commit's script and checksums replace it, and the library is linked
+      # where 9195dc3's Makefile and step6/dryrun.py look for it.
+      - run: |
+          git fetch origin "$GITHUB_SHA"
+          git checkout "$GITHUB_SHA" -- scripts/dense.sh scripts/dense.sha256
+          make data trec-eval dense-assets DATA="$RUNNER_TEMP/data"
+          mkdir -p "$RUNNER_TEMP/data/dense/onnxruntime-linux-x64-1.31.1/lib"
+          ln -s "$RUNNER_TEMP/data/dense/onnxruntime-1.31.1/onnxruntime/capi/libonnxruntime.so.1.31.1" "$RUNNER_TEMP/data/dense/onnxruntime-linux-x64-1.31.1/lib/"
       - run: go build -o "$RUNNER_TEMP/bin/" ./cmd/dense ./cmd/eval ./cmd/fuse ./cmd/bm25 ./cmd/study ./cmd/embed
       # The step-6 job on synthetic worlds with the real binaries: the work
       # list, layout and collect, records and resumption, the canary, the

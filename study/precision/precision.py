@@ -46,8 +46,8 @@ def main():
             a = ndcg(evalbin, f"{data}/{d}", run)
             a10 = top10(run)
             qs = sorted(ex)
-            c = np.array([a.get(q, 0.0) - ex[q] for q in qs])
-            rec = np.mean([len(a10.get(q, set()) & ex10[q]) / len(ex10[q]) for q in ex10 if ex10[q]])
+            c = np.array([a[q] - ex[q] for q in qs])
+            rec = np.mean([len(a10.get(q, set()) & ex10[q]) / len(ex10[q]) for q in ex10])
             per[ef] = (c, rec)
         ops = {"ef40": 40, "ef120": 120}
         for r in (0.90, 0.95):

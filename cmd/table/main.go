@@ -4,8 +4,13 @@
 // <dataset>.stats.json in -runs; with -reference, the Bleve reference table
 // from <dataset>.bleve1.run and <dataset>.bleve2.run; with -dense, the
 // BGE-base tables from <dataset>.bge.run and the vectors in -vectors and
-// -prebuilt; with -variants, the tables of Bleve's BM25 differences, one at
-// a time, into -results and the first of them into -doc.
+// -prebuilt, and with -check nothing is written and the exit status is 1 if
+// a result falls short; with -ann, the HNSW tables from
+// <dataset>.bge-hnsw-ef<ef>.run and <dataset>.ann.json; with -fusion, the
+// fusion tables from the BM25, BGE and fused runs; with -anchor-build, the
+// tables of the study's anchor build from the per-query files in -data; with
+// -variants, the tables of Bleve's BM25 differences, one at a time, into
+// -results and the first of them into -doc.
 package main
 
 import (
@@ -157,6 +162,10 @@ func signed(d float64) string {
 	return fmt.Sprintf("%+.4f", d)
 }
 
+// outside is the agreement of a difference beyond SPEC §4's 0.005, which
+// -dense -check reports as falling short.
+const outside = "outside 0.005"
+
 // agreement classifies an nDCG@10 difference against SPEC §4.
 func agreement(d float64) string {
 	switch d = math.Abs(d); {
@@ -167,18 +176,21 @@ func agreement(d float64) string {
 	case d <= 0.005+5e-5:
 		return "within 0.005"
 	default:
-		return "outside 0.005"
+		return outside
 	}
 }
 
+// meanOf scores the run at runPath against the test qrels of dataDir. The
+// run is read first, and a qrels error is rendered as text: a caller reads
+// fs.ErrNotExist as "the run is missing", not as a wrong -data.
 func meanOf(dataDir, runPath string) (eval.Scores, error) {
-	qrels, err := beir.Qrels(dataDir, "test")
-	if err != nil {
-		return eval.Scores{}, err
-	}
 	r, err := readRun(runPath)
 	if err != nil {
 		return eval.Scores{}, err
+	}
+	qrels, err := beir.Qrels(dataDir, "test")
+	if err != nil {
+		return eval.Scores{}, errors.New(err.Error())
 	}
 	return eval.Mean(eval.Evaluate(qrels, r)), nil
 }

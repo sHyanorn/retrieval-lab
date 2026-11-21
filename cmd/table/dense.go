@@ -42,7 +42,7 @@ func denseTables(text, anchorsPath, runs, vectors, prebuilt string, mean func(st
 			return "", nil, err
 		}
 		dn, dr := delta(m.NDCG10, a.flatNDCG), delta(m.Recall100, a.flatRecall)
-		if agreement(dn) == "outside 0.005" {
+		if agreement(dn) == outside {
 			short = append(short, fmt.Sprintf("%s: nDCG@10 %.4f, %s from the flat anchor", a.dataset, m.NDCG10, signed(dn)))
 		}
 		fmt.Fprintf(&t, "| %s | %.4f | %.4f | %.4f | %s | %.4f | %.4f | %s | %s |\n",

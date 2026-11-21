@@ -1,7 +1,9 @@
 package main
 
 import (
+	"errors"
 	"fmt"
+	"io/fs"
 	"os"
 	"path/filepath"
 	"strings"
@@ -45,6 +47,35 @@ func TestAnchorReadersRejectTheOtherFile(t *testing.T) {
 	}
 	if _, err := readDenseAnchors("../../results/anchors-bge.tsv"); err != nil {
 		t.Error(err)
+	}
+}
+
+func TestMeanOfTellsMissingQrelsFromMissingRun(t *testing.T) {
+	dir := t.TempDir()
+	run := filepath.Join(dir, "d.run")
+	if err := os.WriteFile(run, []byte("q1 Q0 d1 1 0.5 t\n"), 0o600); err != nil {
+		t.Fatal(err)
+	}
+	if _, err := meanOf(filepath.Join(dir, "nodata"), run); err == nil || errors.Is(err, fs.ErrNotExist) {
+		t.Errorf("run present, qrels missing: %v, want an error that is not fs.ErrNotExist", err)
+	}
+}
+
+func TestDenseTablesReportARunOutsideTheTolerance(t *testing.T) {
+	dir := t.TempDir()
+	anchors := filepath.Join(dir, "anchors.tsv")
+	const tsv = "dataset\tflat_ndcg_cut_10\tflat_recall_100\tfaiss_ndcg_cut_10\tfaiss_recall_100\nd\t0.6000\t0.9000\t0.6000\t0.9000\n"
+	if err := os.WriteFile(anchors, []byte(tsv), 0o600); err != nil {
+		t.Fatal(err)
+	}
+	mean := func(string, string) (eval.Scores, error) { return eval.Scores{NDCG10: 0.5, Recall100: 0.9}, nil }
+	const doc = "<!-- bge-flat -->\n<!-- /bge-flat -->\n<!-- bge-vectors -->\n<!-- /bge-vectors -->\n"
+	_, short, err := denseTables(doc, anchors, dir, dir, dir, mean)
+	if err != nil {
+		t.Fatal(err)
+	}
+	if len(short) != 1 || !strings.HasPrefix(short[0], "d: nDCG@10 0.5000") {
+		t.Errorf("short = %q, want one line for d at nDCG@10 0.5000", short)
 	}
 }
 

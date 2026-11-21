@@ -72,7 +72,14 @@ func normCache(avgdl float32) [256]float32 {
 // termScore is BM25Scorer.score: weight is boost · idf. It equals
 // weight · freq / (freq + k1 · (1 − b + b · length / avgdl)).
 func termScore(weight, freq, normInverse float32) float32 {
-	return weight - weight/(1+float32(freq*normInverse))
+	return scoreOf(weight, float32(freq*normInverse))
+}
+
+// scoreOf is termScore with freq · normInverse already rounded to float32.
+// It rises with that product, so a term's highest product over its
+// postings gives the highest score it adds to any document.
+func scoreOf(weight, product float32) float32 {
+	return weight - weight/(1+product)
 }
 
 // adjustTies is Anserini's ScoreTiesAdjusterReranker, applied to scores in

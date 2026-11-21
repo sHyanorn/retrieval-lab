@@ -2,12 +2,17 @@ package bm25
 
 import (
 	"bytes"
+	"cmp"
 	"fmt"
 	"maps"
 	"math"
+	"math/rand/v2"
 	"path/filepath"
+	"slices"
 	"strings"
 	"testing"
+
+	index "github.com/blevesearch/bleve_index_api"
 
 	"github.com/sHyanorn/retrieval-lab/internal/beir"
 	"github.com/sHyanorn/retrieval-lab/internal/eval"
@@ -25,10 +30,12 @@ var corpus = []beir.Doc{
 	{ID: "f", Text: "cat" + strings.Repeat(" zebra", 50)},
 }
 
-func build(t *testing.T) *Index {
+func build(t *testing.T) *Index { t.Helper(); return buildFrom(t, corpus) }
+
+func buildFrom(t *testing.T, docs []beir.Doc) *Index {
 	t.Helper()
 	x, err := Build(filepath.Join(t.TempDir(), "idx"), func(fn func(beir.Doc) error) error {
-		for _, d := range corpus {
+		for _, d := range docs {
 			if err := fn(d); err != nil {
 				return err
 			}
@@ -126,5 +133,125 @@ func TestRunAdjustsTiesBeforeLeavingOutTheQueryDocument(t *testing.T) {
 	}
 	if want := fmt.Sprintf("b Q0 e 1 %f t\n", hits[1].Score); buf.String() != want || hits[1].Score >= hits[0].Score {
 		t.Fatalf("run = %q, want %q below %v", buf.String(), want, hits[0].Score)
+	}
+}
+
+// randomCorpus draws n documents from a vocabulary of four words and two
+// stop words, a third of them copies of an earlier one, so that many
+// documents tie; IDs are drawn apart from the order of indexing.
+func randomCorpus(r *rand.Rand, n int) []beir.Doc {
+	words := []string{"cat", "dog", "fish", "bird", "the", "and"}
+	text := func(most int) string {
+		w := make([]string, r.IntN(most+1))
+		for i := range w {
+			w[i] = words[r.IntN(len(words))]
+		}
+		return strings.Join(w, " ")
+	}
+	docs := make([]beir.Doc, n)
+	for i, id := range r.Perm(n) {
+		docs[i] = beir.Doc{ID: fmt.Sprintf("d%03d", id), Title: text(2), Text: text(8)}
+		if i > 0 && r.IntN(3) == 0 {
+			c := docs[r.IntN(i)]
+			docs[i].Title, docs[i].Text = c.Title, c.Text
+		}
+	}
+	return docs
+}
+
+// ranked is what Search must return: every document query matches, sorted
+// by score and then ID, the first k, ties adjusted.
+func ranked(x *Index, query string, k int) ([]eval.Hit, error) {
+	acc := &accumulator{sum: make([]float64, x.stats.Docs), seen: make([]bool, x.stats.Docs)}
+	counts := x.terms(query)
+	for _, t := range slices.Sorted(maps.Keys(counts)) {
+		if err := x.addTerm(acc, t, float32(counts[t])); err != nil {
+			return nil, err
+		}
+	}
+	hits := make([]eval.Hit, len(acc.touched))
+	for i, d := range acc.touched {
+		id, err := x.r.ExternalID(index.NewIndexInternalID(nil, d))
+		if err != nil {
+			return nil, err
+		}
+		hits[i] = eval.Hit{DocID: id, Score: float64(float32(acc.sum[d]))}
+	}
+	slices.SortFunc(hits, func(a, b eval.Hit) int {
+		return cmp.Or(cmp.Compare(b.Score, a.Score), strings.Compare(a.DocID, b.DocID))
+	})
+	hits = hits[:min(k, len(hits))]
+	scores := make([]float32, len(hits))
+	for i, h := range hits {
+		scores[i] = float32(h.Score)
+	}
+	adjustTies(scores)
+	for i := range hits {
+		hits[i].Score = float64(scores[i])
+	}
+	return hits, nil
+}
+
+// checkSearch compares search with ranked on random corpora, for every k
+// from 1 to one past the corpus, queries following each other on one
+// index; it returns the first difference.
+func checkSearch(t *testing.T, search func(x *Index, q string, k int) ([]eval.Hit, error)) error {
+	r := rand.New(rand.NewPCG(1, 2))
+	for c := range 8 {
+		x := buildFrom(t, randomCorpus(r, 10+5*c))
+		for range 20 {
+			q := randomCorpus(r, 1)[0].Text
+			for k := 1; k <= int(x.stats.Docs)+1; k++ {
+				got, err := search(x, q, k)
+				if err != nil {
+					return err
+				}
+				want, err := ranked(x, q, k)
+				if err != nil {
+					return err
+				}
+				if !slices.Equal(got, want) {
+					return fmt.Errorf("corpus %d, query %q, k %d: got %v, want %v", c, q, k, got, want)
+				}
+			}
+		}
+	}
+	return nil
+}
+
+func exhaustive(mut mutation) func(x *Index, q string, k int) ([]eval.Hit, error) {
+	return func(x *Index, q string, k int) ([]eval.Hit, error) { return x.exhaustive(q, k, mut) }
+}
+
+func maxScore(mut mutation) func(x *Index, q string, k int) ([]eval.Hit, error) {
+	return func(x *Index, q string, k int) ([]eval.Hit, error) { return x.maxScore(q, k, mut) }
+}
+
+func TestSearchEqualsFullRanking(t *testing.T) {
+	for name, search := range map[string]func(x *Index, q string, k int) ([]eval.Hit, error){
+		"exhaustive": exhaustive(mutation{}),
+		"MaxScore":   maxScore(mutation{}),
+	} {
+		if err := checkSearch(t, search); err != nil {
+			t.Errorf("%s: %v", name, err)
+		}
+	}
+}
+
+func TestBrokenSearchesAreCaught(t *testing.T) {
+	for name, search := range map[string]func(x *Index, q string, k int) ([]eval.Hit, error){
+		"ties at rank k dropped":           exhaustive(mutation{strictCut: true}),
+		"cut from k − 1 scores":            exhaustive(mutation{shortHeap: true}),
+		"ties by document number":          exhaustive(mutation{byDocNum: true}),
+		"sums kept from the last query":    exhaustive(mutation{stale: true}),
+		"MaxScore, bounds halved":          maxScore(mutation{lowBound: true}),
+		"MaxScore, bound equal to the cut": maxScore(mutation{pruneTies: true}),
+		"MaxScore, cut from k − 1 scores":  maxScore(mutation{shortHeap: true}),
+	} {
+		err := checkSearch(t, search)
+		if err == nil {
+			t.Errorf("%s: passed", name)
+		}
+		t.Logf("%s: %.200v", name, err)
 	}
 }

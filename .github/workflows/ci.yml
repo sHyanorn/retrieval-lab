@@ -120,10 +120,14 @@ jobs:
     env:
       DATASETS: nfcorpus
       DENSE_DATASETS: nfcorpus
+      # A commit whose code of step 2 is bd072df's, as the job requires;
+      # from D023 on, HEAD's is not.
+      STUDY_COMMIT: 9195dc36ad39526c1f43fb099757738e11c41b12
     steps:
       # The whole history: the job compares the code of step 2 with bd072df's.
       - uses: actions/checkout@3d3c42e5aac5ba805825da76410c181273ba90b1 # v7.0.1
         with:
+          ref: ${{ env.STUDY_COMMIT }}
           fetch-depth: 0
       - uses: actions/setup-python@6d4fd22b20465ccc0f7354476588e8df7c9ca0e0 # v7.1.0
         with:
@@ -154,8 +158,8 @@ jobs:
       # after three builds and run again to the end.
       - run: make embed DATA="$RUNNER_TEMP/data"
       - run: python step6/dryrun.py prepare --data "$RUNNER_TEMP/data" --bin "$RUNNER_TEMP/bin" --out "$RUNNER_TEMP/dry"
-      - run: python step6/dryrun.py run --data "$RUNNER_TEMP/data" --out "$RUNNER_TEMP/dry" --commit "$GITHUB_SHA" --stop-after 3
-      - run: python step6/dryrun.py run --data "$RUNNER_TEMP/data" --out "$RUNNER_TEMP/dry" --commit "$GITHUB_SHA"
+      - run: python step6/dryrun.py run --data "$RUNNER_TEMP/data" --out "$RUNNER_TEMP/dry" --commit "$STUDY_COMMIT" --stop-after 3
+      - run: python step6/dryrun.py run --data "$RUNNER_TEMP/data" --out "$RUNNER_TEMP/dry" --commit "$STUDY_COMMIT"
       - run: python -m pytest -q -p no:cacheprovider test_dryrun.py
         working-directory: step6
         env:

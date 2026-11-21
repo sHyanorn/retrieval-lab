@@ -2,7 +2,7 @@
 
 ## 1. Summary
 
-A hybrid retrieval system in Go: BM25, dense vectors and fusion, with cross-encoder reranking still to come (M5). BM25, exact dense retrieval and fusion are each accepted against a published number that a third party can reproduce with public commands and data; approximate search is measured against exact search, and reranking is to be accepted against intervals over queries. A pre-registered study built on the system follows as a second stage and is out of scope here.
+A hybrid retrieval system in Go: BM25, dense vectors and fusion, with cross-encoder reranking still to come (M5, done in M9). BM25, exact dense retrieval and fusion are each accepted against a published number that a third party can reproduce with public commands and data; approximate search is measured against exact search, and reranking is to be accepted against intervals over queries. A pre-registered study built on the system follows as a second stage and is out of scope here. A third stage measures what it costs to serve the system (§7).
 
 ## 2. Data, anchors and measures
 
@@ -76,3 +76,61 @@ Fixed before any fusion result existed.
 - Every metric and every run-file function has known-answer tests; expected values are worked by hand and confirmed with trec_eval.
 - Each tested property has a test that a deliberately broken implementation fails.
 - CI runs lint, the tests with the race detector, and the reproduction of the small datasets.
+
+## 7. Serving
+
+The third stage measures what it costs to serve the hybrid retrieval of §3 at the quality of each model's exact pipeline: latency, throughput, memory and dollars, beside Lucene, faiss and Qdrant on the same machine. The protocol is BENCHMARKS.md, Serving protocol, committed before any serving result; D021 to D028 give the reasons.
+
+### Data and models
+
+- Costs are measured on NQ: 2,681,468 documents and 3,452 test queries (BEIR's test split, checked against Pyserini's copy in BENCHMARKS.md, Data check). The six datasets of §2 check correctness, in CI and in development.
+- Four of the study's eight models, at the revisions of docs/PREREGISTRATION.md, Section 5: all-MiniLM-L6-v2 (384 dimensions), bge-base-en-v1.5 (768), snowflake-arctic-embed-m-v1.5 (768) and mxbai-embed-large-v1 (1024). BGE-base and Arctic have the same dimension and encoder size, but on NQ they need ef 70.0 and 162.5, averaged over the study's four builds, to find 0.95 of the exact top 10 (`study/results/select.tsv`); MiniLM and mxbai add a smaller and a larger encoder and dimension.
+- NQ's document and query vectors are encoded once on a GPU, as the study encoded them (D025). §3 leaves out anything that needs a GPU; this encoding is the one exception, and serving runs on CPUs.
+
+### Questions
+
+1. Where the cost lies: the time per query on one thread of each stage (encoding, BM25, HNSW, fusion) in each model's end-to-end configuration of equal quality.
+2. BM25 query evaluation: the time per query on one thread, for the top 1000 and the top 100, of the array accumulator, of MaxScore and of Lucene 10.5, and for the top 1000 of the evaluation at commit 9195dc3, all three of this system writing the same run files. The evaluation at 9195dc3 scores every matching document and sorts them all before it keeps the top k, so k changes only how many it keeps. Bleve's and Lucene's postings differ, so the comparison with Lucene is of engine and algorithm together.
+3. The dense index at equal quality, with the query vector given: for each model and each code (float32; int8 and binary, with the candidates rescored in float32), the configuration of equal quality selected by D021, with its time per query on one thread, its capacity under load, its memory and its build time; beside it faiss, Lucene and Qdrant on BGE-base's vectors.
+4. Serving from the query text: for each model, the highest arrival rate per vCPU at which p99 latency stays within 100 ms; p50, p99 and p99.9 at fixed rates; memory; dollars per million queries. With the query vector given, BGE-base's hybrid configuration is served beside Qdrant's hybrid retrieval over the same dense vectors and BM25 as sparse vectors.
+5. Reranking (M9): the nDCG@10 that a cross-encoder gains over the hybrid top k, with a paired bootstrap interval, and its cost per query. It changes the quality served, so it stays out of the tables of equal quality.
+
+Expected before any serving result: for every model but MiniLM, the float32 encoder's mean time per query is at least ten times that of the HNSW search in the model's end-to-end configuration.
+
+### Equal quality (D021)
+
+- A model's reference is its exact pipeline on the same queries: BM25 flat (§4), exact dense search (D011) over the query vectors of the model's float32 serving encoder, and RRF with k = 60 over the top 1000 of each, keeping 1000 (D015). A dense configuration is held to the exact dense run and a hybrid one to the exact hybrid run. A BM25 evaluation must write the same run file byte for byte.
+- A configuration's loss is the reference's mean nDCG@10 minus its own, its own averaged per query over three builds with level seeds 1, 2 and 3. It has equal quality when the loss is at most δ = 0.005. The build served is build 1; its own loss is reported too.
+- The test queries are sorted by the SHA-256 of their IDs; the first 1,726 are half A and the other 1,726 half B. For each model and tier, and in the dense tier for each code, every combination of the other settings contributes its smallest ef whose loss on A is at most δ, and the one with the lowest mean time per query on one thread over A's queries is selected. On B its loss is reported with the 95% interval of a paired bootstrap over the queries: 10,000 samples with replacement, seed fixed, the 2.5th and 97.5th percentiles of the mean per-query difference. A configuration whose loss on B exceeds δ is reported as selected on A and not of equal quality on B. Costs use all 3,452 queries.
+- The tiers: dense, with the query vector given, returning the top 10; hybrid, with the query vector given (BGE-base, beside Qdrant); end to end, hybrid from the query text. Where the query vector is given, it is the float32 serving encoder's; the query encoder varies only end to end.
+- The grid: ef from the study's 65 values (docs/PREREGISTRATION.md, Section 6), at least the dense depth; the dense depth fused, 10, 100 or 1000; the BM25 depth fused, 100 or 1000; the code, float32, int8 (one byte per dimension, its scale and offset from the dimension's minimum and maximum over the document vectors, values rounded to nearest) or binary (one bit per dimension, set where the component is positive), an int8 or binary search rescoring all its ef candidates in float32; the query encoder, float32 or int8. M = 16 and efConstruction = 200 throughout, the study's settings.
+- Each model's exact nDCG@10 stands beside its costs: in R1's tables in a column, in R2's above the table.
+
+### Components
+
+| Component | Built on | Checked against |
+|---|---|---|
+| BM25 evaluation: MaxScore, and an array accumulator (D023) | Bleve's postings and `TermFieldReader.Advance` | the run files of §4 and NQ's BM25 run of the study, byte for byte |
+| HNSW and vector kernels (D024) | a module of their own, from recserve at 35a47a2 | hashes of builds and searches taken at 35a47a2 |
+| int8 and binary codes, rescored in float32 | the same graph as float32 | exact search |
+| Query encoders of the four models, float32 and int8 (D025) | ONNX Runtime, one thread per query | float32: the GPU encoder's query vectors |
+| `cmd/build`: BM25 index with each term's bound, graphs and codes, as files with their SHA-256 | Bleve, the HNSW module | |
+| `cmd/serve`: one model, dataset and configuration per process (D022) | HTTP/1.1 and JSON on net/http | the in-process run, byte for byte |
+| `cmd/load`: open-loop load (D026) | net/http | each response's top 10 against the in-process result |
+| Comparators (D027) | Anserini 2.3.0 on Lucene 10.5.0, faiss 1.16.0, Qdrant | their exact search over the same vectors |
+
+`POST /search` takes `{"query": text, "vector": [optional], "k": n, "mode": "hybrid" | "dense" | "bm25"}` and returns `{"hits": [{"id", "score"}], "stages_us": {"encode", "bm25", "dense", "fuse"}}`; a request with a vector skips the encoder. `GET /healthz` reports readiness. Profiling listens on a separate port, off by default.
+
+Out of scope: updating or deleting documents; gRPC; hnswlib; batching queries in the encoder; serving from several nodes.
+
+### Completion criteria
+
+Fixed before any serving result.
+
+1. BM25: every run file of both evaluations equals that of §4 byte for byte on the six datasets, in CI, and NQ's equals the BM25 run in `results/step5/runs.sha256`. Property tests on random corpora compare the top k with a full ranking of every matching document, ties at rank k included, and a broken variant of each property fails them.
+2. HNSW: the module's first version equals recserve's two packages at 35a47a2 but for the import path and the package comment; its tests assert the hashes of D024. The HNSW tables of M3 are compared as D024 sets.
+3. Codes and kernels: each SIMD kernel equals its Go reference bit for bit. With ef equal to the number of documents, on a graph whose nodes are all reachable on layer 0, the int8 and binary searches return the exact top k.
+4. Encoders: each model's float32 serving encoder gives NQ query vectors with a cosine of at least 0.9999 to the GPU encoder's (D012's threshold).
+5. Serving: every NFCorpus test query sent over HTTP gives a run byte-identical to the in-process run; under load, the top 10 of every response equals the in-process one, with no mismatch.
+6. Vectors: the SHA-256 of each model's NQ vectors are compared with the study's, `results/step4/attempt-3/vectors.sha256`, and the outcome recorded (D025).
+7. Every serving table is written by a command from committed result files and checked as the tables of §4 are.

@@ -1,6 +1,6 @@
 # Benchmarks
 
-This file fixes how every figure in the project is produced. The HNSW and fusion protocol sections were committed, with their result tables empty, before their results; the BM25 and BGE-base-en-v1.5 run protocols were committed together with their result tables. Results are appended under Results, and a change to the protocol after results exist is recorded in DECISIONS.md with its reason.
+This file fixes how every figure in the project is produced. The HNSW, fusion and serving protocol sections were committed, with their result tables empty, before their results; the BM25 and BGE-base-en-v1.5 run protocols were committed together with their result tables. Results are appended under Results, and a change to the protocol after results exist is recorded in DECISIONS.md with its reason.
 
 ## Anchors
 
@@ -293,3 +293,131 @@ nDCG@10 of each fused run minus that of each of its inputs, with the 95% interva
 | scidocs | 0.1490 | 0.2172 | +0.0460 [+0.0395, +0.0526] | -0.0222 [-0.0298, -0.0147] | +0.0529 [+0.0460, +0.0599] | -0.0153 [-0.0223, -0.0083] |
 | scifact | 0.6789 | 0.7404 | +0.0631 [+0.0408, +0.0854] | +0.0016 [-0.0212, +0.0236] | +0.0683 [+0.0475, +0.0905] | +0.0068 [-0.0159, +0.0294] |
 <!-- /fusion-gain -->
+
+## Serving protocol
+
+SPEC §7 sets the questions, the rule of equal quality (D021) and the completion criteria; D026 to D028 give the reasons for what follows. Costs are measured on NQ's 3,452 test queries, losses as D021 sets them.
+
+### Rounds
+
+R0, R1 and R2 each run on their own Runpod cpu3g pod with 32 vCPUs in EU-RO-1 (D028). R0 measures the probes' spread, rehearses every install, downloads Qdrant's binary once onto the network volume, and serves BM25 on FiQA at three rates, three runs each, to see their spread; it reports no result, and the protocol changes only between R0 and R1, each change recorded in DECISIONS.md. R1 measures this system. R2 measures the comparators and, on the same pod, the configurations of this system that the comparators' tables hold: the three BM25 evaluations, the one of 9195dc3 built from that commit and timed for the top 1000 alone (SPEC §7, question 2), BGE-base's dense configuration in each code and its hybrid configuration with the query vector given, and the headline configurations, which are each model's end-to-end configuration and BGE-base's float32 dense configuration. R2 serves R1's graph files, kept on the network volume and checked by SHA-256, and runs the headline configurations at R1's lower common rate, in queries per second.
+
+### Two tiers
+
+- In process, without load: each configuration runs every query five times on one thread and discards the first pass, recording each query's time and the time of each stage. One thread means GOMAXPROCS 1 and one ONNX Runtime thread, the process pinned to one vCPU whose SMT sibling stays idle. Each of the four passes gives a mean, a p50 and a p99 of the time per query; a figure is the median of the four, with their range, and the selection of D021 uses the mean. Lucene and faiss run the same way; Lucene runs three more passes first, for its JIT.
+- Served, under open-loop load: `cmd/serve` and Qdrant, driven by `cmd/load`.
+
+### Load
+
+- `cmd/load` sends requests at Poisson arrivals, repetition i drawn from seed i, so every system sees the same schedules; the queries follow an order drawn from a fixed seed. Latency runs from a request's due time to its response, so a slow server cannot delay the requests that measure it; the lag from the due time to the actual send is recorded too.
+- A pool of 64 keep-alive connections is opened before the warm-up; when all 64 are busy a new one is opened and counted.
+- Percentiles are exact, by nearest rank: the p-quantile of n sorted latencies is the ⌈p·n⌉-th. The record of every request is kept.
+- A request without a response 2 s after its due time, or answered with a 503 (D022), counts with infinite latency.
+- For this system, every response's top 10 must equal the in-process result; for Qdrant, its own answer to the same query sent alone before the run.
+
+### Runs
+
+- A run is 20 s of warm-up at its rate, not counted, then a window of the longer of 60 s and the time 10,000 requests take at that rate, at most 180 s. p99.9 is reported only from a window of at least 10,000 requests.
+- SLOs: p99 at most 10 ms with the query vector given (the dense and hybrid tiers), at most 100 ms from the query text (end to end). A run meets its SLO when it is valid and its p99 is within it; in the search for capacity, a rate whose run is invalid three times counts as missing it.
+- Capacity. C_est is the server's 8 vCPUs divided by the configuration's mean time per query in process. Rates of 0.4, 0.6, 0.8, 1.0 and 1.2 times C_est run once each; while the highest rate run meets the SLO, a rate 0.2 times C_est higher runs, up to 3 times C_est, and while the lowest misses it, half that rate runs, down to 0.05 times C_est. Let r1 be the lowest rate run that misses the SLO and r0 the highest rate run below it. Twice, the midpoint of r0 and r1 runs once and replaces r0 if it meets the SLO, r1 if it misses. Then r0 runs three times. The capacity is r0 if all its three runs meet the SLO; otherwise the next lower rate run takes its place and runs three times, down to the lowest rate run. A configuration without such a rate, or with no rate that misses up to 3 times C_est, has no capacity, and the table says why. Throughput per vCPU is the capacity divided by 8.
+- A configuration whose p99 in process exceeds its SLO gets no capacity; it runs once at 0.4, 0.6, 0.8 and 1.0 times C_est, and its latency at those rates is reported.
+- Groups: (a) the dense configurations of the four models, with the query vector given; (b) BGE-base's three dense configurations and Qdrant's; (c) BGE-base's hybrid configuration with the query vector given and Qdrant's; (d) the end-to-end configurations of the four models. Each group runs at two common rates, 0.5 and 0.8 times the lowest capacity among its configurations that have one, or the lowest C_est if none has, three times each.
+- The three repetitions of a rate are interleaved across the configurations of a round (A B C A B C A B C). A figure is the median of three runs with their minimum and maximum. Two configurations differ only where all three runs of one are better than all three of the other; otherwise the table reads "not resolved on this machine" with both ranges.
+- Graphs are built with level seeds 1, 2 and 3 over the documents in corpus order, on 8 inserting goroutines, with nothing else running; each graph file's SHA-256 is recorded and build 1's time is reported. Builds on several goroutines differ from run to run (D014).
+
+### Machine
+
+- At start a pod records its CPU model, the SHA-256 of its CPU flags, its cpuset, its SMT siblings (`thread_siblings_list`), its cgroup limits, its kernel version and its memory.
+- The server gets 8 vCPUs, the two threads of 4 whole cores when the SMT pairs are visible; the load generator 4; the probes 1; the others stay idle, and no build or other job runs while a configuration is measured. Qdrant runs on the same 8 vCPUs with its thread pools set to 8.
+- Fixed and recorded: the container image by digest; the Go toolchain, ONNX Runtime's library, the ONNX models, the JDK, Anserini's jar, the faiss wheel and Qdrant's binary by SHA-256; the repository's commit; GOGC at its default and no GOMEMLIMIT; the SHA-256 of every binary run. Vectors, indexes and graphs are read from the container disk, copied there from the network volume. A pod's CPU model cannot be chosen: a round on a CPU model other than R1's is reported separately.
+
+### Noise
+
+- The round's reference for each probe is the median of its first three runs at the round's start.
+- Before and after each run, a fixed single-thread workload, always the same binary, runs on each of the server's 8 vCPUs at once; a run around which the slowest of the eight is more than 10% slower than the reference is flagged.
+- Before and after each run, 2 s of random pointer chasing measures memory latency; more than 15% above the reference flags the run.
+- On the probes' vCPU, a loop of 1 ms sleeps records each overrun; the longest stall and the number above 5 ms are reported per run.
+- Before and after each run: steal time from `/proc/stat`, throttling from the cgroup's `cpu.stat`, the server's major page faults.
+- R1 and R2 run on different pods; the headline configurations' throughput per vCPU and p99 at the lower common rate are reported from both, with their difference.
+
+### Invalid runs
+
+A run is invalid when the p99 of its send lag exceeds 1 ms or its achieved rate is below 99% of its target; when a response is a 5xx other than a 503, or its top 10 differs; when the CPU model or topology changes within the round; when the server takes a major page fault in a timed window; when the server restarts; when swap is used. An invalid run is run again, at most twice; a run invalid three times is listed with its reasons and left out. A flagged run is run again, at most twice; a run still flagged keeps its numbers, marked, and is left out of comparisons.
+
+### Memory
+
+- Anonymous and file-backed RSS from `smaps_rollup` at the end of each window.
+- Working set: one more run per configuration at its lower common rate, not timed and exempt from the page-fault rule, starts after `posix_fadvise(POSIX_FADV_DONTNEED)` on its files and counts with `mincore` the pages resident at its end, readahead included.
+
+### Cost
+
+Dollars per million queries are 10^6 × price per vCPU-hour / (3,600 × throughput per vCPU), at cpu3g's price read from Runpod's API and stated with the time of reading. Beside it stands the same figure at the price of the cheapest of cpu3c, cpu3g and cpu3m whose memory for 8 vCPUs holds the working set, computed from the measured quantities.
+
+### Comparators
+
+On BGE-base's NQ vectors, with the settings of D027.
+
+- Lucene 10.5.0 through Anserini 2.3.0's jar on JDK 21, in process: BM25 flat over NQ, indexed as Anserini's `beir-v1.0.0-nq.flat` configuration indexes it, k1 0.9 and b 0.4; HNSW in float32 and with int8 quantization, M 16 and beamWidth 200, merged into one segment as Anserini merges it. A single-file Java harness times each query.
+- faiss-cpu 1.16.0, in process, one OpenMP thread: `IndexHNSWFlat`; `IndexHNSWSQ` with 8 bits under `IndexRefineFlat`, `k_factor` ef / k; `IndexBinaryHNSW` over the binary code of SPEC §7, returning ef candidates, which the harness rescores in float32. The vectors are read with `numpy.memmap` from the same file.
+- Qdrant, served: HNSW with m 16 and ef_construct 200; scalar int8 and binary quantization kept in memory, rescored, with oversampling 2 and 3; vectors uploaded over REST. Hybrid: sparse document vectors of BM25 contributions and sparse query vectors of term counts, fused by RRF through its Query API with k 61 and prefetches of this system's depths.
+
+### Results
+
+Filled from committed result files by a command, as the tables above are.
+
+#### Environment
+
+| Round | Pod | CPU model | vCPUs | SMT pairs | Kernel | Memory | Price per vCPU-hour, read at |
+|---|---|---|---|---|---|---|---|
+
+#### Cost by stage, R1
+
+Mean milliseconds per query on one thread, the median of four passes [range]; each model's end-to-end configuration.
+
+| Model | Exact nDCG@10 | Configuration | Encode | BM25 | HNSW | Fusion | Total |
+|---|---|---|---|---|---|---|---|
+
+#### BM25 evaluation, R2
+
+Milliseconds per query on one thread, the median of four passes [range]. The evaluation at 9195dc3 has no top-100 cells (SPEC §7, question 2).
+
+| Evaluation | Top 1000 mean | p50 | p99 | Top 100 mean | p50 | p99 |
+|---|---|---|---|---|---|---|
+
+#### Dense retrieval at equal quality, R1
+
+Query vector given.
+
+| Model | Exact nDCG@10 | Code | ef | Loss on B [95%] | Loss of build 1 on B | Mean ms, one thread | Throughput per vCPU | p50 / p99 at the common rates | RSS | Working set | Build 1, s |
+|---|---|---|---|---|---|---|---|---|---|---|---|
+
+#### Comparators, R2
+
+BGE-base, query vector given, its exact nDCG@10 above the table; throughput and latency under load for this system and Qdrant only.
+
+| System | Code | Search parameter | Loss on B [95%] | Mean ms, one thread | Throughput per vCPU | p50 / p99 at the common rates | RSS | Working set | Build 1, s |
+|---|---|---|---|---|---|---|---|---|---|
+
+#### Hybrid with the query vector given, R2
+
+BGE-base, its exact hybrid nDCG@10 above the table.
+
+| System | Configuration | Loss on B [95%] | Throughput per vCPU | p50 / p99 at the common rates | RSS | Working set |
+|---|---|---|---|---|---|---|
+
+#### End to end, R1
+
+| Model | Exact nDCG@10 | Encoder | Configuration | Loss on B [95%] | Throughput per vCPU | p50 / p99 / p99.9 at the common rates | RSS | Working set | USD per million queries |
+|---|---|---|---|---|---|---|---|---|---|
+
+#### Headline configurations in R1 and R2
+
+Throughput per vCPU and p99 at the lower common rate.
+
+| Configuration | R1 | R2 | R2 minus R1 |
+|---|---|---|---|
+
+#### Invalid runs
+
+| Round | Configuration | Rate | Reason |
+|---|---|---|---|
